@@ -29,8 +29,17 @@ Những gì người dùng đưa vào cho một video: logo, nội dung chữ, v
 _Avoid_: asset, tài nguyên
 
 **Bộ nhận diện**:
-Logo, màu, font và giọng văn của thương hiệu duy nhất mà bộ **Skill** phục vụ.
+Logo, màu, font và giọng văn của thương hiệu duy nhất mà bộ **Skill** phục vụ, lưu ở một chỗ riêng để mọi **Skill** cùng đọc.
 _Avoid_: brand kit, theme
+
+**Phong cách**:
+Cảm giác chung của mọi **Video quảng cáo**: tin cậy, chuyên môn (gọn, số liệu, chứng chỉ) pha năng động (cắt nhanh, chữ nảy, chuyển cảnh). Không dùng giọng đọc; thông điệp truyền qua chữ và nhạc.
+
+**Điểm duyệt**:
+Chỗ quy trình dừng lại chờ người dùng đồng ý trước khi đi tiếp. Có hai điểm: sau **Kịch bản** và sau **Storyboard xem trước**. Sau đó mới render.
+
+**Storyboard xem trước**:
+Ảnh tĩnh của từng cảnh, render từ chính bản dựng Remotion, để duyệt bố cục trước khi render video.
 
 **Lower-third**:
 Dải chữ ở mép dưới khung hình, thường ghi tên, chức danh hoặc thông điệp phụ.
@@ -44,7 +53,8 @@ Cảnh phụ chèn vào để minh hoạ cho lời nói hoặc cảnh chính.
 - **Kiến thức nghề** được chắt lọc thành **Skill**; mỗi **Skill** ghi nguồn **Kiến thức nghề** của nó.
 - **Hiệu ứng** được dựng bằng Remotion; bộ **Skill** dạy cách làm nghề, còn kỹ thuật Remotion giao cho các skill của plugin Remotion.
 - Bộ **Skill** gồm nhiều **Skill** nhỏ, mỗi skill một việc, và một **Skill điều phối** gọi chúng theo thứ tự các **Khâu**.
-- Mọi **Video quảng cáo** đều dùng chung một **Bộ nhận diện**.
+- Mọi **Video quảng cáo** đều dùng chung một **Bộ nhận diện** và một **Phong cách**.
+- Thành phẩm được giao thẳng trong phiên chat.
 
 ## Flagged ambiguities
 
