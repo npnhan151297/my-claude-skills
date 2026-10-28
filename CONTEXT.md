@@ -33,7 +33,16 @@ Logo, màu, font và giọng văn của thương hiệu duy nhất mà bộ **Sk
 _Avoid_: brand kit, theme
 
 **Phong cách**:
-Cảm giác chung của mọi **Video quảng cáo**: tin cậy, chuyên môn (gọn, số liệu, chứng chỉ) pha năng động (cắt nhanh, chữ nảy, chuyển cảnh). Không dùng giọng đọc; thông điệp truyền qua chữ và nhạc.
+Cảm giác chung của mọi **Video quảng cáo**: tin cậy, chuyên môn (gọn, số liệu, chứng chỉ) pha năng động (cắt nhanh, chữ nảy, chuyển cảnh). Không dùng giọng đọc; thông điệp truyền qua chữ và nhạc. Nhịp chia theo phần: **Hook** (3 giây đầu) và **CTA** (cuối) nhanh, chữ nảy; phần giữa (lợi ích, số liệu, chứng chỉ) gọn, tiết chế.
+
+**Hook**:
+Khoảng 3 giây đầu của **Video quảng cáo**, nhiệm vụ duy nhất là giữ người xem không lướt qua.
+
+**CTA**:
+Lời kêu gọi hành động ở cuối video (đăng ký, nhắn tin, bấm link).
+
+**Nhạc nền**:
+Do người dùng đưa vào; nếu không có thì chọn từ thư viện miễn phí bản quyền. Claude không tự sinh nhạc. Nhạc được cắt khớp nhịp dựng.
 
 **Điểm duyệt**:
 Chỗ quy trình dừng lại chờ người dùng đồng ý trước khi đi tiếp. Có hai điểm: sau **Kịch bản** và sau **Storyboard xem trước**. Sau đó mới render.
