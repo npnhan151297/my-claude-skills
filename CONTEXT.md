@@ -61,7 +61,7 @@ Cảnh phụ chèn vào để minh hoạ cho lời nói hoặc cảnh chính.
 - Mỗi **Skill** thuộc về đúng một **Khâu**, trừ skill điều phối chạy qua nhiều **Khâu**.
 - **Kiến thức nghề** được chắt lọc thành **Skill**; mỗi **Skill** ghi nguồn **Kiến thức nghề** của nó.
 - **Hiệu ứng** được dựng bằng Remotion; bộ **Skill** dạy cách làm nghề, còn kỹ thuật Remotion giao cho các skill của plugin Remotion.
-- Bộ **Skill** gồm nhiều **Skill** nhỏ, mỗi skill một việc, và một **Skill điều phối** gọi chúng theo thứ tự các **Khâu**.
+- Bộ **Skill** gồm 33 **Skill** nhỏ, mỗi skill một việc, và một **Skill điều phối** (`ad-video-director`) gọi chúng theo thứ tự các **Khâu**.
 - Mọi **Video quảng cáo** đều dùng chung một **Bộ nhận diện** và một **Phong cách**.
 - Thành phẩm được giao thẳng trong phiên chat.
 
