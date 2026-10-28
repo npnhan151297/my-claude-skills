@@ -1,0 +1,317 @@
+<title>Kho skill dựng quảng cáo</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;800&family=JetBrains+Mono:wght@400;600&display=swap">
+<style>
+/* Layout: một cột như bảng phân cảnh — mỗi Khâu là một "track", mỗi skill là một clip có ô tích. Thanh trạng thái dính ở đáy. */
+:root {
+  --bg: #f5f6f4;
+  --surface: #ffffff;
+  --fg: #16201d;
+  --muted: #5b6863;
+  --line: #d9dfdb;
+  --accent: #0d6b5c;
+  --accent-soft: #e0efeb;
+  --pick: #b4660a;
+  --pick-soft: #fbefdc;
+  --font-display: "Be Vietnam Pro", system-ui, sans-serif;
+  --font-body: "Be Vietnam Pro", system-ui, sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, monospace;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #101614; --surface: #18201d; --fg: #e6ece9; --muted: #98a6a0; --line: #2b3632;
+    --accent: #4fc2ad; --accent-soft: #173430; --pick: #f0a64a; --pick-soft: #3a2a14;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #101614; --surface: #18201d; --fg: #e6ece9; --muted: #98a6a0; --line: #2b3632;
+  --accent: #4fc2ad; --accent-soft: #173430; --pick: #f0a64a; --pick-soft: #3a2a14;
+  color-scheme: dark;
+}
+* { box-sizing: border-box; }
+body {
+  background: var(--bg); color: var(--fg); font-family: var(--font-body); font-size: 15px; line-height: 1.55;
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+  padding-block: 32px 120px;
+}
+.wrap { max-width: 860px; margin: 0 auto; display: grid; gap: 36px; }
+header { display: grid; gap: 10px; }
+.eyebrow { font-family: var(--font-mono); font-size: 12px; letter-spacing: .06em; color: var(--accent); text-transform: uppercase; }
+h1 { font-family: var(--font-display); font-weight: 800; font-size: clamp(26px, 5vw, 38px); line-height: 1.25; margin: 0; text-wrap: balance; }
+.lead { color: var(--muted); max-width: 64ch; margin: 0; }
+.legend { display: flex; flex-wrap: wrap; gap: 8px 18px; font-size: 13px; color: var(--muted); }
+.legend span { display: inline-flex; align-items: center; gap: 6px; }
+.star { color: var(--pick); font-weight: 800; }
+.actions { display: flex; flex-wrap: wrap; gap: 10px; }
+button {
+  font: 600 14px var(--font-body); border-radius: 8px; padding: 9px 14px; cursor: pointer;
+  border: 1px solid var(--line); background: var(--surface); color: var(--fg);
+}
+button.primary { background: var(--accent); border-color: var(--accent); color: var(--bg); }
+button:focus-visible, input:focus-visible, textarea:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+button:disabled { opacity: .5; cursor: default; }
+
+section.track { display: grid; gap: 12px; }
+.track-head { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; border-bottom: 1px solid var(--line); padding-bottom: 6px; }
+.track-head h2 { font-family: var(--font-display); font-size: 19px; font-weight: 800; margin: 0; }
+.track-head .count { font-family: var(--font-mono); font-size: 12px; color: var(--muted); white-space: nowrap; }
+.track-note { margin: 0; color: var(--muted); font-size: 13.5px; }
+.list { display: grid; gap: 8px; }
+
+label.clip {
+  display: grid; grid-template-columns: 22px 1fr; gap: 12px; align-items: start;
+  background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 12px 14px; cursor: pointer;
+}
+label.clip.rec { border-left: 4px solid var(--pick); padding-left: 11px; }
+label.clip:has(input:checked) { background: var(--accent-soft); border-color: var(--accent); }
+label.clip input { width: 18px; height: 18px; margin: 3px 0 0; accent-color: var(--accent); }
+.clip-body { min-width: 0; display: grid; gap: 4px; }
+.clip-top { display: flex; flex-wrap: wrap; align-items: baseline; gap: 4px 10px; }
+.clip-name { font-weight: 600; }
+.clip-id { font-family: var(--font-mono); font-size: 12px; color: var(--muted); }
+.clip-desc { margin: 0; font-size: 14px; }
+.chips { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 2px; }
+.chip { font-size: 11.5px; font-family: var(--font-mono); padding: 1px 7px; border-radius: 999px; border: 1px solid var(--line); color: var(--muted); }
+.chip.rec { background: var(--pick-soft); border-color: transparent; color: var(--pick); font-weight: 600; }
+.chip.hi { color: var(--accent); border-color: var(--accent); }
+.src { font-size: 12.5px; color: var(--muted); }
+.src a { color: var(--accent); text-underline-offset: 2px; }
+
+.notes { display: grid; gap: 8px; }
+.notes label { font-weight: 600; }
+textarea { width: 100%; min-height: 90px; font: 14px var(--font-body); padding: 10px 12px; border-radius: 8px; border: 1px solid var(--line); background: var(--surface); color: var(--fg); resize: vertical; }
+
+.later { font-size: 13.5px; color: var(--muted); }
+.later ul { margin: 6px 0 0; padding-left: 18px; }
+
+.bar {
+  position: fixed; left: 0; right: 0; bottom: 0; z-index: 5;
+  background: var(--surface); border-top: 1px solid var(--line);
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+  padding-block: 12px calc(12px + env(safe-area-inset-bottom, 0px));
+}
+.bar-in { max-width: 860px; margin: 0 auto; display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 10px; }
+.tally { font-family: var(--font-mono); font-variant-numeric: tabular-nums; font-size: 14px; }
+.tally b { font-size: 18px; }
+.tally.ok b { color: var(--accent); }
+.tally.warn b { color: var(--pick); }
+.status { font-size: 13px; color: var(--muted); }
+@media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
+</style>
+
+<div class="wrap">
+  <header>
+    <div class="eyebrow">my-claude-skills · Video quảng cáo 15–60s · 9:16 → 16:9</div>
+    <h1>Kho skill dựng quảng cáo</h1>
+    <p class="lead">32 skill ứng viên, xếp theo từng Khâu. Mỗi skill dạy Claude một việc mà nhà sản xuất video chuyên nghiệp làm, còn phần kỹ thuật Remotion giao cho plugin Remotion. Tích chọn 8–12 skill muốn làm trước rồi bấm <b>Lưu lựa chọn</b>; Claude sẽ đọc lựa chọn này để viết skill.</p>
+    <div class="legend">
+      <span><span class="star">▍</span> Claude khuyên làm trước</span>
+      <span>Độ khó = mức khó để Claude làm tốt bằng code</span>
+    </div>
+    <div class="actions">
+      <button type="button" id="pick-rec">Chọn 11 skill được khuyên</button>
+      <button type="button" id="clear">Bỏ chọn tất cả</button>
+    </div>
+  </header>
+
+  <main id="tracks" class="wrap" style="gap:36px"></main>
+
+  <section class="notes">
+    <label for="note">Ghi chú cho Claude (tuỳ chọn)</label>
+    <textarea id="note" placeholder="Ví dụ: gộp lower-thirds vào kinetic-typography; thêm skill làm video cho ngày khai giảng…"></textarea>
+  </section>
+
+  <section class="later">
+    <b>Để giai đoạn sau</b> (đã thống nhất, không nằm trong danh sách chọn):
+    <ul>
+      <li>VFX ghép cảnh: tách nền, phông xanh, theo dõi chuyển động</li>
+      <li>3D, hạt (particle), ánh sáng</li>
+      <li>Hiệu ứng, hình ảnh do AI tạo; giọng đọc AI</li>
+    </ul>
+  </section>
+</div>
+
+<div class="bar">
+  <div class="bar-in">
+    <div class="tally" id="tally"><b id="n">0</b> đã chọn · mục tiêu 8–12</div>
+    <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap">
+      <span class="status" id="status">Chưa lưu</span>
+      <button type="button" class="primary" id="save">Lưu lựa chọn</button>
+    </div>
+  </div>
+</div>
+
+<script>
+const S = {
+  segwise: ["Segwise: cấu trúc quảng cáo từng khung", "https://segwise.ai/blog/anatomy-top-performing-video-ad-frame-by-frame"],
+  hooks: ["Segwise: 25 mẫu hook", "https://segwise.ai/blog/video-ad-hooks-drive-conversions.md"],
+  tiktok3s: ["Stackmatix: quy tắc 3 giây TikTok", "https://stackmatix.com/blog/tiktok-creative-best-practices-2026"],
+  adcreate: ["AdCreate: 15 công thức kịch bản", "https://adcreate.com/blog/ad-copywriting-formulas-frameworks"],
+  pas: ["PAS cho người làm khoá học", "https://course-coach.pages.dev/courses/copywriting-for-course-creators/04-pas-framework/"],
+  storyboard: ["Storyboard đa tỉ lệ khung hình", "https://medium.com/airapps/a-storyboard-template-for-every-platform-free-download-c1e9fe5f5142"],
+  animatic: ["Animatic và nhịp thời lượng", "https://preprompt-docs.pages.dev/user/storyboard/reframing-beats/"],
+  cuts: ["PremiumBeat: 8 kiểu cắt", "https://www.premiumbeat.com/blog/8-essential-cuts-every-editor-should-know"],
+  jl: ["Soundstripe: J-cut và L-cut", "https://soundstripe.com/blogs/a-video-editors-guide-to-j-cuts-and-l-cuts"],
+  beat: ["Cardboard: dựng theo nhịp nhạc", "https://learn.usecardboard.com/ai-editing/beat-sync-montage"],
+  beat2: ["VideoProc: đánh dấu beat", "https://videoproc.com/video-editing-software/guide-free-win/edit-to-the-beat.htm"],
+  rtrans: ["Remotion: TransitionSeries", "https://remotion.dev/docs/transitions/transitionseries"],
+  rspring: ["Remotion: springTiming", "https://v4.remotion.dev/docs/transitions/timings/springtiming"],
+  kinetic: ["SVGator: kinetic typography", "https://www.svgator.com/blog/kinetic-typography-a-guide-to-text-in-motion/"],
+  satisfying: ["Easing, timing, chuyển động phụ", "https://www.imagine.art/blogs/how-to-create-satisfying-motion-design"],
+  bvp: ["Be Vietnam Pro", "https://fontsource.org/fonts/be-vietnam-pro/about"],
+  vntype: ["Vietnamese Typography: thách thức", "https://vietnamesetypography.com/design-challenges/"],
+  match: ["School of Motion: match cut", "https://schoolofmotion.com/blog/match-cuts"],
+  aemask: ["Adobe: chuyển cảnh bằng mask", "https://www.adobe.com/learn/after-effects/web/create-custom-transitions"],
+  logo: ["MindStudio: logo reveal bằng Remotion", "https://mindstudio.ai/blog/remotion-claude-code-animated-logo-reveals-motion-graphics"],
+  grade: ["Màu thương hiệu và chỉnh màu", "https://www.capcut.com/create/monochrome-color-grading-single-accent-hue-brand-videos"],
+  contrast: ["Cloudinary: chữ trên video dễ đọc", "https://cloudinary.com/documentation/accessible_media_visual_audio_clarity_text"],
+  lufs: ["Fora Soft: mức LUFS từng nền tảng", "https://www.forasoft.com/learn/audio-for-video/articles-audio/lufs-targets-per-platform-2026"],
+  lufs2: ["video-use: −14 LUFS, −1 dBTP", "https://instagit.com/browser-use/video-use/social-media-loudness-normalization-targets/"],
+  safe: ["Reap: vùng an toàn Shorts/Reels/TikTok", "https://reap.video/blog/short-form-video-safe-zones"],
+  safe2: ["House of Marketers: safe zone", "https://houseofmarketers.com/guide-to-safe-zones-tiktok-facebook-instagram-stories-reels/"],
+  reframe: ["Adobe: reframe video", "https://helpx.adobe.com/lt/firefly/work-with-enterprise-features/creative-production/best-practices-for-reframe-video-in-creative-production.html"],
+  caps: ["OpenClip: kiểu phụ đề", "https://openclip.app/learn/caption-styling"],
+  caps2: ["BlitzCut: cỡ chữ phụ đề Shorts", "https://blitzcutai.com/blog/best-caption-style-youtube-shorts-2026"],
+  toolkit: ["digitalsamba claude-code-video-toolkit", "https://awesome.ecosyste.ms/projects/github.com%2Fdigitalsamba%2Fclaude-code-video-toolkit"],
+  rbest: ["Remotion best practices (skill chính thức)", "https://mcpservers.org/claude-skills/remotion/remotion-best-practices"],
+  editorvn: ["CareerLink: kỹ năng editor quảng cáo", "https://www.careerlink.vn/cam-nang-viec-lam/?p=18743"],
+};
+
+const TRACKS = [
+  { name: "Điều phối và nền tảng", note: "Khung chạy chung cho mọi video: thứ tự các Khâu, hai Điểm duyệt, Bộ nhận diện.", items: [
+    ["ad-video-director", "Đạo diễn quảng cáo", "Skill điều phối: nhận yêu cầu, gọi các skill theo thứ tự Khâu, dừng ở hai Điểm duyệt (Kịch bản, Storyboard xem trước), rồi render và giao file.", "cao", "trung bình", true, ["toolkit", "rbest"]],
+    ["brand-kit", "Bộ nhận diện", "Đọc thư mục brand/ (logo, màu, font, giọng văn), kiểm tra thiếu sót và sinh bộ token dùng chung cho mọi cảnh Remotion.", "cao", "thấp", true, ["toolkit", "grade"]],
+    ["asset-intake", "Kiểm tra nguyên liệu", "Kiểm tra ảnh/video người dùng đưa vào: độ phân giải, tỉ lệ, độ dài; chuẩn hoá bằng FFmpeg; báo cái nào dùng được, cái nào phải thay bằng đồ hoạ.", "trung bình", "thấp", false, ["toolkit"]],
+  ]},
+  { name: "Tiền kỳ", note: "Từ ý tưởng đến kịch bản và storyboard. Điểm duyệt 1 và 2 nằm ở đây.", items: [
+    ["ad-script", "Kịch bản quảng cáo", "Viết kịch bản 15/30/60 giây theo cấu trúc Hook → Bối cảnh → Lợi ích/Bằng chứng → CTA; dùng PAS cho bản ngắn, AIDA cho bản dài.", "cao", "thấp", true, ["segwise", "adcreate", "pas"]],
+    ["hook-writer", "Viết Hook 3 giây", "Sinh 3–5 Hook theo 5 mẫu (câu hỏi, chuyển đổi trước–sau, phá mẫu, bằng chứng xã hội, khẩn cấp); giữ nguyên thân video để thử A/B.", "cao", "thấp", true, ["hooks", "tiktok3s"]],
+    ["on-screen-copy-vi", "Chữ trên màn hình tiếng Việt", "Rút lời thoại thành chữ hiển thị: tối đa 2 dòng, 2–5 từ mỗi khối, ngắt dòng đúng cụm từ tiếng Việt, không để chữ treo.", "cao", "trung bình", false, ["caps", "vntype"]],
+    ["storyboard-preview", "Storyboard xem trước", "Chia kịch bản thành cảnh có thời lượng, dựng khung Remotion thô và render ảnh tĩnh từng cảnh để duyệt bố cục trước khi render video.", "cao", "trung bình", true, ["storyboard", "animatic"]],
+    ["asset-to-scene", "Ghép nguyên liệu vào cảnh", "Gán ảnh/video thật cho từng cảnh; cảnh nào thiếu nguyên liệu thì đề xuất đồ hoạ thay thế (chữ, số liệu, biểu tượng).", "trung bình", "thấp", false, ["storyboard"]],
+    ["ad-reference-breakdown", "Phân tích quảng cáo mẫu", "Mổ xẻ một quảng cáo tham khảo theo từng giây: nhịp cắt, số cảnh, kiểu chữ, vị trí CTA; rút ra mẫu để áp vào video mới.", "thấp", "trung bình", false, ["segwise"]],
+  ]},
+  { name: "Dựng", note: "Nhịp, cách cắt và lắp cảnh. Hook và CTA nhanh, phần giữa gọn và tiết chế.", items: [
+    ["pacing-rhythm", "Nhịp dựng theo phần", "Quy tắc độ dài cảnh: Hook và CTA cắt nhanh, phần giữa giữ đủ lâu để đọc; tính thời gian đọc chữ tiếng Việt; cắt trước khi người xem chán.", "cao", "trung bình", true, ["cuts", "segwise"]],
+    ["beat-sync", "Dựng theo nhịp nhạc", "Phát hiện beat của Nhạc nền, đặt điểm cắt và hiệu ứng trùng beat, đưa lúc lộ lợi ích chính và CTA vào đúng đoạn nhạc lên.", "cao", "cao", true, ["beat", "beat2"]],
+    ["scene-assembly", "Lắp cảnh bằng Remotion", "Lắp các cảnh bằng TransitionSeries, tính tổng thời lượng khi chuyển cảnh chồng lên nhau, giữ đúng độ dài 15/30/60 giây.", "trung bình", "trung bình", false, ["rtrans", "rbest"]],
+    ["b-roll-placement", "Chèn B-roll", "Chèn ảnh/video thật làm B-roll; ảnh tĩnh dùng zoom/trượt chậm (Ken Burns) để không bị đứng hình.", "trung bình", "thấp", false, ["editorvn"]],
+    ["cut-craft", "Kỹ thuật cắt", "Cắt theo chuyển động, match cut, J/L-cut với âm thanh; khi nào dùng cắt thẳng. Ít quan trọng hơn vì video không có giọng đọc.", "thấp", "trung bình", false, ["cuts", "jl"]],
+  ]},
+  { name: "Hiệu ứng", note: "Giai đoạn 1: chữ động, đồ hoạ chuyển động và chuyển cảnh.", items: [
+    ["kinetic-typography", "Chữ động", "Bộ mẫu chữ động theo Phong cách: nảy, xuất hiện từng từ cho Hook và CTA; trượt, mờ tiết chế cho phần giữa. Mọi chuyển động dựng bằng spring/interpolate.", "cao", "trung bình", true, ["kinetic", "rspring"]],
+    ["vietnamese-type-safety", "An toàn chữ tiếng Việt", "Chọn font có dấu chuẩn (ví dụ Be Vietnam Pro), giãn dòng đủ cho dấu chồng (Ấ, Ầ, ẩ), kiểm tra bằng câu nhiều dấu, không để dấu bị cắt khi chữ chuyển động.", "cao", "thấp", true, ["bvp", "vntype"]],
+    ["motion-principles", "Nguyên tắc chuyển động", "Bộ quy tắc chung mà các skill hiệu ứng tham chiếu: easing, thời lượng chuẩn, chuyển động phụ, vượt đà nhẹ, không để mọi thứ cùng chuyển động.", "trung bình", "thấp", false, ["satisfying", "kinetic"]],
+    ["transitions-pro", "Chuyển cảnh chuyên nghiệp", "Zoom, trượt, wipe/che khung bằng mask, match cut đồ hoạ; quy định tối đa 2–3 kiểu chuyển cảnh mỗi video và khi nào dùng kiểu nào.", "cao", "trung bình", true, ["match", "aemask", "rtrans"]],
+    ["stat-counter-chart", "Số liệu và biểu đồ động", "Số đếm tăng dần, thanh tiến độ, biểu đồ cột/tròn cho số học viên, tỉ lệ đỗ, năm kinh nghiệm.", "cao", "trung bình", false, ["satisfying"]],
+    ["lower-thirds", "Lower-third", "Dải tên giảng viên, chức danh, chứng chỉ ở mép dưới; vào ra gọn, nằm trong vùng an toàn.", "trung bình", "thấp", false, ["kinetic"]],
+    ["keyword-emphasis", "Nhấn mạnh từ khoá", "Gạch chân, khoanh, tô nền hoặc đổi màu từ khoá trong câu; chỉ nhấn một từ mỗi khối để không loãng.", "trung bình", "thấp", false, ["caps"]],
+    ["logo-reveal", "Logo mở/đóng", "Hiệu ứng xuất hiện logo ở đầu hoặc cuối video, ngắn (dưới 1,5 giây) để không ăn vào Hook.", "trung bình", "trung bình", false, ["logo"]],
+    ["cta-endcard", "Màn hình CTA cuối", "Màn hình kết: lời kêu gọi, nút giả, link hoặc mã QR, thông tin liên hệ; nhịp nhanh, giữ đủ lâu để đọc.", "cao", "thấp", false, ["segwise", "safe"]],
+  ]},
+  { name: "Màu và âm thanh", note: "Không có giọng đọc: Nhạc nền và hiệu ứng âm thanh gánh cảm xúc.", items: [
+    ["brand-color-grade", "Đồng bộ màu", "Chỉnh màu ảnh/video thật cho đồng bộ: sửa phơi sáng, cân bằng trắng trước khi áp look; giữ đúng màu logo và màu thương hiệu.", "trung bình", "cao", false, ["grade"]],
+    ["text-contrast-guard", "Bảo đảm chữ dễ đọc", "Kiểm tra tương phản chữ/nền (tối thiểu 4,5:1), tự thêm nền đỡ hoặc viền khi nền thay đổi liên tục.", "cao", "thấp", false, ["contrast"]],
+    ["music-edit", "Cắt nhạc nền", "Nhận nhạc người dùng đưa hoặc chọn từ thư viện miễn phí bản quyền, cắt khớp độ dài, fade đầu/cuối, kết đúng câu nhạc.", "cao", "trung bình", false, ["beat"]],
+    ["sfx-layer", "Hiệu ứng âm thanh", "Thêm whoosh, pop, click khớp với chuyển cảnh và chữ nảy; giữ nhỏ dưới nhạc nền.", "trung bình", "thấp", false, ["beat"]],
+    ["loudness-master", "Chuẩn âm lượng", "Chuẩn hoá âm thanh về khoảng −14 LUFS, đỉnh tối đa −1 dBTP bằng FFmpeg loudnorm trước khi xuất.", "trung bình", "thấp", false, ["lufs", "lufs2"]],
+  ]},
+  { name: "Phụ đề và xuất bản", note: "Bố cục cho điện thoại, xuất 9:16 và 16:9, kiểm tra cuối.", items: [
+    ["safe-zone-layout", "Vùng an toàn 9:16", "Đặt chữ, logo, CTA tránh giao diện TikTok/Reels/Shorts: chừa mép trên, mép dưới và cột nút bên phải; có lớp phủ để kiểm tra.", "cao", "thấp", true, ["safe", "safe2"]],
+    ["reframe-16x9", "Xuất bản 16:9", "Từ bản dựng 9:16, bố cục lại cho 16:9 theo từng cảnh (không chỉ cắt khung); chữ và đồ hoạ tự sắp lại.", "cao", "trung bình", false, ["reframe", "storyboard"]],
+    ["captions-style", "Kiểu phụ đề", "Phụ đề chữ đậm, cỡ khoảng 7–10% chiều cao khung, nổi bật từng từ có chọn lọc; dùng khi video có lời hoặc chữ chạy dài.", "thấp", "thấp", false, ["caps", "caps2"]],
+    ["render-qc", "Render và kiểm tra cuối", "Render bản cuối, kiểm tra thời lượng, khung đen, chữ tràn, dấu bị cắt, âm lượng; gửi file vào chat kèm danh sách lỗi đã sửa.", "cao", "thấp", false, ["rbest", "toolkit"]],
+    ["cover-frame", "Ảnh bìa", "Chọn hoặc dựng khung bìa (thumbnail) có tiêu đề rõ cho bản đăng lên mạng xã hội.", "thấp", "thấp", false, ["safe"]],
+  ]},
+];
+
+const ALL = TRACKS.flatMap(t => t.items);
+const REC = ALL.filter(i => i[5]).map(i => i[0]);
+document.getElementById("pick-rec").textContent = `Chọn ${REC.length} skill được khuyên`;
+
+function el(tag, attrs = {}, ...kids) {
+  const e = document.createElement(tag);
+  for (const [k, v] of Object.entries(attrs)) { if (k === "class") e.className = v; else e.setAttribute(k, v); }
+  for (const k of kids) e.append(k);
+  return e;
+}
+
+const root = document.getElementById("tracks");
+for (const t of TRACKS) {
+  const list = el("div", { class: "list" });
+  for (const [id, name, desc, prio, diff, rec, srcs] of t.items) {
+    const cb = el("input", { type: "checkbox", id: "c-" + id, "data-id": id });
+    const chips = el("div", { class: "chips" });
+    if (rec) chips.append(el("span", { class: "chip rec" }, "khuyên làm trước"));
+    chips.append(el("span", { class: "chip" + (prio === "cao" ? " hi" : "") }, "ưu tiên " + prio));
+    chips.append(el("span", { class: "chip" }, "độ khó " + diff));
+    const src = el("div", { class: "src" }, "Nguồn: ");
+    srcs.forEach((k, i) => {
+      if (i) src.append(" · ");
+      const a = el("a", { href: S[k][1], target: "_blank", rel: "noopener" }, S[k][0]);
+      a.addEventListener("click", e => e.stopPropagation());
+      src.append(a);
+    });
+    const body = el("div", { class: "clip-body" },
+      el("div", { class: "clip-top" }, el("span", { class: "clip-name" }, name), el("span", { class: "clip-id" }, id)),
+      el("p", { class: "clip-desc" }, desc), chips, src);
+    list.append(el("label", { class: "clip" + (rec ? " rec" : ""), for: "c-" + id }, cb, body));
+  }
+  root.append(el("section", { class: "track" },
+    el("div", { class: "track-head" }, el("h2", {}, t.name), el("span", { class: "count" }, t.items.length + " skill")),
+    el("p", { class: "track-note" }, t.note), list));
+}
+
+const boxes = [...document.querySelectorAll("input[type=checkbox]")];
+const note = document.getElementById("note");
+const statusEl = document.getElementById("status");
+const saveBtn = document.getElementById("save");
+let dirty = false;
+
+function selected() { return boxes.filter(b => b.checked).map(b => b.dataset.id); }
+function refresh() {
+  const n = selected().length;
+  document.getElementById("n").textContent = n;
+  const t = document.getElementById("tally");
+  t.className = "tally " + (n >= 8 && n <= 12 ? "ok" : n ? "warn" : "");
+}
+function markDirty() { dirty = true; statusEl.textContent = "Có thay đổi chưa lưu"; refresh(); }
+boxes.forEach(b => b.addEventListener("change", markDirty));
+note.addEventListener("input", markDirty);
+document.getElementById("pick-rec").addEventListener("click", () => { boxes.forEach(b => b.checked = REC.includes(b.dataset.id)); markDirty(); });
+document.getElementById("clear").addEventListener("click", () => { boxes.forEach(b => b.checked = false); markDirty(); });
+refresh();
+
+let db = null;
+const ref = () => db.doc("selection/current");
+(async () => {
+  try { db = await window.claude?.use?.("db"); } catch { db = null; }
+  if (!db) { statusEl.textContent = "Không lưu được ở chế độ xem này. Hãy mở bằng tài khoản claude.ai của bạn."; saveBtn.disabled = true; return; }
+  try {
+    const snap = await ref().get();
+    if (snap.exists && !dirty) {
+      const d = snap.data();
+      boxes.forEach(b => b.checked = (d.selected || []).includes(b.dataset.id));
+      note.value = d.note || "";
+      refresh();
+      statusEl.textContent = "Đã tải lựa chọn đã lưu";
+    }
+  } catch { statusEl.textContent = "Chưa tải được lựa chọn đã lưu"; }
+})();
+
+saveBtn.addEventListener("click", async () => {
+  if (!db) return;
+  saveBtn.disabled = true; statusEl.textContent = "Đang lưu…";
+  try {
+    await ref().set({ selected: selected(), note: note.value.trim(), savedAt: new Date().toISOString() });
+    dirty = false; statusEl.textContent = `Đã lưu ${selected().length} skill. Quay lại chat và nhắn Claude.`;
+  } catch (e) {
+    statusEl.textContent = "Lưu không được: " + (e?.message || "lỗi không rõ") + ". Thử lại sau ít phút.";
+  } finally { saveBtn.disabled = false; }
+});
+</script>
