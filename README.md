@@ -21,6 +21,7 @@ git clone --depth 1 https://github.com/npnhan151297/my-claude-skills /tmp/my-cla
 | Hiệu ứng | `motion-principles`, `kinetic-typography`, `vietnamese-type-safety`, `transitions-pro`, `stat-counter-chart`, `lower-thirds`, `keyword-emphasis`, `logo-reveal`, `cta-endcard` |
 | Màu và âm thanh | `brand-color-grade`, `text-contrast-guard`, `music-edit`, `sfx-layer`, `loudness-master` |
 | Phụ đề và xuất bản | `safe-zone-layout`, `reframe-16x9`, `captions-style`, `render-qc`, `cover-frame` |
+| Video sự kiện từ footage thô | `dung-video-tu-footage` |
 | Khác | `grill-with-docs`, `grilling`, `domain-modeling` (Matt Pocock) |
 
 ## Thêm skill mới
