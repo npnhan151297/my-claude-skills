@@ -19,5 +19,6 @@ Tạo một thư mục mới chứa `SKILL.md` ở gốc repo rồi push lên `m
 - `grill-with-docs`: phỏng vấn dồn dập để mài sắc kế hoạch, đồng thời ghi ADR và glossary (gọi `grilling` + `domain-modeling`)
 - `grilling`
 - `domain-modeling`
+- `dung-video-tu-footage`: dựng video sự kiện từ footage thô trên Drive (rà clip, chống rung, slow motion, cắt theo phách, chữ chạy Remotion, danh sách cảnh cho editor)
 
 Nguồn: Matt Pocock — plugin "Skills For Real Engineers".
