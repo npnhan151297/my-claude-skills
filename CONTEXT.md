@@ -12,7 +12,7 @@ _Avoid_: kỹ năng nghề, khoá học, lộ trình học
 Cách làm, quy tắc, mẹo của nhà sản xuất video chuyên nghiệp, thu thập từ các nguồn bên ngoài. Là nguyên liệu để viết **Skill**, không phải sản phẩm cuối.
 
 **Video quảng cáo**:
-Video giới thiệu một sản phẩm hoặc dịch vụ nhằm thuyết phục người xem. Là loại video duy nhất bộ **Skill** nhắm tới ở giai đoạn này.
+Video 15–60 giây giới thiệu một dịch vụ hoặc khoá học (đào tạo, tư vấn, chứng chỉ) nhằm thuyết phục người xem đăng ký. Chữ và phụ đề bằng tiếng Việt. Là loại video duy nhất bộ **Skill** nhắm tới ở giai đoạn này.
 _Avoid_: video bài giảng, video khoá học, testimonial
 
 **Khâu**:
@@ -20,6 +20,17 @@ Một bước trong quy trình làm **Video quảng cáo**. Bộ **Skill** phủ
 
 **Hiệu ứng**:
 Thành phần hình ảnh được tạo bằng code, không có sẵn trong cảnh quay. Giai đoạn 1 gồm **Chữ động / đồ hoạ chuyển động** (tiêu đề, lower-third, số liệu, biểu đồ) và **Chuyển cảnh** (zoom, trượt, che khung, khớp hình). VFX ghép cảnh, 3D/particle và hiệu ứng AI để giai đoạn sau.
+
+**Khung hình chính / Khung hình phụ**:
+Mỗi **Video quảng cáo** dựng trước ở khung hình chính 9:16, rồi xuất thêm khung hình phụ 16:9 từ cùng bản dựng.
+
+**Nguyên liệu**:
+Những gì người dùng đưa vào cho một video: logo, nội dung chữ, và một ít ảnh hoặc video thật. Phần còn thiếu do Claude dựng bằng đồ hoạ.
+_Avoid_: asset, tài nguyên
+
+**Bộ nhận diện**:
+Logo, màu, font và giọng văn của thương hiệu duy nhất mà bộ **Skill** phục vụ.
+_Avoid_: brand kit, theme
 
 **Lower-third**:
 Dải chữ ở mép dưới khung hình, thường ghi tên, chức danh hoặc thông điệp phụ.
@@ -31,7 +42,9 @@ Cảnh phụ chèn vào để minh hoạ cho lời nói hoặc cảnh chính.
 
 - Mỗi **Skill** thuộc về đúng một **Khâu**, trừ skill điều phối chạy qua nhiều **Khâu**.
 - **Kiến thức nghề** được chắt lọc thành **Skill**; mỗi **Skill** ghi nguồn **Kiến thức nghề** của nó.
-- **Hiệu ứng** được dựng bằng Remotion.
+- **Hiệu ứng** được dựng bằng Remotion; bộ **Skill** dạy cách làm nghề, còn kỹ thuật Remotion giao cho các skill của plugin Remotion.
+- Bộ **Skill** gồm nhiều **Skill** nhỏ, mỗi skill một việc, và một **Skill điều phối** gọi chúng theo thứ tự các **Khâu**.
+- Mọi **Video quảng cáo** đều dùng chung một **Bộ nhận diện**.
 
 ## Flagged ambiguities
 
