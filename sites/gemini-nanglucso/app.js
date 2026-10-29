@@ -213,6 +213,9 @@
   const still = matchMedia('(prefers-reduced-motion: reduce)').matches;
   const play = (app) => {
     if (!app) return;
+    // A recorded GIF: restart it from the first frame
+    const gif = $('img', app);
+    if (app.classList.contains('app--gif')) { const src = gif.src; gif.src = ''; gif.src = src; app.dataset.started = 'yes'; return; }
     const typed = $('.side__typed', app);
     const text = app.dataset.prompt;
     $$('[data-new]', app).forEach((el, i) => el.style.setProperty('--i', i));
