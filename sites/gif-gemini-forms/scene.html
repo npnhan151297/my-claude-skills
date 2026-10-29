@@ -1,0 +1,311 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<title>Gemini trong Google Forms</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Google+Sans+Flex:wght@400;500;700&display=block">
+<link rel="stylesheet" href="https://unpkg.com/@phosphor-icons/web@2.1.1/src/regular/style.css">
+<link rel="stylesheet" href="https://unpkg.com/@phosphor-icons/web@2.1.1/src/fill/style.css">
+<style>
+/* Cảnh minh họa Gemini trong Google Forms, khung 1272 x 788.
+   Mọi chuyển động nằm trên một trục thời gian (ms); render.js gọi window.render(t) để chụp từng khung. */
+:root {
+  --purple: #673ab7; --purple-dark: #4b2a8f; --form-bg: #f0ebf8; --ink: #1f1f1f; --muted: #5f6368;
+  --line: #dadce0; --blue: #0b57d0; --green: #188038; --chip: #e9eef6;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html, body { width: 1272px; height: 788px; overflow: hidden; background: #fff; }
+body { font-family: 'Google Sans Flex', 'Google Sans', Roboto, Arial, sans-serif; color: var(--ink); -webkit-font-smoothing: antialiased; }
+.stage { position: relative; width: 1272px; height: 788px; overflow: hidden; background: var(--form-bg); }
+sub { font-size: .72em; line-height: 0; }
+
+/* Thanh trên của Forms */
+.top { position: absolute; inset: 0 0 auto 0; height: 100px; background: #fff; border-bottom: 1px solid var(--line); z-index: 2; }
+.top__row { display: flex; align-items: center; gap: 14px; height: 58px; padding: 0 18px; }
+.forms-ico { width: 30px; height: 40px; border-radius: 4px; background: var(--purple); display: grid; place-items: center; color: #fff; font-size: 20px; }
+.doc-name { font-size: 21px; display: grid; }
+.doc-name span { grid-area: 1 / 1; white-space: nowrap; }
+.doc-name .new { opacity: 0; }
+.saved { font-size: 12.5px; color: var(--muted); display: flex; gap: 8px; align-items: center; }
+.saved i { font-size: 17px; }
+.top__icons { margin-left: auto; display: flex; gap: 20px; color: #444746; font-size: 23px; align-items: center; }
+.publish { background: var(--purple); color: #fff; font-size: 14.5px; font-weight: 500; padding: 11px 22px; border-radius: 6px; margin-left: 8px; }
+.avatar { width: 34px; height: 34px; border-radius: 50%; background: linear-gradient(135deg,#f6b26b,#e06666); color: #fff; display: grid; place-items: center; font-size: 15px; font-weight: 700; }
+.tabs { display: flex; justify-content: center; gap: 34px; font-size: 14.5px; color: #444746; }
+.tabs span { padding: 10px 2px 11px; }
+.tabs .on { color: var(--purple); font-weight: 500; border-bottom: 3px solid var(--purple); }
+
+/* Biểu mẫu */
+.canvas { position: absolute; left: 0; right: 0; top: 101px; bottom: 0; overflow: hidden; }
+.col { position: absolute; left: 251px; width: 770px; top: 14px; }
+.card { background: #fff; border-radius: 8px; border: 1px solid var(--line); padding: 22px 26px; margin-bottom: 12px; position: relative; overflow: hidden; }
+.card--head { border-top: 10px solid var(--purple); padding-top: 20px; }
+.card--head h1 { font-size: 30px; font-weight: 400; line-height: 1.25; position: relative; height: 38px; }
+.card--head h1 span, .card--head p span { position: absolute; left: 0; top: 0; white-space: nowrap; }
+.card--head p { font-size: 14.5px; color: var(--muted); margin-top: 10px; position: relative; height: 20px; }
+.head-new { opacity: 0; }
+.q { opacity: 0; transform: translateY(18px); border-left: 6px solid transparent; }
+.q.sel { border-left-color: #4285f4; }
+.q__top { display: flex; justify-content: space-between; align-items: baseline; gap: 20px; }
+.q__title { font-size: 16.5px; line-height: 1.45; }
+.q__pts { font-size: 13px; color: var(--muted); white-space: nowrap; }
+.opts { list-style: none; margin-top: 12px; display: grid; gap: 4px; }
+.opts li { position: relative; font-size: 15px; line-height: 20px; padding: 5px 0 5px 30px; }
+.opts li::before { content: ''; position: absolute; left: 0; top: 6px; width: 18px; height: 18px; border-radius: 50%; border: 2px solid #5f6368; box-sizing: border-box; }
+.opts li.ok { color: var(--green); font-weight: 500; }
+.opts li.ok::before { border-color: var(--green); background: radial-gradient(circle, var(--green) 0 4px, transparent 5px); }
+.opts li.ok i { font-size: 18px; margin-left: 8px; vertical-align: -3px; }
+.q__key { margin-top: 12px; font-size: 13.5px; color: var(--blue); display: flex; gap: 6px; align-items: center; font-weight: 500; }
+.sheen { position: absolute; inset: 0; background: linear-gradient(100deg, transparent 30%, rgba(66,133,244,.16) 45%, rgba(155,114,203,.18) 55%, transparent 70%); transform: translateX(-100%); pointer-events: none; }
+.tools { position: absolute; left: 1036px; top: 14px; width: 48px; background: #fff; border-radius: 8px; border: 1px solid var(--line); display: grid; gap: 18px; padding: 14px 0; justify-items: center; color: #5f6368; font-size: 22px; }
+
+/* Lớp tối và hộp thoại Gemini */
+.scrim { position: absolute; inset: 0; background: rgba(32,33,36,.42); z-index: 5; }
+.dlg { position: absolute; left: 138px; top: 65px; width: 996px; height: 660px; background: #fff; border-radius: 26px; z-index: 6; padding: 34px 48px 0; box-shadow: 0 12px 40px rgba(0,0,0,.18); }
+.dlg__bar { display: flex; justify-content: space-between; align-items: center; font-size: 17px; color: #444746; }
+.dlg__bar i { font-size: 24px; }
+.dlg__bar b { display: flex; gap: 8px; align-items: center; font-weight: 500; }
+.spark { width: 22px; height: 22px; display: inline-block; background: conic-gradient(from 200deg, #4285f4, #9b72cb, #d96570, #4285f4); -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M12 0C12 6.6 17.4 12 24 12C17.4 12 12 17.4 12 24C12 17.4 6.6 12 0 12C6.6 12 12 6.6 12 0Z'/%3E%3C/svg%3E") center/contain no-repeat; mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M12 0C12 6.6 17.4 12 24 12C17.4 12 12 17.4 12 24C12 17.4 6.6 12 0 12C6.6 12 12 6.6 12 0Z'/%3E%3C/svg%3E") center/contain no-repeat; }
+.hello { margin-top: 34px; font-size: 48px; line-height: 1.12; font-weight: 500; letter-spacing: -.5px; }
+.hello .g { background: linear-gradient(90deg, #4285f4 0%, #9b72cb 45%, #d96570 75%, #4285f4 100%); background-size: 200% 100%; -webkit-background-clip: text; background-clip: text; color: transparent; }
+.hello .s { color: #6f7378; display: block; }
+.body { position: relative; height: 296px; margin-top: 30px; }
+.cards { position: absolute; inset: 0; display: grid; grid-template-columns: repeat(3, 1fr); gap: 34px; }
+.sug { background: #eef1f9; border-radius: 16px; padding: 18px 16px 16px; height: 210px; display: flex; flex-direction: column; gap: 14px; }
+.sug p { font-size: 15px; line-height: 1.4; color: #1f1f1f; min-height: 42px; }
+.sug svg { border-radius: 10px; width: 100%; flex: 1; display: block; }
+.shuffle { position: absolute; left: 50%; top: 190px; width: 42px; height: 42px; margin-left: -21px; border-radius: 50%; background: #eef1f9; border: 4px solid #fff; display: grid; place-items: center; font-size: 18px; color: #444746; }
+.loading { position: absolute; inset: 0; opacity: 0; padding-top: 10px; }
+.loading__msg { display: flex; align-items: center; gap: 14px; font-size: 19px; color: #444746; }
+.loading__msg .spark { width: 30px; height: 30px; }
+.bars { margin-top: 28px; display: grid; gap: 16px; }
+.bars span { height: 18px; border-radius: 9px; background: linear-gradient(90deg, #e8eaf6 0%, #c9d7f8 25%, #e5d4f3 50%, #e8eaf6 75%); background-size: 300% 100%; }
+.bars span:nth-child(2) { width: 88%; } .bars span:nth-child(3) { width: 94%; } .bars span:nth-child(4) { width: 62%; }
+.input { position: absolute; left: 48px; right: 48px; top: 512px; min-height: 62px; border-radius: 31px; background: #eef1f9; border: 2px solid transparent; display: flex; align-items: flex-start; padding: 17px 10px 0 22px; gap: 12px; }
+.input.focus { border-color: var(--blue); background: #fff; }
+.input__text { flex: 1; font-size: 16.5px; line-height: 1.5; color: #1f1f1f; padding-bottom: 12px; min-height: 40px; }
+.hint { color: #5f6368; }
+.caret { display: inline-block; width: 2px; height: 20px; background: var(--blue); vertical-align: -4px; margin-left: 1px; }
+.file { display: inline-flex; align-items: center; gap: 6px; background: #d3e3fd; color: #041e49; border-radius: 8px; padding: 1px 9px 1px 6px; font-size: 15px; font-weight: 500; vertical-align: 1px; opacity: 0; transform: scale(.6); }
+.file i { color: #c5221f; font-size: 17px; }
+.create { flex: none; align-self: flex-start; margin-top: -10px; background: #dde1e6; color: #8a8f95; border-radius: 22px; padding: 11px 24px; font-size: 15px; font-weight: 500; }
+.input.ready .create { background: var(--blue); color: #fff; }
+.note { position: absolute; left: 52px; bottom: 28px; font-size: 12.5px; color: #444746; }
+.note u { text-underline-offset: 2px; }
+
+/* Thông báo cuối và con trỏ */
+.snack { position: absolute; left: 24px; bottom: 24px; z-index: 8; background: #303030; color: #f2f2f2; border-radius: 8px; padding: 15px 18px; font-size: 14.5px; display: flex; gap: 22px; align-items: center; opacity: 0; transform: translateY(16px); box-shadow: 0 4px 14px rgba(0,0,0,.25); }
+.snack .spark { width: 18px; height: 18px; vertical-align: -3px; margin-right: 8px; }
+.snack b { color: #a8c7fa; font-weight: 500; }
+.cursor { position: absolute; left: 0; top: 0; z-index: 20; width: 26px; height: 26px; }
+.ring { position: absolute; z-index: 19; width: 44px; height: 44px; margin: -22px 0 0 -22px; border-radius: 50%; background: rgba(11,87,208,.25); opacity: 0; }
+.fade { position: absolute; inset: 0; background: #fff; z-index: 30; opacity: 0; pointer-events: none; }
+</style>
+</head>
+<body>
+<div class="stage" id="stage">
+  <header class="top">
+    <div class="top__row">
+      <span class="forms-ico"><i class="ph ph-list-bullets"></i></span>
+      <span class="doc-name"><span class="old">Biểu mẫu không có tiêu đề</span><span class="new">Kiểm tra 15 phút: Phản ứng oxi hóa – khử</span></span>
+      <span class="saved"><i class="ph ph-star"></i><i class="ph ph-folder-simple"></i><i class="ph ph-cloud-check"></i>Đã lưu mọi thay đổi vào Drive</span>
+      <span class="top__icons"><i class="ph ph-palette"></i><i class="ph ph-eye"></i><i class="ph ph-arrow-counter-clockwise"></i><i class="ph ph-arrow-clockwise"></i><i class="ph ph-link-simple"></i><i class="ph ph-user-plus"></i><i class="ph ph-dots-three-vertical"></i><span class="publish">Xuất bản</span><span class="avatar">H</span></span>
+    </div>
+    <nav class="tabs"><span class="on">Câu hỏi</span><span>Câu trả lời</span><span>Cài đặt</span></nav>
+  </header>
+
+  <main class="canvas">
+    <div class="col" id="col">
+      <section class="card card--head">
+        <h1><span class="head-old">Biểu mẫu không có tiêu đề</span><span class="head-new">Kiểm tra 15 phút: Phản ứng oxi hóa – khử</span></h1>
+        <p><span class="head-old">Mô tả biểu mẫu</span><span class="head-new">Hóa học 10 · 10 câu trắc nghiệm · Mỗi câu 1 điểm · Có đáp án</span></p>
+        <span class="sheen"></span>
+      </section>
+      <section class="card q sel">
+        <div class="q__top"><p class="q__title">1. Số oxi hóa của lưu huỳnh (S) trong H<sub>2</sub>SO<sub>4</sub> là</p><span class="q__pts">1 điểm</span></div>
+        <ul class="opts"><li>+4</li><li class="ok">+6 <i class="ph ph-check"></i></li><li>−2</li><li>0</li></ul>
+        <p class="q__key"><i class="ph ph-clipboard-text"></i>Đáp án: B</p>
+        <span class="sheen"></span>
+      </section>
+      <section class="card q">
+        <div class="q__top"><p class="q__title">2. Trong phản ứng Zn + CuSO<sub>4</sub> → ZnSO<sub>4</sub> + Cu, chất khử là</p><span class="q__pts">1 điểm</span></div>
+        <ul class="opts"><li class="ok">Zn <i class="ph ph-check"></i></li><li>CuSO<sub>4</sub></li><li>ZnSO<sub>4</sub></li><li>Cu</li></ul>
+        <p class="q__key"><i class="ph ph-clipboard-text"></i>Đáp án: A</p>
+        <span class="sheen"></span>
+      </section>
+      <section class="card q">
+        <div class="q__top"><p class="q__title">3. Quá trình oxi hóa là quá trình</p><span class="q__pts">1 điểm</span></div>
+        <ul class="opts"><li>nhận electron</li><li class="ok">nhường electron <i class="ph ph-check"></i></li><li>nhận proton</li><li>nhường proton</li></ul>
+        <p class="q__key"><i class="ph ph-clipboard-text"></i>Đáp án: B</p>
+        <span class="sheen"></span>
+      </section>
+    </div>
+    <aside class="tools"><i class="ph ph-plus-circle"></i><i class="ph ph-download-simple"></i><i class="ph ph-text-t"></i><i class="ph ph-image"></i><i class="ph ph-youtube-logo"></i><i class="ph ph-rows"></i></aside>
+  </main>
+
+  <div class="scrim" id="scrim"></div>
+  <section class="dlg" id="dlg">
+    <div class="dlg__bar"><b>Gemini</b><i class="ph ph-x"></i></div>
+    <h2 class="hello"><span class="g">Xin chào, cô Hạnh</span><span class="s">Cùng bắt đầu tạo nhé</span></h2>
+    <div class="body">
+      <div class="cards" id="cards">
+        <article class="sug">
+          <p>Tạo bài kiểm tra về bảng tuần hoàn các nguyên tố hóa học</p>
+          <svg viewBox="0 0 244 120" preserveAspectRatio="xMidYMid slice"><rect width="244" height="120" fill="#1b2a4a"/>
+            <g font-family="Google Sans Flex, Arial" font-weight="700" font-size="11" text-anchor="middle">
+              <rect x="22" y="14" width="26" height="26" rx="4" fill="#f6b26b"/><text x="35" y="31" fill="#1b2a4a">H</text>
+              <rect x="196" y="14" width="26" height="26" rx="4" fill="#8e7cc3"/><text x="209" y="31" fill="#fff">He</text>
+              <rect x="22" y="46" width="26" height="26" rx="4" fill="#e06666"/><text x="35" y="63" fill="#fff">Li</text>
+              <rect x="52" y="46" width="26" height="26" rx="4" fill="#e69138"/><text x="65" y="63" fill="#fff">Be</text>
+              <rect x="106" y="46" width="26" height="26" rx="4" fill="#6fa8dc"/><text x="119" y="63" fill="#fff">C</text>
+              <rect x="136" y="46" width="26" height="26" rx="4" fill="#6fa8dc"/><text x="149" y="63" fill="#fff">N</text>
+              <rect x="166" y="46" width="26" height="26" rx="4" fill="#6fa8dc"/><text x="179" y="63" fill="#fff">O</text>
+              <rect x="196" y="46" width="26" height="26" rx="4" fill="#8e7cc3"/><text x="209" y="63" fill="#fff">Ne</text>
+              <rect x="22" y="78" width="26" height="26" rx="4" fill="#e06666"/><text x="35" y="95" fill="#fff">Na</text>
+              <rect x="52" y="78" width="26" height="26" rx="4" fill="#e69138"/><text x="65" y="95" fill="#fff">Mg</text>
+              <rect x="106" y="78" width="26" height="26" rx="4" fill="#93c47d"/><text x="119" y="95" fill="#1b2a4a">Si</text>
+              <rect x="136" y="78" width="26" height="26" rx="4" fill="#6fa8dc"/><text x="149" y="95" fill="#fff">P</text>
+              <rect x="166" y="78" width="26" height="26" rx="4" fill="#6fa8dc"/><text x="179" y="95" fill="#fff">S</text>
+              <rect x="196" y="78" width="26" height="26" rx="4" fill="#8e7cc3"/><text x="209" y="95" fill="#fff">Ar</text>
+            </g></svg>
+        </article>
+        <article class="sug">
+          <p>Phiếu khảo sát sau buổi thực hành thí nghiệm</p>
+          <svg viewBox="0 0 244 120" preserveAspectRatio="xMidYMid slice"><rect width="244" height="120" fill="#d9ead3"/>
+            <rect y="92" width="244" height="28" fill="#b6d7a8"/>
+            <path d="M104 22h22v24l22 40a8 8 0 0 1-7 12H89a8 8 0 0 1-7-12l22-40z" fill="#fff" stroke="#38761d" stroke-width="3"/>
+            <path d="M93 70h44l9 16a5 5 0 0 1-4 7H88a5 5 0 0 1-4-7z" fill="#6fa8dc"/>
+            <rect x="100" y="16" width="30" height="8" rx="3" fill="#38761d"/>
+            <circle cx="110" cy="78" r="3" fill="#fff"/><circle cx="122" cy="84" r="2.5" fill="#fff"/><circle cx="116" cy="60" r="3" fill="#a4c2f4"/><circle cx="122" cy="48" r="2" fill="#a4c2f4"/>
+            <rect x="164" y="44" width="12" height="50" rx="5" fill="#fff" stroke="#38761d" stroke-width="3"/><rect x="167" y="66" width="6" height="25" rx="3" fill="#e06666"/>
+            <rect x="184" y="52" width="12" height="42" rx="5" fill="#fff" stroke="#38761d" stroke-width="3"/><rect x="187" y="70" width="6" height="21" rx="3" fill="#f1c232"/>
+            <rect x="152" y="90" width="56" height="6" rx="3" fill="#38761d"/>
+            <circle cx="46" cy="52" r="20" fill="#93c47d"/><rect x="43" y="66" width="6" height="28" fill="#783f04"/>
+          </svg>
+        </article>
+        <article class="sug">
+          <p>Ôn tập liên kết hóa học cho học sinh lớp 10</p>
+          <svg viewBox="0 0 244 120" preserveAspectRatio="xMidYMid slice"><rect width="244" height="120" fill="#fce5cd"/>
+            <g stroke="#7f6000" stroke-width="5" stroke-linecap="round"><line x1="122" y1="60" x2="72" y2="34"/><line x1="122" y1="60" x2="172" y2="34"/><line x1="122" y1="60" x2="122" y2="100"/></g>
+            <circle cx="122" cy="60" r="22" fill="#e06666"/><text x="122" y="67" text-anchor="middle" font-family="Google Sans Flex, Arial" font-weight="700" font-size="18" fill="#fff">N</text>
+            <circle cx="72" cy="34" r="14" fill="#fff" stroke="#b7b7b7" stroke-width="2"/><text x="72" y="39" text-anchor="middle" font-family="Google Sans Flex, Arial" font-weight="700" font-size="13" fill="#444">H</text>
+            <circle cx="172" cy="34" r="14" fill="#fff" stroke="#b7b7b7" stroke-width="2"/><text x="172" y="39" text-anchor="middle" font-family="Google Sans Flex, Arial" font-weight="700" font-size="13" fill="#444">H</text>
+            <circle cx="122" cy="100" r="14" fill="#fff" stroke="#b7b7b7" stroke-width="2"/><text x="122" y="105" text-anchor="middle" font-family="Google Sans Flex, Arial" font-weight="700" font-size="13" fill="#444">H</text>
+            <circle cx="30" cy="96" r="6" fill="#f6b26b"/><circle cx="214" cy="92" r="8" fill="#f6b26b"/><circle cx="206" cy="18" r="5" fill="#f6b26b"/>
+          </svg>
+        </article>
+        <span class="shuffle"><i class="ph ph-shuffle"></i></span>
+      </div>
+      <div class="loading" id="loading">
+        <p class="loading__msg"><span class="spark" id="lspark"></span>Đang soạn câu hỏi từ tệp Hóa 10 – Bài 15.pdf…</p>
+        <div class="bars"><span></span><span></span><span></span><span></span></div>
+      </div>
+    </div>
+    <div class="input" id="input">
+      <p class="input__text"><span class="hint" id="ph">Mô tả biểu mẫu thầy cô muốn tạo. Gõ @ để thêm nội dung từ tệp.</span><span id="typed"></span><span class="file" id="file"><i class="ph-fill ph-file-pdf"></i>Hóa 10 – Bài 15.pdf</span><span class="caret" id="caret"></span></p>
+      <span class="create">Tạo</span>
+    </div>
+    <p class="note">Gemini cho Workspace có thể mắc lỗi, vì vậy hãy kiểm tra lại câu hỏi và đáp án. <u>Tìm hiểu thêm</u></p>
+  </section>
+
+  <div class="snack" id="snack"><span><span class="spark"></span>Gemini đã thêm <b>10 câu hỏi kèm đáp án</b>. Thầy cô xem lại rồi bấm Xuất bản.</span></div>
+  <div class="ring" id="ring"></div>
+  <svg class="cursor" id="cursor" viewBox="0 0 26 26"><path d="M3 2l17 11-7.5 1.2L16.5 22l-3.2 1.5-4-7.8L3 20.5z" fill="#111" stroke="#fff" stroke-width="1.6" stroke-linejoin="round"/></svg>
+  <div class="fade" id="fade"></div>
+</div>
+
+<script>
+// Trục thời gian (ms). Đổi số ở đây để chỉnh nhịp.
+const T = {
+  total: 15000,
+  cursorToInput: [700, 1500], clickInput: 1600,
+  typeStart: 1850, typeStep: 30,
+  fileChip: 5250,
+  cursorToCreate: [5600, 6200], clickCreate: 6300,
+  loading: [6400, 8500],
+  close: [8500, 9000],
+  title: 9000, questions: [9400, 9900, 10400],
+  scroll: [10900, 12000], snack: 12000,
+  fadeOut: [14550, 15000], fadeIn: [0, 350],
+};
+const PROMPT = 'Tạo bài kiểm tra 15 phút gồm 10 câu trắc nghiệm về phản ứng oxi hóa – khử cho học sinh lớp 10, có đáp án, dựa trên ';
+
+const $ = (s) => document.querySelector(s);
+const $$ = (s) => [...document.querySelectorAll(s)];
+const clamp = (x) => Math.min(1, Math.max(0, x));
+const ease = (x) => { x = clamp(x); return x < .5 ? 4 * x * x * x : 1 - Math.pow(-2 * x + 2, 3) / 2; };
+const out = (x) => 1 - Math.pow(1 - clamp(x), 3);
+const span = (t, [a, b]) => (t - a) / (b - a);
+const lerp = (a, b, k) => a + (b - a) * k;
+
+function centerOf(el) { const r = el.getBoundingClientRect(); return [r.left + r.width / 2, r.top + r.height / 2]; }
+let P;
+function measure() {
+  const r = $('#input').getBoundingClientRect();
+  P = { start: [1010, 740], input: [r.left + 380, r.top + 34], create: centerOf($('.create')) };
+}
+
+window.render = (t) => {
+  if (!P) measure();
+  // Gõ yêu cầu
+  const n = t < T.typeStart ? 0 : Math.min(PROMPT.length, Math.floor((t - T.typeStart) / T.typeStep) + 1);
+  $('#typed').textContent = PROMPT.slice(0, n);
+  const focused = t >= T.clickInput;
+  $('#input').classList.toggle('focus', focused && t < T.clickCreate);
+  $('#input').classList.toggle('ready', n > 0);
+  $('#ph').style.display = focused ? 'none' : '';
+  $('#caret').style.opacity = focused && t < T.clickCreate && Math.floor(t / 500) % 2 === 0 ? 1 : 0;
+  const fk = out(span(t, [T.fileChip, T.fileChip + 250]));
+  $('#file').style.display = t >= T.fileChip ? '' : 'none'; $('#file').style.opacity = fk; $('#file').style.transform = `scale(${lerp(.6, 1, fk)})`;
+
+  // Con trỏ chuột
+  let pos = P.start;
+  if (t >= T.cursorToInput[0]) pos = [lerp(P.start[0], P.input[0], ease(span(t, T.cursorToInput))), lerp(P.start[1], P.input[1], ease(span(t, T.cursorToInput)))];
+  if (t >= T.cursorToCreate[0]) { const k = ease(span(t, T.cursorToCreate)); pos = [lerp(P.input[0], P.create[0], k), lerp(P.input[1], P.create[1], k)]; }
+  const press = (c) => t >= c && t < c + 160;
+  const cur = $('#cursor');
+  cur.style.transform = `translate(${pos[0] - 3}px, ${pos[1] - 2}px) scale(${press(T.clickInput) || press(T.clickCreate) ? .85 : 1})`;
+  cur.style.opacity = 1 - clamp(span(t, [T.clickCreate + 500, T.clickCreate + 800]));
+  const ring = $('#ring');
+  const rc = [T.clickInput, T.clickCreate].find((c) => t >= c && t < c + 450);
+  if (rc !== undefined) { const k = (t - rc) / 450; ring.style.opacity = .9 * (1 - k); ring.style.transform = `translate(${pos[0]}px, ${pos[1]}px) scale(${lerp(.4, 1.3, k)})`; ring.style.left = '0'; ring.style.top = '0'; }
+  else ring.style.opacity = 0;
+
+  // Đang tạo
+  const lk = clamp(span(t, [T.loading[0], T.loading[0] + 300]));
+  $('#cards').style.opacity = 1 - lk;
+  $('#loading').style.opacity = lk;
+  $('#lspark').style.transform = `rotate(${(t - T.loading[0]) * .25}deg)`;
+  $$('.bars span').forEach((b, i) => { b.style.backgroundPosition = `${100 - ((t / 14 + i * 20) % 300)}% 0`; });
+  $('.hello .g').style.backgroundPosition = `${-(t / 30) % 200}% 0`;
+
+  // Đóng hộp thoại
+  const ck = ease(span(t, T.close));
+  $('#dlg').style.opacity = 1 - ck;
+  $('#dlg').style.transform = `translateY(${ck * 24}px) scale(${1 - ck * .04})`;
+  $('#scrim').style.opacity = 1 - ck;
+  $('#dlg').style.display = ck >= 1 ? 'none' : '';
+
+  // Biểu mẫu được điền
+  const hk = out(span(t, [T.title, T.title + 400]));
+  $$('.head-old').forEach((e) => (e.style.opacity = 1 - hk));
+  $$('.head-new').forEach((e) => (e.style.opacity = hk));
+  $('.doc-name .old').style.opacity = 1 - hk; $('.doc-name .new').style.opacity = hk;
+  const sheens = $$('.sheen');
+  sheens[0].style.transform = `translateX(${lerp(-100, 100, clamp(span(t, [T.title, T.title + 900])))}%)`;
+  $$('.q').forEach((q, i) => {
+    const s = T.questions[i]; const k = out(span(t, [s, s + 450]));
+    q.style.opacity = k; q.style.transform = `translateY(${(1 - k) * 18}px)`;
+    sheens[i + 1].style.transform = `translateX(${lerp(-100, 100, clamp(span(t, [s + 100, s + 1000])))}%)`;
+  });
+  $('#col').style.transform = `translateY(${-232 * ease(span(t, T.scroll))}px)`;
+  const sk = out(span(t, [T.snack, T.snack + 350]));
+  $('#snack').style.opacity = sk; $('#snack').style.transform = `translateY(${(1 - sk) * 16}px)`;
+
+  // Mờ đầu và cuối để GIF lặp lại êm
+  $('#fade').style.opacity = Math.max(1 - clamp(span(t, T.fadeIn)), clamp(span(t, T.fadeOut)));
+};
+window.TOTAL = T.total;
+</script>
+</body>
+</html>
