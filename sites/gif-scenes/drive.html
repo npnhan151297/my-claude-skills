@@ -1,0 +1,349 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<title>Gemini trong Google Drive</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Google+Sans+Flex:wght@400;500;700&display=block">
+<link rel="stylesheet" href="https://unpkg.com/@phosphor-icons/web@2.1.1/src/regular/style.css">
+<link rel="stylesheet" href="https://unpkg.com/@phosphor-icons/web@2.1.1/src/fill/style.css">
+<style>
+/* Cảnh minh họa Hỏi Gemini trong Google Drive: hiệu trưởng thêm tệp làm nguồn rồi hỏi tổng hợp. Khung 1272 x 788.
+   Mọi chuyển động nằm trên một trục thời gian (ms); render.js gọi window.render(t) để chụp từng khung. */
+:root { --ink: #1f1f1f; --muted: #5f6368; --line: #e3e3e3; --blue: #0b57d0; --green: #188038; --chip: #e9eef6; --bg: #f8fafd; }
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html, body { width: 1272px; height: 788px; overflow: hidden; background: #fff; }
+body { font-family: 'Google Sans Flex', 'Google Sans', Roboto, Arial, sans-serif; color: var(--ink); -webkit-font-smoothing: antialiased; }
+.stage { position: relative; width: 1272px; height: 788px; overflow: hidden; background: var(--bg); }
+.spark { width: 18px; height: 18px; display: inline-block; flex: none; background: conic-gradient(from 200deg, #4285f4, #9b72cb, #d96570, #4285f4); -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M12 0C12 6.6 17.4 12 24 12C17.4 12 12 17.4 12 24C12 17.4 6.6 12 0 12C6.6 12 12 6.6 12 0Z'/%3E%3C/svg%3E") center/contain no-repeat; mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M12 0C12 6.6 17.4 12 24 12C17.4 12 12 17.4 12 24C12 17.4 6.6 12 0 12C6.6 12 12 6.6 12 0Z'/%3E%3C/svg%3E") center/contain no-repeat; }
+
+/* Thanh trên của Drive */
+.top { position: absolute; inset: 0 0 auto 0; height: 62px; display: flex; align-items: center; gap: 16px; padding: 0 18px; z-index: 3; }
+.logo { display: flex; align-items: center; gap: 10px; font-size: 21px; color: #444746; width: 214px; }
+.search { width: 620px; height: 46px; border-radius: 23px; background: #e9eef6; display: flex; align-items: center; gap: 14px; padding: 0 18px; font-size: 15px; color: #444746; }
+.search i { font-size: 20px; }
+.search .r { margin-left: auto; display: flex; gap: 14px; }
+.top__r { margin-left: auto; display: flex; gap: 16px; align-items: center; font-size: 22px; color: #444746; }
+.gem { width: 40px; height: 40px; border-radius: 50%; display: grid; place-items: center; }
+.gem.on { background: #d3e3fd; }
+.avatar { width: 34px; height: 34px; border-radius: 50%; background: linear-gradient(135deg,#5e97f6,#3367d6); color: #fff; display: grid; place-items: center; font-size: 15px; font-weight: 700; }
+
+/* Màn trang chủ Drive */
+.home { position: absolute; inset: 62px 0 0 0; }
+.nav { position: absolute; left: 0; top: 0; width: 240px; padding: 6px 12px; font-size: 14px; color: #1f1f1f; }
+.new { display: inline-flex; gap: 12px; align-items: center; background: #fff; border-radius: 16px; padding: 16px 20px; font-size: 14.5px; font-weight: 500; box-shadow: 0 1px 3px rgba(60,64,67,.3); margin: 4px 0 14px 6px; }
+.new i { font-size: 22px; }
+.nav p { display: flex; gap: 16px; align-items: center; padding: 7px 14px; border-radius: 16px; }
+.nav p i { font-size: 18px; color: #444746; }
+.nav p.on { background: #c2e7ff; font-weight: 500; }
+.nav hr { border: 0; height: 10px; }
+.panel { position: absolute; left: 248px; right: 14px; top: 2px; bottom: 14px; background: #fff; border-radius: 16px; padding: 18px 22px; overflow: hidden; }
+.panel h1 { font-size: 23px; font-weight: 400; }
+.sect { margin-top: 18px; font-size: 14.5px; font-weight: 500; display: flex; gap: 8px; align-items: center; }
+.folders { display: grid; grid-template-columns: repeat(5, 1fr); gap: 12px; margin-top: 12px; }
+.folders span { background: #f0f4f9; border-radius: 12px; padding: 13px 14px; font-size: 13.5px; display: flex; gap: 10px; align-items: center; white-space: nowrap; overflow: hidden; }
+.folders i { font-size: 18px; color: #444746; }
+.files { width: 100%; border-collapse: collapse; margin-top: 10px; font-size: 13.5px; }
+.files th { text-align: left; font-weight: 500; color: #444746; font-size: 13px; padding: 8px 10px; border-bottom: 1px solid var(--line); }
+.files td { padding: 8px 10px; border-bottom: 1px solid #f1f3f4; white-space: nowrap; }
+.files td:first-child { display: flex; gap: 12px; align-items: center; }
+.ft { width: 18px; height: 18px; border-radius: 3px; display: inline-grid; place-items: center; color: #fff; font-size: 11px; flex: none; }
+.ft.doc { background: #4285f4; } .ft.pdf { background: #ea4335; } .ft.sheet { background: #188038; } .ft.slide { background: #f4b400; } .ft.folder { background: none; color: #444746; font-size: 18px; }
+.who { display: inline-flex; gap: 8px; align-items: center; }
+.who b { width: 22px; height: 22px; border-radius: 50%; display: inline-grid; place-items: center; color: #fff; font-size: 11px; font-weight: 700; }
+
+/* Màn Hỏi Gemini */
+.ask { position: absolute; inset: 62px 0 0 0; opacity: 0; }
+.rail { position: absolute; left: 0; top: 0; width: 64px; display: grid; justify-items: center; gap: 20px; padding-top: 10px; font-size: 20px; color: #444746; }
+.rail .plus { width: 44px; height: 44px; border-radius: 14px; background: #fff; display: grid; place-items: center; box-shadow: 0 1px 3px rgba(60,64,67,.3); font-size: 22px; }
+.askp { position: absolute; left: 70px; right: 14px; top: 2px; bottom: 14px; background: #fff; border-radius: 16px; }
+.askp__head { display: flex; align-items: center; gap: 12px; padding: 14px 18px; font-size: 16px; }
+.askp__head i { font-size: 20px; color: #444746; }
+.askp__head .r { margin-left: auto; display: flex; gap: 14px; align-items: center; }
+.save { display: flex; gap: 8px; align-items: center; background: #c2e7ff; color: #001d35; border-radius: 18px; padding: 7px 14px; font-size: 13.5px; font-weight: 500; }
+.save i { font-size: 16px; color: #001d35; }
+.src { position: absolute; left: 14px; top: 58px; bottom: 14px; width: 270px; background: #f8fafd; border-radius: 14px; padding: 10px 12px; }
+.src__tabs { display: flex; gap: 22px; font-size: 13.5px; color: #444746; border-bottom: 1px solid var(--line); padding: 4px 6px 0; }
+.src__tabs span { padding-bottom: 9px; }
+.src__tabs .on { color: var(--blue); font-weight: 500; border-bottom: 3px solid var(--blue); }
+.src__empty { text-align: center; margin-top: 64px; font-size: 13.5px; color: #444746; }
+.src__empty svg { display: block; margin: 0 auto 12px; }
+.addbtn { display: inline-flex; gap: 6px; align-items: center; background: var(--blue); color: #fff; border-radius: 16px; padding: 7px 16px; font-size: 13.5px; font-weight: 500; margin-top: 14px; }
+.addbtn.small { background: #d3e3fd; color: #041e49; margin: 12px 0 6px 2px; padding: 6px 14px; }
+.addbtn i { font-size: 13px; }
+.list { opacity: 0; }
+.list p { display: flex; gap: 8px; align-items: center; font-size: 13px; padding: 6px 2px; white-space: nowrap; overflow: hidden; opacity: 0; }
+.list p .cb { width: 16px; height: 16px; border-radius: 3px; background: var(--blue); color: #fff; display: grid; place-items: center; font-size: 11px; flex: none; }
+.src__foot { position: absolute; left: 12px; right: 12px; bottom: 12px; font-size: 12.5px; color: #444746; }
+.src__foot div { display: flex; align-items: center; gap: 6px; margin-top: 8px; }
+.src__foot .app { width: 18px; height: 18px; border-radius: 4px; }
+.toggle { margin-left: auto; width: 34px; height: 20px; border-radius: 10px; background: var(--blue); position: relative; }
+.toggle::after { content: ''; position: absolute; right: 3px; top: 3px; width: 14px; height: 14px; border-radius: 50%; background: #fff; }
+.dd { position: absolute; left: 26px; top: 0; background: #fff; border-radius: 10px; box-shadow: 0 4px 18px rgba(60,64,67,.28); padding: 6px 0; font-size: 13.5px; width: 190px; opacity: 0; z-index: 4; }
+.dd p { display: flex; gap: 10px; align-items: center; padding: 8px 14px; }
+.dd p.hl { background: #e9eef6; }
+.dd i { font-size: 17px; }
+
+.center { position: absolute; left: 300px; right: 0; top: 58px; bottom: 0; }
+.welcome { position: absolute; left: 0; right: 0; top: 190px; text-align: center; }
+.welcome h2 { font-size: 26px; font-weight: 500; background: linear-gradient(90deg, #4285f4, #9b72cb, #d96570, #4285f4); background-size: 200% 100%; -webkit-background-clip: text; background-clip: text; color: transparent; }
+.welcome p { display: flex; gap: 10px; justify-content: center; margin-top: 18px; }
+.welcome p span { border: 1px solid #c4c7c5; border-radius: 10px; padding: 8px 14px; font-size: 13.5px; display: flex; gap: 8px; align-items: center; }
+.convo { position: absolute; left: 60px; right: 60px; top: 10px; font-size: 14px; line-height: 1.55; }
+.bubble { margin-left: auto; max-width: 520px; background: var(--chip); border-radius: 18px 4px 18px 18px; padding: 10px 16px; opacity: 0; }
+.think { margin-top: 16px; display: flex; gap: 10px; align-items: center; color: #444746; opacity: 0; }
+.ans { margin-top: 16px; opacity: 0; }
+.ans .row { opacity: 0; margin-top: 4px; }
+.ans h4 { font-size: 14.5px; font-weight: 500; margin-top: 12px; }
+.ans h4:first-child { margin-top: 0; }
+.ans ul, .ans ol { padding-left: 22px; }
+.cite { display: inline-grid; place-items: center; min-width: 18px; height: 18px; border-radius: 9px; background: #e8eaed; color: #444746; font-size: 11px; font-weight: 500; padding: 0 5px; margin-left: 4px; vertical-align: 1px; }
+.cite.hl { background: #d3e3fd; color: #0b57d0; }
+.acts { display: flex; gap: 10px; align-items: center; margin-top: 14px; opacity: 0; font-size: 13px; color: #444746; }
+.acts span { display: flex; gap: 6px; align-items: center; border: 1px solid #dadce0; border-radius: 8px; padding: 6px 10px; }
+.acts span.hover { background: #e9eef6; }
+.acts .r { margin-left: auto; display: flex; gap: 14px; font-size: 17px; }
+.input { position: absolute; left: 60px; right: 60px; bottom: 30px; border-radius: 22px; border: 1px solid #c4c7c5; background: #fff; padding: 12px 14px 8px; }
+.input.focus { border: 2px solid var(--blue); padding: 11px 13px 7px; }
+.input__text { font-size: 14px; line-height: 1.5; min-height: 21px; }
+.hint { color: #5f6368; }
+.caret { display: inline-block; width: 2px; height: 16px; background: var(--blue); vertical-align: -3px; margin-left: 1px; }
+.input__row { display: flex; align-items: center; gap: 12px; margin-top: 8px; color: #444746; font-size: 17px; }
+.srcchip { display: flex; gap: 4px; align-items: center; font-size: 12.5px; background: #e9eef6; border-radius: 8px; padding: 2px 8px; }
+.send { margin-left: auto; width: 32px; height: 32px; border-radius: 50%; background: #e9eef6; color: #a3a8ad; display: grid; place-items: center; font-size: 16px; }
+.input.ready .send { background: var(--blue); color: #fff; }
+.note { position: absolute; left: 0; right: 0; bottom: 9px; text-align: center; font-size: 10.5px; color: #5f6368; }
+
+/* Hộp chọn tệp */
+.scrim { position: absolute; inset: 0; background: rgba(32,33,36,.42); z-index: 6; opacity: 0; }
+.picker { position: absolute; left: 196px; top: 70px; width: 880px; height: 600px; background: #fff; border-radius: 16px; z-index: 7; opacity: 0; padding: 16px 20px; box-shadow: 0 12px 40px rgba(0,0,0,.2); }
+.picker__head { display: flex; align-items: center; gap: 12px; font-size: 18px; }
+.picker__head .s { margin-left: 30px; flex: 1; height: 40px; border-radius: 20px; background: #e9eef6; display: flex; align-items: center; gap: 10px; padding: 0 16px; font-size: 14px; color: #444746; }
+.picker__head > i { font-size: 22px; color: #444746; }
+.ptabs { display: flex; gap: 26px; margin-top: 14px; font-size: 13.5px; color: #444746; border-bottom: 1px solid var(--line); }
+.ptabs span { padding-bottom: 10px; }
+.ptabs .on { color: var(--blue); font-weight: 500; border-bottom: 3px solid var(--blue); }
+.crumbs { margin-top: 14px; font-size: 14px; color: #444746; display: flex; gap: 6px; align-items: center; }
+.crumbs b { font-weight: 500; color: #1f1f1f; }
+.ptable { width: 100%; border-collapse: collapse; margin-top: 10px; font-size: 13.5px; }
+.ptable th { text-align: left; font-weight: 500; color: #444746; font-size: 13px; padding: 9px 12px; border-bottom: 1px solid var(--line); }
+.ptable td { padding: 10px 12px; border-bottom: 1px solid #f1f3f4; white-space: nowrap; }
+.ptable td:first-child { display: flex; gap: 12px; align-items: center; }
+.ptable tr.sel td { background: #c2e7ff; }
+.pfoot { position: absolute; left: 0; right: 0; bottom: 0; height: 58px; border-top: 1px solid var(--line); display: flex; align-items: center; gap: 14px; padding: 0 20px; font-size: 14px; background: #e9eef6; border-radius: 0 0 16px 16px; opacity: 0; }
+.pfoot .add { margin-left: auto; background: var(--blue); color: #fff; border-radius: 18px; padding: 8px 22px; font-weight: 500; }
+
+.cursor { position: absolute; left: 0; top: 0; z-index: 20; width: 26px; height: 26px; }
+.ring { position: absolute; left: 0; top: 0; z-index: 19; width: 44px; height: 44px; margin: -22px 0 0 -22px; border-radius: 50%; background: rgba(11,87,208,.25); opacity: 0; }
+.fade { position: absolute; inset: 0; background: #fff; z-index: 30; opacity: 0; pointer-events: none; }
+</style>
+</head>
+<body>
+<div class="stage">
+  <header class="top">
+    <span class="logo"><svg width="34" height="30" viewBox="0 0 34 30"><path d="M11 1h12l11 19h-12z" fill="#fbbc04"/><path d="M11 1L0 20l6 10 11-19z" fill="#188038"/><path d="M6 30h22l6-10H12z" fill="#4285f4"/></svg>Drive</span>
+    <span class="search"><i class="ph ph-magnifying-glass"></i>Hỏi đáp từ Drive<span class="r"><i class="ph ph-image"></i><i class="ph ph-sliders-horizontal"></i></span></span>
+    <span class="top__r"><i class="ph ph-check-circle"></i><i class="ph ph-question"></i><i class="ph ph-gear"></i><span class="gem" id="gem"><span class="spark" style="width:22px;height:22px"></span></span><i class="ph ph-dots-nine"></i><span class="avatar">T</span></span>
+  </header>
+
+  <section class="home" id="home">
+    <nav class="nav">
+      <span class="new"><i class="ph ph-plus"></i>Mới</span>
+      <p class="on"><i class="ph-fill ph-house"></i>Trang chủ</p><p><i class="ph ph-check-square"></i>Hoạt động</p><p><i class="ph ph-folder-star"></i>Dự án</p><p><i class="ph ph-squares-four"></i>Không gian làm việc</p><hr>
+      <p><i class="ph ph-hard-drives"></i>Drive của tôi</p><p><i class="ph ph-users-three"></i>Bộ nhớ dùng chung</p><hr>
+      <p><i class="ph ph-users"></i>Được chia sẻ với tôi</p><p><i class="ph ph-clock"></i>Gần đây</p><p><i class="ph ph-star"></i>Có gắn dấu sao</p><hr>
+      <p><i class="ph ph-warning-circle"></i>Thư rác</p><p><i class="ph ph-trash"></i>Thùng rác</p><p><i class="ph ph-cloud"></i>Bộ nhớ</p>
+    </nav>
+    <div class="panel">
+      <h1>Chào mừng bạn đến với Drive</h1>
+      <p class="sect"><i class="ph ph-caret-down"></i>Thư mục đề xuất</p>
+      <div class="folders"><span><i class="ph-fill ph-folder"></i>Ban giám hiệu</span><span><i class="ph-fill ph-folder"></i>Tổ Toán – Tin</span><span><i class="ph-fill ph-folder"></i>Kế hoạch giáo dục</span><span><i class="ph-fill ph-folder"></i>Hồ sơ chuyển đổi số</span><span><i class="ph-fill ph-folder"></i>Thi đua – Khen thưởng</span></div>
+      <p class="sect"><i class="ph ph-caret-down"></i>Tệp đề xuất</p>
+      <table class="files">
+        <tr><th>Tên</th><th>Lý do đề xuất</th><th>Chủ sở hữu</th><th>Vị trí</th></tr>
+        <tr><td><span class="ft pdf">P</span>Kế hoạch năm học 2025–2026.pdf</td><td>Bạn đã mở · 8:05</td><td><span class="who"><b style="background:#3367d6">T</b>tôi</span></td><td>Ban giám hiệu</td></tr>
+        <tr><td><span class="ft doc">≡</span>Báo cáo sơ kết học kỳ I</td><td>Bạn đã sửa · Hôm qua</td><td><span class="who"><b style="background:#3367d6">T</b>tôi</span></td><td>Ban giám hiệu</td></tr>
+        <tr><td><span class="ft doc">≡</span>Biên bản họp hội đồng sư phạm tháng 1</td><td>Cô Lan chia sẻ với bạn</td><td><span class="who"><b style="background:#e06666">L</b>Nguyễn Thị Lan</span></td><td>Được chia sẻ với tôi</td></tr>
+        <tr><td><span class="ft sheet">⊞</span>Thống kê kết quả học tập HK I</td><td>Bạn thường mở</td><td><span class="who"><b style="background:#188038">M</b>Trần Văn Minh</span></td><td>Kế hoạch giáo dục</td></tr>
+        <tr><td><span class="ft slide">▭</span>Hội nghị sơ kết học kỳ I</td><td>Bạn đã trình chiếu · 15/1</td><td><span class="who"><b style="background:#3367d6">T</b>tôi</span></td><td>Ban giám hiệu</td></tr>
+        <tr><td><span class="ft doc">≡</span>Kế hoạch bồi dưỡng giáo viên về AI</td><td>Bạn đã mở · 12/1</td><td><span class="who"><b style="background:#3367d6">T</b>tôi</span></td><td>Hồ sơ chuyển đổi số</td></tr>
+        <tr><td><span class="ft sheet">⊞</span>Thời khóa biểu học kỳ II</td><td>Bạn đã mở · 10/1</td><td><span class="who"><b style="background:#f6b26b">H</b>Lê Thu Hà</span></td><td>Kế hoạch giáo dục</td></tr>
+      </table>
+    </div>
+  </section>
+
+  <section class="ask" id="ask">
+    <nav class="rail"><span class="plus"><i class="ph ph-plus"></i></span><i class="ph ph-house"></i><i class="ph ph-check-square"></i><i class="ph ph-folder-star"></i><i class="ph ph-hard-drives"></i><i class="ph ph-users-three"></i><i class="ph ph-users"></i><i class="ph ph-clock"></i><i class="ph ph-star"></i><i class="ph ph-trash"></i></nav>
+    <div class="askp">
+      <div class="askp__head"><i class="ph ph-list"></i>Hỏi Gemini<span class="r"><span class="save"><i class="ph ph-folder-simple-star"></i>Lưu thành dự án</span><i class="ph ph-x"></i></span></div>
+      <aside class="src">
+        <p class="src__tabs"><span class="on" id="srcTab">Nguồn của bạn</span><span>Lịch sử</span></p>
+        <div class="src__empty" id="srcEmpty">
+          <svg width="74" height="70" viewBox="0 0 74 70"><rect x="10" y="10" width="40" height="52" rx="5" fill="#e6f4ea" stroke="#188038" stroke-width="2"/><rect x="22" y="4" width="40" height="52" rx="5" fill="#fff" stroke="#188038" stroke-width="2"/><rect x="29" y="14" width="24" height="4" rx="2" fill="#81c995"/><rect x="29" y="23" width="26" height="3" rx="1.5" fill="#ceead6"/><rect x="29" y="30" width="20" height="3" rx="1.5" fill="#ceead6"/><circle cx="56" cy="52" r="10" fill="#188038"/><path d="M52 52h8M56 48v8" stroke="#fff" stroke-width="2"/></svg>
+          Thêm nguồn để có câu trả lời sâu hơn<br><span class="addbtn" id="addBtn">Thêm <i class="ph ph-caret-down"></i></span>
+        </div>
+        <div class="list" id="srcList"><span class="addbtn small">Thêm <i class="ph ph-caret-down"></i></span></div>
+        <div class="dd" id="dd"><p id="ddDrive"><svg width="17" height="15" viewBox="0 0 34 30"><path d="M11 1h12l11 19h-12z" fill="#fbbc04"/><path d="M11 1L0 20l6 10 11-19z" fill="#188038"/><path d="M6 30h22l6-10H12z" fill="#4285f4"/></svg>Thêm từ Drive</p><p><i class="ph ph-envelope-simple" style="color:#c5221f"></i>Thêm từ Gmail</p></div>
+        <div class="src__foot">Cho phép Gemini tìm nguồn trong
+          <div><span class="app" style="background:#4285f4"></span><span class="app" style="background:#ea4335"></span><span class="app" style="background:#188038"></span><span class="app" style="background:#fbbc04"></span><span class="app" style="background:#a142f4"></span><span class="toggle"></span></div></div>
+      </aside>
+      <div class="center">
+        <div class="welcome" id="welcome"><h2>Đặt câu hỏi về các tệp của bạn</h2>
+          <p><span><i class="ph ph-clipboard-text" style="color:#188038"></i>Chuẩn bị họp</span><span><i class="ph ph-list-magnifying-glass" style="color:#0b57d0"></i>Tìm thông tin chính</span><span><i class="ph ph-check-circle" style="color:#a142f4"></i>Theo dõi tiến độ</span></p></div>
+        <div class="convo">
+          <p class="bubble" id="bubble"></p>
+          <p class="think" id="think"><span class="spark" id="tspark" style="width:20px;height:20px"></span>Đang đọc 3 tệp nguồn…</p>
+          <div class="ans" id="ans">
+            <div class="row"><h4><span class="spark" style="width:16px;height:16px;vertical-align:-2px;margin-right:8px"></span>Kết quả học kỳ I so với kế hoạch năm học</h4></div>
+            <ul>
+              <li class="row"><b>Chất lượng giáo dục:</b> 91,8% học sinh đạt mức Khá, Tốt, vượt chỉ tiêu 90%.<span class="cite">1</span><span class="cite">2</span></li>
+              <li class="row"><b>Chuyển đổi số:</b> 100% lớp đã dùng Google Classroom; 32/47 giáo viên (68%) hoàn thành bồi dưỡng AI, chưa đạt chỉ tiêu 80%.<span class="cite">1</span><span class="cite">2</span></li>
+              <li class="row"><b>Cơ sở vật chất:</b> đưa vào sử dụng 2/3 phòng học thông minh theo kế hoạch.<span class="cite">2</span></li>
+            </ul>
+            <div class="row"><h4>3 việc cần ưu tiên trong học kỳ II</h4></div>
+            <ol>
+              <li class="row">Hoàn thành bồi dưỡng AI cho 15 giáo viên còn lại trước 31/3.<span class="cite">3</span></li>
+              <li class="row">Hoàn thiện và bàn giao phòng học thông minh thứ ba.<span class="cite">3</span></li>
+              <li class="row">Tăng cường ôn tập cho khối 9 trước kỳ thi tuyển sinh lớp 10.<span class="cite">3</span></li>
+            </ol>
+            <p class="acts" id="acts"><span id="exp"><i class="ph ph-file-text" style="color:#4285f4"></i>Xuất sang Tài liệu</span><span><i class="ph ph-copy"></i>Sao chép</span><span class="r"><i class="ph ph-thumbs-up"></i><i class="ph ph-thumbs-down"></i></span></p>
+          </div>
+        </div>
+        <div class="input" id="input">
+          <p class="input__text"><span class="hint" id="hint">Hỏi Gemini</span><span id="typed"></span><span class="caret" id="caret"></span></p>
+          <div class="input__row"><span class="srcchip" id="srcchip"><i class="ph ph-files"></i><span id="srcN">0</span></span><i class="ph ph-sliders-horizontal"></i><span class="send" id="send"><i class="ph ph-arrow-up"></i></span></div>
+        </div>
+        <p class="note">Gemini cho Workspace có thể mắc lỗi, vì vậy hãy kiểm tra lại. <u>Tìm hiểu thêm</u></p>
+      </div>
+    </div>
+  </section>
+
+  <div class="scrim" id="scrim"></div>
+  <section class="picker" id="picker">
+    <div class="picker__head"><svg width="22" height="20" viewBox="0 0 34 30"><path d="M11 1h12l11 19h-12z" fill="#fbbc04"/><path d="M11 1L0 20l6 10 11-19z" fill="#188038"/><path d="M6 30h22l6-10H12z" fill="#4285f4"/></svg>Thêm nguồn<span class="s"><i class="ph ph-magnifying-glass"></i>Tìm trong Drive hoặc dán URL</span><i class="ph ph-x"></i></div>
+    <p class="ptabs"><span>Gần đây</span><span>Dự án</span><span class="on">Drive của tôi</span><span>Bộ nhớ dùng chung</span><span>Được chia sẻ với tôi</span><span>Có gắn dấu sao</span></p>
+    <p class="crumbs">Drive của tôi <i class="ph ph-caret-right"></i>Ban giám hiệu <i class="ph ph-caret-right"></i><b>Năm học 2025–2026</b></p>
+    <table class="ptable" id="ptable">
+      <tr><th>Tên</th><th>Chủ sở hữu</th><th>Sửa đổi lần cuối</th><th>Kích thước</th></tr>
+      <tr><td><span class="ft folder"><i class="ph-fill ph-folder"></i></span>Minh chứng kiểm định</td><td>tôi</td><td>5 thg 1, 2026</td><td>—</td></tr>
+      <tr data-pick><td><span class="ft pdf">P</span>Kế hoạch năm học 2025–2026.pdf</td><td>tôi</td><td>20 thg 9, 2025</td><td>1,2 MB</td></tr>
+      <tr data-pick><td><span class="ft doc">≡</span>Báo cáo sơ kết học kỳ I</td><td>tôi</td><td>16 thg 1, 2026</td><td>—</td></tr>
+      <tr data-pick><td><span class="ft doc">≡</span>Biên bản họp hội đồng sư phạm tháng 1</td><td>Nguyễn Thị Lan</td><td>20 thg 1, 2026</td><td>—</td></tr>
+      <tr><td><span class="ft sheet">⊞</span>Phân công chuyên môn HK II</td><td>tôi</td><td>8 thg 1, 2026</td><td>—</td></tr>
+      <tr><td><span class="ft pdf">P</span>Công văn hướng dẫn nhiệm vụ năm học.pdf</td><td>tôi</td><td>3 thg 9, 2025</td><td>640 KB</td></tr>
+    </table>
+    <div class="pfoot" id="pfoot"><i class="ph ph-x"></i><span id="selN">1 mục đã chọn</span><span class="add" id="pAdd">Thêm</span></div>
+  </section>
+
+  <div class="ring" id="ring"></div>
+  <svg class="cursor" id="cursor" viewBox="0 0 26 26"><path d="M3 2l17 11-7.5 1.2L16.5 22l-3.2 1.5-4-7.8L3 20.5z" fill="#111" stroke="#fff" stroke-width="1.6" stroke-linejoin="round"/></svg>
+  <div class="fade" id="fade"></div>
+</div>
+
+<script>
+// Trục thời gian (ms). Đổi số ở đây để chỉnh nhịp.
+const T = {
+  total: 14000, fadeIn: [0, 300], fadeOut: [13600, 14000],
+  cursorToGem: [300, 950], clickGem: 1050, toAsk: [1150, 1450],
+  cursorToAdd: [1550, 2000], clickAdd: 2100,
+  cursorToDrive: [2200, 2450], clickDrive: 2550, picker: [2600, 2850],
+  picks: [[3000, 3300], [3450, 3650], [3800, 4000]], clickPicks: [3400, 3750, 4100],
+  cursorToPAdd: [4250, 4650], clickPAdd: 4750, closePicker: [4800, 5000], srcList: 5050,
+  cursorToInput: [5300, 5700], clickInput: 5800, typeStart: 5950, typeStep: 17,
+  cursorToSend: [7950, 8250], clickSend: 8350, think: 8500, ans: 9300, rowStep: 230,
+  cursorToExp: [11700, 12300],
+};
+const PROMPT = 'Tóm tắt kết quả học kỳ I so với kế hoạch năm học, rồi đề xuất 3 việc cần ưu tiên trong học kỳ II.';
+const SOURCES = [['pdf', 'P', 'Kế hoạch năm học 2025–2026.pdf'], ['doc', '≡', 'Báo cáo sơ kết học kỳ I'], ['doc', '≡', 'Biên bản họp hội đồng sư phạm tháng 1']];
+const $ = (s) => document.querySelector(s);
+const $$ = (s) => [...document.querySelectorAll(s)];
+$('#srcList').insertAdjacentHTML('beforeend', SOURCES.map(([c, g, n], i) => `<p><span class="cb"><i class="ph ph-check"></i></span><span class="ft ${c}">${g}</span>${i + 1}. ${n}</p>`).join(''));
+
+const clamp = (x) => Math.min(1, Math.max(0, x));
+const ease = (x) => { x = clamp(x); return x < .5 ? 4 * x * x * x : 1 - Math.pow(-2 * x + 2, 3) / 2; };
+const out = (x) => 1 - Math.pow(1 - clamp(x), 3);
+const span = (t, [a, b]) => (t - a) / (b - a);
+const lerp = (a, b, k) => a + (b - a) * k;
+const centerOf = (el, dx = 0) => { const r = el.getBoundingClientRect(); return [r.left + Math.min(r.width / 2, 90) + dx, r.top + r.height / 2]; };
+
+window.render = (t) => {
+  // Trang chủ Drive sang Hỏi Gemini
+  const ak = ease(span(t, T.toAsk));
+  $('#home').style.opacity = 1 - ak; $('#ask').style.opacity = ak;
+  $('#home').style.visibility = ak < 1 ? 'visible' : 'hidden';
+  $('#gem').classList.toggle('on', t >= T.clickGem);
+
+  // Menu Thêm và hộp chọn tệp
+  $('#dd').style.top = ($('#addBtn').getBoundingClientRect().bottom - $('.src').getBoundingClientRect().top + 4) + 'px';
+  $('#dd').style.left = ($('#addBtn').getBoundingClientRect().left - $('.src').getBoundingClientRect().left) + 'px';
+  $('#dd').style.opacity = t >= T.clickAdd && t < T.clickDrive + 100 ? out(span(t, [T.clickAdd, T.clickAdd + 150])) : 0;
+  $('#ddDrive').classList.toggle('hl', t >= T.cursorToDrive[1] - 80);
+  const pk = Math.min(out(span(t, T.picker)), 1 - ease(span(t, T.closePicker)));
+  $('#picker').style.opacity = pk; $('#scrim').style.opacity = pk;
+  $('#picker').style.transform = `scale(${lerp(.97, 1, pk)})`;
+  $('#picker').style.visibility = $('#scrim').style.visibility = pk > 0 ? 'visible' : 'hidden';
+  const rows = $$('#ptable tr[data-pick]');
+  const nSel = T.clickPicks.filter((c) => t >= c).length;
+  rows.forEach((r, i) => r.classList.toggle('sel', i < nSel));
+  $('#pfoot').style.opacity = nSel ? 1 : 0;
+  $('#selN').textContent = `${nSel} mục đã chọn`;
+
+  // Danh sách nguồn
+  const lk = t >= T.srcList;
+  $('#srcEmpty').style.display = lk ? 'none' : '';
+  $('#srcList').style.opacity = lk ? 1 : 0;
+  $$('#srcList p').forEach((p, i) => (p.style.opacity = out(span(t, [T.srcList + i * 120, T.srcList + 300 + i * 120]))));
+  $('#srcTab').textContent = lk ? 'Nguồn của bạn (3)' : 'Nguồn của bạn';
+  $('#srcN').textContent = lk ? '3' : '0';
+
+  // Gõ câu hỏi, gửi đi
+  const sent = t >= T.clickSend;
+  const c = t < T.typeStart || sent ? 0 : Math.min(PROMPT.length, Math.floor((t - T.typeStart) / T.typeStep) + 1);
+  $('#typed').textContent = PROMPT.slice(0, c);
+  const focused = t >= T.clickInput && !sent;
+  $('#input').classList.toggle('focus', focused);
+  $('#input').classList.toggle('ready', c > 0);
+  $('#hint').style.display = focused ? 'none' : '';
+  $('#caret').style.display = focused && Math.floor(t / 500) % 2 === 0 ? '' : 'none';
+  $('#welcome').style.opacity = 1 - clamp(span(t, [T.clickSend, T.clickSend + 200]));
+  $('.welcome h2').style.backgroundPosition = `${-(t / 30) % 200}% 0`;
+  $('#bubble').textContent = PROMPT;
+  $('#bubble').style.opacity = out(span(t, [T.clickSend, T.clickSend + 250]));
+  $('#think').style.opacity = t >= T.think && t < T.ans ? out(span(t, [T.think, T.think + 200])) : 0;
+  $('#think').style.display = t < T.ans ? '' : 'none';
+  $('#tspark').style.transform = `rotate(${t * .3}deg)`;
+  $('#ans').style.opacity = t >= T.ans ? 1 : 0;
+  const rowsA = $$('#ans .row');
+  rowsA.forEach((r, i) => { const k = out(span(t, [T.ans + i * T.rowStep, T.ans + i * T.rowStep + 300])); r.style.opacity = k; r.style.transform = `translateY(${(1 - k) * 6}px)`; });
+  const actsAt = T.ans + rowsA.length * T.rowStep;
+  $('#acts').style.opacity = out(span(t, [actsAt, actsAt + 300]));
+  $('#exp').classList.toggle('hover', t >= T.cursorToExp[1]);
+
+  // Con trỏ chuột
+  const pr = $$('#ptable tr[data-pick]');
+  const P = {
+    start: [700, 560], gem: centerOf($('#gem')), add: centerOf($('#addBtn')), drive: centerOf($('#ddDrive')),
+    p0: centerOf(pr[0], 30), p1: centerOf(pr[1], 30), p2: centerOf(pr[2], 30), padd: centerOf($('#pAdd')),
+    input: centerOf($('#input'), 120), send: centerOf($('#send')), exp: centerOf($('#exp')),
+  };
+  const path = [[T.cursorToGem, 'start', 'gem'], [T.cursorToAdd, 'gem', 'add'], [T.cursorToDrive, 'add', 'drive'], [T.picks[0], 'drive', 'p0'], [T.picks[1], 'p0', 'p1'], [T.picks[2], 'p1', 'p2'],
+    [T.cursorToPAdd, 'p2', 'padd'], [T.cursorToInput, 'padd', 'input'], [T.cursorToSend, 'input', 'send'], [T.cursorToExp, 'send', 'exp']];
+  if (!window.FIX) window.FIX = {}; // vị trí đo lúc phần tử chứa nó hiện rõ
+  const vis = { add: !lk && ak === 1, drive: t >= T.clickAdd + 150, p0: pk === 1, p1: pk === 1, p2: pk === 1, padd: pk === 1 && nSel > 0 };
+  for (const k in P) if (vis[k] !== false) FIX[k] = P[k];
+  const at = (k) => (k === 'start' ? P.start : FIX[k] || P[k]);
+  let pos = P.start;
+  for (const [win, a, b] of path) if (t >= win[0]) { const k = ease(span(t, win)); const A = at(a), B = at(b); pos = [lerp(A[0], B[0], k), lerp(A[1], B[1], k)]; }
+  const clicks = [T.clickGem, T.clickAdd, T.clickDrive, ...T.clickPicks, T.clickPAdd, T.clickInput, T.clickSend];
+  const pressed = clicks.some((x) => t >= x && t < x + 160);
+  $('#cursor').style.transform = `translate(${pos[0] - 3}px, ${pos[1] - 2}px) scale(${pressed ? .85 : 1})`;
+  $('#cursor').style.opacity = t < T.clickSend + 400 ? 1 : t < T.cursorToExp[0] ? 1 - clamp(span(t, [T.clickSend + 400, T.clickSend + 700])) : clamp(span(t, [T.cursorToExp[0], T.cursorToExp[0] + 250]));
+  const rc = clicks.find((x) => t >= x && t < x + 450);
+  if (rc !== undefined) { const k = (t - rc) / 450; $('#ring').style.opacity = .9 * (1 - k); $('#ring').style.transform = `translate(${pos[0]}px, ${pos[1]}px) scale(${lerp(.4, 1.3, k)})`; }
+  else $('#ring').style.opacity = 0;
+
+  $('#fade').style.opacity = Math.max(1 - clamp(span(t, T.fadeIn)), clamp(span(t, T.fadeOut)));
+};
+window.TOTAL = T.total;
+</script>
+</body>
+</html>
