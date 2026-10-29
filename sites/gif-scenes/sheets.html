@@ -7,13 +7,15 @@
 <link rel="stylesheet" href="https://unpkg.com/@phosphor-icons/web@2.1.1/src/regular/style.css">
 <link rel="stylesheet" href="https://unpkg.com/@phosphor-icons/web@2.1.1/src/fill/style.css">
 <style>
-/* Cảnh minh họa Gemini trong Google Sheets: từ bảng điểm cuối năm tạo dashboard. Khung 1272 x 788.
+/* Cảnh minh họa canvas của Gemini trong Google Sheets: từ bảng điểm cuối năm tạo dashboard. Khung 1272 x 788.
+   Theo mạch video của Google: mở Gemini, chọn Công cụ > Tạo canvas, gõ yêu cầu, canvas mở thành trang tính mới, phóng to để thao tác.
    Mọi chuyển động nằm trên một trục thời gian (ms); render.js gọi window.render(t) để chụp từng khung. */
-:root { --ink: #1f1f1f; --muted: #5f6368; --line: #e1e3e1; --blue: #0b57d0; --green: #188038; --canvas: #f9fbfd; --chip: #e9eef6; }
+:root { --ink: #1f1f1f; --muted: #5f6368; --line: #e1e3e1; --blue: #0b57d0; --green: #188038; --canvas: #f9fbfd; --chip: #e9eef6; --left: 866px; }
 * { box-sizing: border-box; margin: 0; padding: 0; }
 html, body { width: 1272px; height: 788px; overflow: hidden; background: #fff; }
 body { font-family: 'Google Sans Flex', 'Google Sans', Roboto, Arial, sans-serif; color: var(--ink); -webkit-font-smoothing: antialiased; }
 .stage { position: relative; width: 1272px; height: 788px; overflow: hidden; background: var(--canvas); }
+.zoom { position: absolute; inset: 0; transform-origin: 0 0; }
 
 /* Thanh trên của Sheets */
 .top { position: absolute; inset: 0 0 auto 0; height: 64px; display: flex; align-items: center; gap: 12px; padding: 0 16px; }
@@ -26,16 +28,21 @@ body { font-family: 'Google Sans Flex', 'Google Sans', Roboto, Arial, sans-serif
 .pill { font-size: 14px; font-weight: 500; border-radius: 20px; padding: 9px 16px; display: flex; gap: 6px; align-items: center; }
 .pill--share { background: #c2e7ff; color: #001d35; }
 .pill i { font-size: 17px; }
-.gem-btn { width: 38px; height: 38px; border-radius: 50%; background: #d3e3fd; display: grid; place-items: center; }
+.gem-btn { width: 38px; height: 38px; border-radius: 50%; display: grid; place-items: center; }
+.gem-btn.on { background: #d3e3fd; }
 .avatar { width: 34px; height: 34px; border-radius: 50%; background: linear-gradient(135deg,#a1c2fa,#4285f4); color: #fff; display: grid; place-items: center; font-size: 15px; font-weight: 700; }
-.toolbar { position: absolute; left: 12px; top: 68px; width: 840px; height: 38px; border-radius: 20px; background: #edf2fa; display: flex; align-items: center; gap: 17px; padding: 0 16px; color: #444746; font-size: 18px; }
+.toolbar { position: absolute; left: 12px; top: 68px; width: calc(var(--left) - 26px); height: 38px; border-radius: 20px; background: #edf2fa; display: flex; align-items: center; gap: 17px; padding: 0 16px; color: #444746; font-size: 18px; overflow: hidden; white-space: nowrap; }
 .toolbar small { font-size: 13px; }
-.fx { position: absolute; left: 0; top: 110px; width: 866px; height: 30px; display: flex; align-items: center; border-bottom: 1px solid var(--line); font-size: 13px; color: #444746; background: #fff; }
+.fx { position: absolute; left: 0; top: 110px; width: var(--left); height: 30px; display: flex; align-items: center; border-bottom: 1px solid var(--line); font-size: 13px; color: #444746; background: #fff; }
 .fx__ref { width: 90px; padding-left: 12px; border-right: 1px solid var(--line); }
 .fx__val { padding-left: 12px; }
+.cvbar { position: absolute; left: 0; top: 110px; width: var(--left); height: 30px; display: flex; align-items: center; gap: 10px; padding: 0 12px; background: #fff; border-bottom: 1px solid var(--line); font-size: 13px; color: #1f1f1f; opacity: 0; z-index: 2; }
+.cvbar i { font-size: 16px; color: #444746; }
+.cvbar .r { margin-left: auto; display: flex; gap: 14px; align-items: center; color: #444746; }
+.cvbar .r span { display: flex; gap: 5px; align-items: center; }
 
 /* Trang tính */
-.sheet { position: absolute; left: 0; top: 140px; width: 866px; bottom: 34px; overflow: hidden; background: #fff; }
+.sheet { position: absolute; left: 0; top: 140px; width: var(--left); bottom: 34px; overflow: hidden; background: #fff; }
 table { border-collapse: collapse; font-size: 13px; table-layout: fixed; }
 th, td { border: 1px solid var(--line); height: 25px; padding: 0 7px; white-space: nowrap; overflow: hidden; }
 thead th { background: #f8f9fa; color: #444746; font-weight: 400; font-size: 12px; height: 22px; }
@@ -44,53 +51,52 @@ tr.head td { font-weight: 700; background: #e6f4ea; color: #0d652d; }
 td.num { text-align: right; }
 td.tag span { font-size: 11.5px; border-radius: 10px; padding: 2px 8px; font-weight: 500; }
 .k-tot { background: #e6f4ea; color: #137333; } .k-kha { background: #e8f0fe; color: #1967d2; } .k-dat { background: #fef7e0; color: #b06000; } .k-chua { background: #fce8e6; color: #c5221f; }
-.tabsbar { position: absolute; left: 0; bottom: 0; width: 866px; height: 34px; display: flex; align-items: center; gap: 14px; padding: 0 14px; font-size: 13px; color: #444746; border-top: 1px solid var(--line); background: var(--canvas); }
-.tabsbar .on { background: #e1e9f7; color: #0b57d0; font-weight: 500; padding: 5px 12px; border-radius: 6px; }
+.tabsbar { position: absolute; left: 0; bottom: 0; width: var(--left); height: 34px; display: flex; align-items: center; gap: 8px; padding: 0 14px; font-size: 13px; color: #444746; border-top: 1px solid var(--line); background: var(--canvas); }
+.tabsbar i { margin-right: 6px; }
+.tabsbar .tab { padding: 5px 12px; border-radius: 6px; display: flex; gap: 6px; align-items: center; }
+.tabsbar .tab.on { background: #e1e9f7; color: #0b57d0; font-weight: 500; }
+.tabsbar .tab--new { opacity: 0; }
 
-/* Dashboard do Gemini tạo */
-.dash { position: absolute; left: 10px; top: 72px; width: 846px; bottom: 10px; background: #fff; border-radius: 16px; box-shadow: 0 6px 24px rgba(60,64,67,.18); padding: 18px 20px; opacity: 0; z-index: 4; }
+/* Canvas: dashboard do Gemini tạo, mở thành trang tính mới */
+.dash { position: absolute; left: 0; top: 140px; width: var(--left); bottom: 34px; background: #f6f8fc; padding: 14px 16px; opacity: 0; z-index: 1; }
 .dash__head { display: flex; align-items: center; gap: 12px; }
-.dash__ico { width: 36px; height: 36px; border-radius: 9px; background: #e6f4ea; color: #188038; display: grid; place-items: center; font-size: 20px; }
-.dash__head h2 { font-size: 19px; font-weight: 700; }
-.dash__head p { font-size: 12px; color: var(--muted); }
+.dash__ico { width: 34px; height: 34px; border-radius: 9px; background: #1a73e8; color: #fff; display: grid; place-items: center; font-size: 19px; flex: none; }
+.dash__head h2 { font-size: 18px; font-weight: 700; }
+.dash__head p { font-size: 11.5px; color: var(--muted); }
 .dash__filters { margin-left: auto; display: flex; gap: 8px; }
-.chip { font-size: 12px; border: 1px solid #c4c7c5; border-radius: 8px; padding: 5px 10px; color: #444746; display: flex; gap: 4px; align-items: center; }
-.kpis { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-top: 14px; }
-.kpi { border-radius: 12px; padding: 10px 14px; background: #f8fafd; border: 1px solid #edf0f2; opacity: 0; }
-.kpi small { font-size: 11px; letter-spacing: .3px; color: var(--muted); text-transform: uppercase; font-weight: 500; }
-.kpi b { display: block; font-size: 26px; font-weight: 700; margin-top: 2px; }
-.kpi span { font-size: 11.5px; color: var(--muted); }
+.chip { font-size: 12px; border: 1px solid #c4c7c5; border-radius: 8px; padding: 5px 10px; color: #444746; display: flex; gap: 4px; align-items: center; background: #fff; }
+.kpis { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-top: 12px; }
+.kpi { border-radius: 12px; padding: 8px 14px; background: #fff; border: 1px solid #e8ebef; opacity: 0; }
+.kpi small { font-size: 10.5px; letter-spacing: .3px; color: var(--muted); text-transform: uppercase; font-weight: 500; }
+.kpi b { display: block; font-size: 24px; font-weight: 700; margin-top: 1px; }
+.kpi span { font-size: 11px; color: var(--muted); }
 .kpi--g b { color: #137333; } .kpi--b b { color: #1967d2; }
-.row2 { display: grid; grid-template-columns: 1.55fr 1fr; gap: 12px; margin-top: 12px; }
-.panelc { border: 1px solid #edf0f2; border-radius: 12px; padding: 12px 14px; opacity: 0; position: relative; }
-.panelc h3 { font-size: 13.5px; font-weight: 500; margin-bottom: 8px; }
-.bars { display: flex; align-items: flex-end; gap: 22px; height: 170px; padding: 0 8px 0 30px; position: relative; }
-.bars .axis { position: absolute; left: 0; right: 0; bottom: 0; top: 0; }
+.row2 { display: grid; grid-template-columns: 1.55fr 1fr; gap: 10px; margin-top: 10px; }
+.panelc { background: #fff; border: 1px solid #e8ebef; border-radius: 12px; padding: 10px 14px; opacity: 0; position: relative; }
+.panelc h3 { font-size: 13px; font-weight: 500; margin-bottom: 6px; }
+.bars { display: flex; align-items: flex-end; gap: 22px; height: 150px; padding: 0 8px 0 30px; position: relative; margin-top: 14px; }
+.bars .axis { position: absolute; inset: 0; }
 .axis span { position: absolute; left: 0; right: 0; border-top: 1px dashed #e3e3e3; font-size: 10.5px; color: #80868b; }
 .axis span em { position: absolute; left: 0; top: -8px; font-style: normal; }
 .bar { flex: 1; position: relative; display: flex; flex-direction: column; justify-content: flex-end; height: 100%; z-index: 1; }
 .bar i { display: block; border-radius: 6px 6px 0 0; background: #4285f4; height: 0; }
 .bar.hot i { background: #1a73e8; box-shadow: 0 0 0 2px #d2e3fc; }
 .bar b { position: absolute; left: 0; right: 0; text-align: center; font-size: 11.5px; font-weight: 500; color: #3c4043; }
-.blabels { display: flex; gap: 22px; padding: 6px 8px 0 30px; }
+.blabels { display: flex; gap: 22px; padding: 5px 8px 0 30px; }
 .blabels span { flex: 1; text-align: center; font-size: 11px; color: #444746; }
 .tip { position: absolute; z-index: 3; background: #202124; color: #fff; font-size: 11.5px; border-radius: 6px; padding: 6px 9px; white-space: nowrap; opacity: 0; line-height: 1.4; }
-.donut { display: flex; align-items: center; gap: 14px; }
+.donut { display: flex; align-items: center; gap: 12px; }
 .legend { list-style: none; display: grid; gap: 8px; font-size: 12px; }
 .legend li { display: flex; align-items: center; gap: 7px; }
 .legend i { width: 10px; height: 10px; border-radius: 3px; }
 .legend b { margin-left: auto; padding-left: 10px; font-weight: 500; }
 .top5 { width: 100%; font-size: 12.5px; }
-.top5 td, .top5 th { border: 0; border-bottom: 1px solid #f1f3f4; height: 25px; padding: 0 6px; text-align: left; }
-.top5 th { font-size: 11px; color: var(--muted); font-weight: 500; background: none; text-transform: uppercase; height: 22px; }
+.top5 td, .top5 th { border: 0; border-bottom: 1px solid #f1f3f4; height: 24px; padding: 0 6px; text-align: left; }
+.top5 th { font-size: 10.5px; color: var(--muted); font-weight: 500; background: none; text-transform: uppercase; height: 20px; }
 .top5 td.num, .top5 th.num { text-align: right; }
-.top5 tr { opacity: 0; }
-.top5 thead tr { opacity: 1; }
+.top5 tbody tr { opacity: 0; }
 .medal { display: inline-grid; place-items: center; width: 20px; height: 20px; border-radius: 50%; font-size: 11px; font-weight: 700; background: #f1f3f4; color: #444746; }
 .m1 { background: #fde293; color: #7a5800; } .m2 { background: #e3e3e3; } .m3 { background: #f6c8a8; color: #7a3d0c; }
-.skel { position: absolute; left: 10px; top: 72px; width: 846px; bottom: 10px; border-radius: 16px; background: #fff; z-index: 3; opacity: 0; padding: 22px; display: grid; gap: 14px; align-content: start; box-shadow: 0 6px 24px rgba(60,64,67,.12); }
-.skel span { height: 18px; border-radius: 9px; background: linear-gradient(90deg, #e8eaf6 0%, #c9d7f8 25%, #e5d4f3 50%, #e8eaf6 75%); background-size: 300% 100%; }
-.skel .big { height: 120px; border-radius: 14px; }
 
 /* Bảng Gemini bên phải */
 .panel { position: absolute; right: 10px; top: 72px; bottom: 10px; width: 392px; background: #fff; border-radius: 18px; padding: 14px 16px 0; z-index: 5; }
@@ -98,29 +104,45 @@ td.tag span { font-size: 11.5px; border-radius: 10px; padding: 2px 8px; font-wei
 .panel__head i { font-size: 20px; color: #444746; }
 .panel__head .r { margin-left: auto; display: flex; gap: 14px; }
 .spark { width: 18px; height: 18px; display: inline-block; flex: none; background: conic-gradient(from 200deg, #4285f4, #9b72cb, #d96570, #4285f4); -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M12 0C12 6.6 17.4 12 24 12C17.4 12 12 17.4 12 24C12 17.4 6.6 12 0 12C6.6 12 12 6.6 12 0Z'/%3E%3C/svg%3E") center/contain no-repeat; mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M12 0C12 6.6 17.4 12 24 12C17.4 12 12 17.4 12 24C12 17.4 6.6 12 0 12C6.6 12 12 6.6 12 0Z'/%3E%3C/svg%3E") center/contain no-repeat; }
-.welcome { position: absolute; left: 22px; right: 22px; top: 190px; }
+.welcome { position: absolute; left: 22px; right: 22px; top: 200px; }
 .welcome h2 { font-size: 24px; font-weight: 500; background: linear-gradient(90deg, #4285f4, #9b72cb, #d96570, #4285f4); background-size: 200% 100%; -webkit-background-clip: text; background-clip: text; color: transparent; }
-.sugs { list-style: none; margin-top: 18px; display: grid; gap: 12px; font-size: 14px; color: #3c4043; }
-.sugs li { display: flex; gap: 10px; align-items: center; }
-.sugs i { font-size: 17px; color: #5f6368; }
+.sugs { position: relative; margin-top: 18px; height: 130px; }
+.sugs > div { position: absolute; inset: 0; }
+.chips { display: flex; flex-wrap: wrap; gap: 8px; }
+.chips span { border: 1px solid #c4c7c5; border-radius: 9px; padding: 7px 12px; font-size: 13.5px; display: flex; gap: 7px; align-items: center; color: #1f1f1f; }
+.chips i { font-size: 16px; color: #444746; }
+.all { margin-top: 14px; font-size: 13.5px; display: flex; gap: 8px; align-items: center; color: #1f1f1f; }
+.list { display: grid; gap: 12px; font-size: 14px; color: #3c4043; opacity: 0; }
+.list p { display: flex; gap: 10px; align-items: center; }
+.list i { font-size: 17px; color: #5f6368; }
 .convo { position: absolute; left: 16px; right: 16px; top: 52px; font-size: 13.5px; line-height: 1.5; }
 .bubble { margin-left: 46px; background: var(--chip); border-radius: 18px 4px 18px 18px; padding: 10px 14px; opacity: 0; }
 .reply { margin-top: 16px; display: flex; gap: 10px; align-items: flex-start; opacity: 0; }
 .reply .spark { width: 20px; height: 20px; margin-top: 1px; }
-.reply__text { display: grid; }
+.reply__text { display: grid; color: #444746; }
 .reply__text > span { grid-area: 1 / 1; opacity: 0; }
-.made { margin-top: 12px; margin-left: 30px; border: 1px solid var(--line); border-radius: 12px; padding: 10px 12px; display: flex; gap: 10px; align-items: center; font-size: 13px; opacity: 0; }
-.made .dash__ico { width: 30px; height: 30px; font-size: 16px; }
-.made small { display: block; color: var(--muted); font-size: 11.5px; }
+.reply__text .final { color: var(--ink); }
+.reply__text .final em { display: block; margin-top: 10px; font-style: normal; }
+.thumbs { margin: 10px 0 0 30px; display: flex; gap: 14px; color: #444746; font-size: 17px; opacity: 0; }
 .input { position: absolute; left: 14px; right: 14px; bottom: 30px; border-radius: 22px; border: 1px solid #c4c7c5; background: #fff; padding: 12px 14px 8px; }
 .input.focus { border: 2px solid var(--blue); padding: 11px 13px 7px; }
 .input__text { font-size: 13.5px; line-height: 1.5; min-height: 20px; }
 .hint { color: #5f6368; }
 .caret { display: inline-block; width: 2px; height: 16px; background: var(--blue); vertical-align: -3px; margin-left: 1px; }
-.input__row { display: flex; align-items: center; gap: 14px; margin-top: 8px; color: #444746; font-size: 18px; }
-.send { margin-left: auto; width: 32px; height: 32px; border-radius: 50%; background: #e9eef6; color: #a3a8ad; display: grid; place-items: center; font-size: 16px; }
+.input__row { display: flex; align-items: center; gap: 12px; margin-top: 8px; color: #444746; font-size: 18px; }
+.input__row .tool { display: flex; align-items: center; gap: 3px; padding: 4px 6px; border-radius: 8px; }
+.input__row .tool small { font-size: 11px; }
+.canvas-chip { display: none; align-items: center; gap: 6px; background: #d3e3fd; color: #041e49; border-radius: 8px; padding: 4px 9px; font-size: 13px; font-weight: 500; }
+.canvas-chip i { font-size: 16px; color: #041e49; }
+.beta { margin-left: auto; font-size: 11.5px; font-weight: 500; color: #0b57d0; background: #e8f0fe; border-radius: 6px; padding: 2px 7px; }
+.send { width: 32px; height: 32px; border-radius: 50%; background: #e9eef6; color: #a3a8ad; display: grid; place-items: center; font-size: 16px; }
 .input.ready .send { background: var(--blue); color: #fff; }
 .note { position: absolute; left: 0; right: 0; bottom: 9px; text-align: center; font-size: 10.5px; color: #5f6368; }
+.menu { position: absolute; left: 70px; bottom: 74px; width: 230px; background: #fff; border-radius: 12px; box-shadow: 0 4px 18px rgba(60,64,67,.28); padding: 10px 0; font-size: 14px; opacity: 0; z-index: 6; }
+.menu small { display: block; padding: 2px 16px 8px; font-size: 12.5px; color: #5f6368; }
+.menu p { display: flex; gap: 12px; align-items: center; padding: 8px 16px; }
+.menu p i { font-size: 18px; color: #444746; }
+.menu p.hl { background: #e9eef6; }
 
 .cursor { position: absolute; left: 0; top: 0; z-index: 20; width: 26px; height: 26px; }
 .ring { position: absolute; left: 0; top: 0; z-index: 19; width: 44px; height: 44px; margin: -22px 0 0 -22px; border-radius: 50%; background: rgba(11,87,208,.25); opacity: 0; }
@@ -129,6 +151,7 @@ td.tag span { font-size: 11.5px; border-radius: 10px; padding: 2px 8px; font-wei
 </head>
 <body>
 <div class="stage">
+ <div class="zoom" id="zoom">
   <header class="top">
     <span class="sheets-ico"></span>
     <div class="name">
@@ -137,20 +160,18 @@ td.tag span { font-size: 11.5px; border-radius: 10px; padding: 2px 8px; font-wei
     </div>
     <div class="top__right"><i class="ph ph-clock-counter-clockwise"></i><i class="ph ph-chat-centered-text"></i><i class="ph ph-video-camera"></i>
       <span class="pill pill--share"><i class="ph-fill ph-lock-simple"></i>Chia sẻ</span>
-      <span class="gem-btn"><span class="spark"></span></span>
+      <span class="gem-btn" id="gem"><span class="spark" style="width:20px;height:20px"></span></span>
       <span class="avatar">T</span></div>
   </header>
-  <div class="toolbar"><i class="ph ph-magnifying-glass"></i><i class="ph ph-arrow-counter-clockwise"></i><i class="ph ph-arrow-clockwise"></i><i class="ph ph-printer"></i><i class="ph ph-paint-roller"></i><small>100%</small><small>₫</small><small>%</small><small>.0</small><small>123</small><small>Mặc định</small><i class="ph ph-text-b"></i><i class="ph ph-text-italic"></i><i class="ph ph-paint-bucket"></i><i class="ph ph-funnel"></i><i class="ph ph-chart-bar"></i></div>
+  <div class="toolbar"><i class="ph ph-magnifying-glass"></i><i class="ph ph-arrow-counter-clockwise"></i><i class="ph ph-arrow-clockwise"></i><i class="ph ph-printer"></i><i class="ph ph-paint-roller"></i><small>100%</small><small>%</small><small>.0</small><small>123</small><small>Mặc định</small><i class="ph ph-text-b"></i><i class="ph ph-text-italic"></i><i class="ph ph-paint-bucket"></i><i class="ph ph-funnel"></i><i class="ph ph-chart-bar"></i><i class="ph ph-link"></i><i class="ph ph-chat-text"></i><i class="ph ph-function"></i></div>
   <div class="fx"><span class="fx__ref">A1</span><span class="fx__val"><i>fx</i>&nbsp;&nbsp;STT</span></div>
+  <div class="cvbar" id="cvbar"><i class="ph ph-squares-four"></i>Dashboard tổng kết cuối năm<span class="r"><span><i class="ph ph-link-simple"></i>Sao chép đường liên kết</span><span><i class="ph ph-table"></i>Xem dữ liệu</span><i class="ph ph-dots-three-vertical"></i></span></div>
   <main class="sheet"><table id="table"></table></main>
-  <div class="tabsbar"><i class="ph ph-plus"></i><i class="ph ph-list"></i><span class="on">Bảng điểm</span><span>Điểm danh</span></div>
-
-  <div class="skel" id="skel"><span style="width:40%"></span><span style="width:25%"></span><span class="big"></span><span></span><span style="width:85%"></span><span class="big"></span></div>
 
   <section class="dash" id="dash">
     <div class="dash__head">
-      <span class="dash__ico"><i class="ph-fill ph-chart-pie-slice"></i></span>
-      <div><h2>Tổng kết cuối năm · Lớp 7A</h2><p>Năm học 2025–2026 · Dữ liệu từ trang tính “Bảng điểm”</p></div>
+      <span class="dash__ico"><i class="ph-fill ph-squares-four"></i></span>
+      <div><h2>Tổng kết cuối năm · Lớp 7A</h2><p>Năm học 2025–2026 · Đồng bộ với trang tính “Bảng điểm”</p></div>
       <div class="dash__filters"><span class="chip">Tất cả môn <i class="ph ph-caret-down"></i></span><span class="chip">Cả năm <i class="ph ph-caret-down"></i></span></div>
     </div>
     <div class="kpis" id="kpis"></div>
@@ -161,47 +182,56 @@ td.tag span { font-size: 11.5px; border-radius: 10px; padding: 2px 8px; font-wei
         <div class="tip" id="tip"></div>
       </div>
       <div class="panelc" id="pdonut"><h3>Kết quả học tập</h3>
-        <div class="donut"><svg id="donut" width="150" height="150" viewBox="0 0 150 150"></svg><ul class="legend" id="legend"></ul></div>
+        <div class="donut"><svg id="donut" width="140" height="140" viewBox="0 0 150 150"></svg><ul class="legend" id="legend"></ul></div>
       </div>
     </div>
-    <div class="panelc" id="ptop" style="margin-top:12px"><h3>Top 5 học sinh có điểm trung bình cao nhất</h3><table class="top5" id="top5"></table></div>
+    <div class="panelc" id="ptop" style="margin-top:10px"><h3>Top 5 học sinh có điểm trung bình cao nhất</h3><table class="top5" id="top5"></table></div>
   </section>
+  <div class="tabsbar"><i class="ph ph-plus"></i><i class="ph ph-list"></i><span class="tab on" id="tab1">Bảng điểm</span><span class="tab tab--new" id="tab2"><i class="ph ph-squares-four" style="margin:0"></i>Dashboard tổng kết</span></div>
 
-  <aside class="panel">
-    <div class="panel__head"><i class="ph ph-list"></i>Gemini <i class="ph ph-caret-down" style="font-size:14px;margin-left:-4px"></i><span class="r"><i class="ph ph-square-split-horizontal"></i><i class="ph ph-x"></i></span></div>
+  <aside class="panel" id="panel">
+    <div class="panel__head"><i class="ph ph-list"></i>Gemini <i class="ph ph-caret-down" style="font-size:14px;margin-left:-4px"></i><span class="r"><i class="ph ph-note-pencil"></i><i class="ph ph-square-split-horizontal"></i><i class="ph ph-x"></i></span></div>
     <div class="welcome" id="welcome">
       <h2>Thầy cô muốn tạo gì?</h2>
-      <ul class="sugs"><li><i class="ph ph-arrow-bend-down-right"></i>Tạo dashboard</li><li><i class="ph ph-arrow-bend-down-right"></i>Tạo bảng Kanban</li><li><i class="ph ph-arrow-bend-down-right"></i>Tạo chế độ xem dạng thẻ</li></ul>
+      <div class="sugs">
+        <div id="sugA"><p class="chips"><span><i class="ph ph-list-checks"></i>Kiểm tra dữ liệu</span><span><i class="ph ph-squares-four"></i>Tạo canvas</span><span><i class="ph ph-chart-line-up"></i>Phân tích</span></p><p class="all"><i class="ph ph-list-bullets" style="font-size:17px;color:#444746"></i>Xem tất cả gợi ý</p></div>
+        <div class="list" id="sugB"><p><i class="ph ph-arrow-bend-down-right"></i>Tạo dashboard</p><p><i class="ph ph-arrow-bend-down-right"></i>Tạo bảng Kanban</p><p><i class="ph ph-arrow-bend-down-right"></i>Tạo chế độ xem dạng thẻ</p></div>
+      </div>
     </div>
     <div class="convo">
       <p class="bubble" id="bubble"></p>
-      <div class="reply" id="reply"><span class="spark" id="rspark"></span><span class="reply__text"><span>Đang đọc dữ liệu trang tính “Bảng điểm”…</span><span>Đang dựng dashboard…</span><span>Đã tạo dashboard từ 40 học sinh trong bảng điểm. Dashboard tự cập nhật khi thầy cô sửa điểm.</span></span></div>
-      <div class="made" id="made"><span class="dash__ico"><i class="ph-fill ph-chart-pie-slice"></i></span><span><b style="font-weight:500">Tổng kết cuối năm · Lớp 7A</b><small>Ứng dụng tương tác · Mở trong trang tính</small></span></div>
+      <div class="reply" id="reply"><span class="spark" id="rspark"></span><span class="reply__text"><span>Đang thu thập thông tin…</span><span>Đang biên dịch mã…</span><span>Đang sửa lỗi…</span><span class="final">Đã tạo xong canvas mới. Các chỉnh sửa giờ đồng bộ với dữ liệu theo thời gian thực.<em>Thầy cô có muốn thay đổi gì trên canvas không?</em></span></span></div>
+      <p class="thumbs" id="thumbs"><i class="ph ph-thumbs-up"></i><i class="ph ph-thumbs-down"></i><i class="ph ph-dots-three-vertical"></i></p>
     </div>
+    <div class="menu" id="menu"><small>Công cụ</small><p><i class="ph ph-hammer"></i>Xây dựng</p><p id="mcanvas"><i class="ph ph-squares-four"></i>Tạo canvas</p><p><i class="ph ph-image"></i>Tạo hình ảnh</p><p><i class="ph ph-binoculars"></i>Deep Research</p></div>
     <div class="input" id="input">
       <p class="input__text"><span class="hint" id="hint">Hỏi Gemini</span><span id="typed"></span><span class="caret" id="caret"></span></p>
-      <div class="input__row"><i class="ph ph-table"></i><i class="ph ph-sliders-horizontal"></i><span class="send" id="send"><i class="ph ph-arrow-up"></i></span></div>
+      <div class="input__row"><span class="tool"><i class="ph ph-table"></i><i class="ph ph-caret-down" style="font-size:12px"></i></span><span class="tool" id="tools"><i class="ph ph-sliders-horizontal"></i></span><span class="canvas-chip" id="cchip"><i class="ph ph-squares-four"></i>Canvas<i class="ph ph-caret-down" style="font-size:12px"></i></span><span class="beta">Beta</span><span class="send" id="send"><i class="ph ph-arrow-up"></i></span></div>
     </div>
     <p class="note">Gemini cho Workspace có thể mắc lỗi. <u>Tìm hiểu thêm</u></p>
   </aside>
 
   <div class="ring" id="ring"></div>
   <svg class="cursor" id="cursor" viewBox="0 0 26 26"><path d="M3 2l17 11-7.5 1.2L16.5 22l-3.2 1.5-4-7.8L3 20.5z" fill="#111" stroke="#fff" stroke-width="1.6" stroke-linejoin="round"/></svg>
-  <div class="fade" id="fade"></div>
+ </div>
+ <div class="fade" id="fade"></div>
 </div>
 
 <script>
 // Trục thời gian (ms). Đổi số ở đây để chỉnh nhịp.
 const T = {
   total: 13000, fadeIn: [0, 300], fadeOut: [12600, 13000],
-  cursorToInput: [250, 750], clickInput: 850,
-  typeStart: 1000, typeStep: 21,
-  cursorToSend: [3700, 4000], clickSend: 4100,
-  reading: 4300, building: 5000, skel: 5000, dash: 6200,
-  kpis: 6500, bars: 7000, donut: 7300, top: 7800, done: 7600,
-  hoverIn: [9100, 9700], tipOn: 9750, tipOff: 11900,
+  cursorToGem: [300, 850], clickGem: 950, panel: [950, 1400],
+  cursorToTools: [1550, 1950], clickTools: 2050,
+  cursorToCanvas: [2200, 2500], clickCanvas: 2600,
+  typeStart: 2800, typeStep: 17,
+  cursorToSend: [5250, 5550], clickSend: 5650,
+  collecting: 5850, compiling: 6450, fixing: 7050, canvas: 7600, done: 7800,
+  kpis: 7900, bars: 8300, donut: 8500, top: 8800,
+  zoom: [9700, 10400], zoomTo: 1.15, zoomAt: [0, 443],
+  hoverIn: [10200, 10800], tipOn: 10850, tipOff: 12550,
 };
-const PROMPT = 'Tạo dashboard tổng kết điểm cuối năm lớp 7A từ bảng này: điểm trung bình từng môn, tỉ lệ kết quả học tập và top 5 học sinh.';
+const PROMPT = 'Tạo dashboard tổng kết điểm cuối năm từ bảng điểm này: điểm trung bình từng môn, tỉ lệ kết quả học tập, top 5 học sinh và bộ lọc theo môn.';
 const SUBJECTS = ['Toán', 'Ngữ văn', 'Tiếng Anh', 'KHTN', 'LS & ĐL'];
 const NAMES = ['Nguyễn Minh Anh', 'Trần Gia Bảo', 'Lê Ngọc Châu', 'Phạm Đức Duy', 'Hoàng Thu Hà', 'Vũ Quốc Huy', 'Đặng Khánh Linh', 'Bùi Tuấn Kiệt', 'Đỗ Mai Phương', 'Ngô Thanh Tâm', 'Dương Bảo Ngọc', 'Lý Hoàng Nam', 'Phan Thảo Vy', 'Võ Đăng Khoa', 'Trịnh Hải Yến', 'Huỳnh Gia Hân', 'Mai Đức Thắng', 'Tô Minh Thư', 'Hồ Nhật Quang', 'Châu Ngọc Diệp', 'Lâm Phúc Hưng', 'Cao Thùy Dung', 'Đinh Trọng Nhân', 'Quách Bảo Trâm', 'Tạ Quang Vinh', 'Lương Hà My', 'Kiều Minh Khôi', 'Âu Thanh Trúc', 'La Gia Huy', 'Thái An Nhiên', 'Mạc Đức Long', 'Triệu Khả Hân', 'Từ Hoài An', 'Lục Thiên Phúc', 'Ông Mỹ Duyên', 'Giang Tấn Phát', 'Văn Ngọc Hân', 'Hà Quốc Bảo', 'Tiêu Kim Ngân', 'Khúc Minh Trí'];
 
@@ -220,13 +250,13 @@ const vi = (x) => x.toFixed(1).replace('.', ',');
 const cls = { 'Tốt': 'k-tot', 'Khá': 'k-kha', 'Đạt': 'k-dat', 'Chưa đạt': 'k-chua' };
 
 // Trang tính
-const cols = ['', 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I'];
-const widths = [40, 46, 168, 64, 70, 78, 64, 70, 70, 96];
+const cols = ['', 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L'];
+const widths = [40, 46, 168, 64, 70, 78, 64, 70, 70, 96, 100, 100, 100];
 let html = '<colgroup>' + widths.map((w) => `<col style="width:${w}px">`).join('') + '</colgroup>';
 html += '<thead><tr>' + cols.map((c) => `<th>${c}</th>`).join('') + '</tr></thead><tbody>';
-html += `<tr class="head"><td class="rh">1</td><td>STT</td><td>Họ và tên</td>${SUBJECTS.map((s) => `<td>${s}</td>`).join('')}<td>ĐTB</td><td>Kết quả</td></tr>`;
+html += `<tr class="head"><td class="rh">1</td><td>STT</td><td>Họ và tên</td>${SUBJECTS.map((s) => `<td>${s}</td>`).join('')}<td>ĐTB</td><td>Kết quả</td><td style="background:#fff"></td><td style="background:#fff"></td><td style="background:#fff"></td></tr>`;
 STUDENTS.slice(0, 22).forEach((s, i) => {
-  html += `<tr><td class="rh">${i + 2}</td><td class="num">${s.stt}</td><td>${s.name}</td>${s.scores.map((x) => `<td class="num">${vi(x)}</td>`).join('')}<td class="num"><b style="font-weight:500">${vi(s.avg)}</b></td><td class="tag"><span class="${cls[s.result]}">${s.result}</span></td></tr>`;
+  html += `<tr><td class="rh">${i + 2}</td><td class="num">${s.stt}</td><td>${s.name}</td>${s.scores.map((x) => `<td class="num">${vi(x)}</td>`).join('')}<td class="num"><b style="font-weight:500">${vi(s.avg)}</b></td><td class="tag"><span class="${cls[s.result]}">${s.result}</span></td><td></td><td></td><td></td></tr>`;
 });
 document.getElementById('table').innerHTML = html + '</tbody>';
 
@@ -235,17 +265,17 @@ const n = STUDENTS.length;
 const classAvg = STUDENTS.reduce((a, s) => a + s.avg, 0) / n;
 const subjAvg = SUBJECTS.map((_, j) => STUDENTS.reduce((a, s) => a + s.scores[j], 0) / n);
 const counts = ['Tốt', 'Khá', 'Đạt', 'Chưa đạt'].map((k) => STUDENTS.filter((s) => s.result === k).length);
-const pct = (c) => Math.round(c / n * 1000) / 10;
+const pct = (c) => String(Math.round(c / n * 1000) / 10).replace('.', ',');
 const top5 = [...STUDENTS].sort((a, b) => b.avg - a.avg || a.stt - b.stt).slice(0, 5);
 window.STATS = { classAvg, subjAvg, counts, top5: top5.map((s) => s.name + ' ' + s.avg) };
 
 document.getElementById('kpis').innerHTML = [
   ['', 'Sĩ số', n, 'học sinh'],
   ['', 'Điểm TB cả lớp', vi(classAvg), 'trên thang 10'],
-  ['kpi--g', 'Kết quả Tốt', counts[0], `${String(pct(counts[0])).replace('.', ',')}% cả lớp`],
-  ['kpi--b', 'Kết quả Khá', counts[1], `${String(pct(counts[1])).replace('.', ',')}% cả lớp`],
+  ['kpi--g', 'Kết quả Tốt', counts[0], `${pct(counts[0])}% cả lớp`],
+  ['kpi--b', 'Kết quả Khá', counts[1], `${pct(counts[1])}% cả lớp`],
 ].map(([c, l, v, s]) => `<div class="kpi ${c}"><small>${l}</small><b data-to="${v}">${v}</b><span>${s}</span></div>`).join('');
-document.getElementById('bars').insertAdjacentHTML('beforeend', subjAvg.map((a) => `<div class="bar"><b></b><i></i></div>`).join(''));
+document.getElementById('bars').insertAdjacentHTML('beforeend', subjAvg.map(() => '<div class="bar"><b></b><i></i></div>').join(''));
 document.getElementById('blabels').innerHTML = SUBJECTS.map((s) => `<span>${s}</span>`).join('');
 const COLORS = ['#34a853', '#4285f4', '#fbbc04', '#ea4335'];
 document.getElementById('legend').innerHTML = ['Tốt', 'Khá', 'Đạt', 'Chưa đạt'].map((k, i) => `<li><i style="background:${COLORS[i]}"></i>${k}<b>${counts[i]} HS</b></li>`).join('');
@@ -272,16 +302,35 @@ function donut(k) {
     }
     a0 = a1;
   });
-  s += `<text x="75" y="72" text-anchor="middle" font-family="Google Sans Flex, Arial" font-size="22" font-weight="700" fill="#1f1f1f">${String(pct(counts[0] + counts[1])).replace('.', ',')}%</text><text x="75" y="90" text-anchor="middle" font-family="Google Sans Flex, Arial" font-size="10.5" fill="#5f6368">Tốt và Khá</text>`;
+  s += `<text x="75" y="72" text-anchor="middle" font-family="Google Sans Flex, Arial" font-size="22" font-weight="700" fill="#1f1f1f">${pct(counts[0] + counts[1])}%</text><text x="75" y="90" text-anchor="middle" font-family="Google Sans Flex, Arial" font-size="10.5" fill="#5f6368">Tốt và Khá</text>`;
   $('#donut').innerHTML = s;
 }
 
 window.render = (t) => {
+  const zoom = $('#zoom');
+  zoom.style.transform = 'none'; // đo vị trí trong hệ tọa độ chưa phóng to
+
+  // Mở khung Gemini: trang tính co lại
+  const pk = ease(span(t, T.panel));
+  document.documentElement.style.setProperty('--left', lerp(1272, 866, pk) + 'px');
+  $('#panel').style.transform = `translateX(${(1 - pk) * 420}px)`;
+  $('#gem').classList.toggle('on', t >= T.clickGem);
+
+  // Menu Công cụ > Tạo canvas
+  const menuOpen = t >= T.clickTools && t < T.clickCanvas + 120;
+  $('#menu').style.opacity = menuOpen ? out(span(t, [T.clickTools, T.clickTools + 150])) : 0;
+  $('#mcanvas').classList.toggle('hl', t >= T.cursorToCanvas[1] - 100);
+  const canvasMode = t >= T.clickCanvas;
+  $('#cchip').style.display = canvasMode ? 'flex' : 'none';
+  $('#tools').style.display = canvasMode ? 'none' : '';
+  const sk = out(span(t, [T.clickCanvas, T.clickCanvas + 300]));
+  $('#sugA').style.opacity = 1 - sk; $('#sugB').style.opacity = sk;
+
   // Gõ yêu cầu, gửi đi
   const sent = t >= T.clickSend;
   const c = t < T.typeStart || sent ? 0 : Math.min(PROMPT.length, Math.floor((t - T.typeStart) / T.typeStep) + 1);
   $('#typed').textContent = PROMPT.slice(0, c);
-  const focused = t >= T.clickInput && !sent;
+  const focused = canvasMode && !sent;
   $('#input').classList.toggle('focus', focused);
   $('#input').classList.toggle('ready', c > 0);
   $('#hint').style.display = focused ? 'none' : '';
@@ -292,20 +341,18 @@ window.render = (t) => {
   $('#bubble').style.opacity = out(span(t, [T.clickSend, T.clickSend + 250]));
 
   // Phản hồi của Gemini
-  $('#reply').style.opacity = out(span(t, [T.reading, T.reading + 250]));
-  const st = [T.reading, T.building, T.done].filter((s) => t >= s).length - 1;
+  $('#reply').style.opacity = out(span(t, [T.collecting, T.collecting + 250]));
+  const st = [T.collecting, T.compiling, T.fixing, T.done].filter((s) => t >= s).length - 1;
   $$('.reply__text > span').forEach((s, i) => (s.style.opacity = i === st ? 1 : 0));
   $('#rspark').style.transform = t < T.done ? `rotate(${t * .3}deg)` : 'none';
-  $('#made').style.opacity = out(span(t, [T.done + 150, T.done + 450]));
+  $('#thumbs').style.opacity = out(span(t, [T.done + 200, T.done + 500]));
 
-  // Khung chờ rồi dashboard
-  $('#skel').style.opacity = Math.min(out(span(t, [T.skel, T.skel + 300])), 1 - clamp(span(t, [T.dash, T.dash + 300])));
-  $$('.skel span').forEach((b, i) => (b.style.backgroundPosition = `${100 - ((t / 14 + i * 20) % 300)}% 0`));
-  const dk = out(span(t, [T.dash, T.dash + 400]));
-  $('#dash').style.opacity = dk;
-  $('#dash').style.transform = `translateY(${(1 - dk) * 14}px)`;
+  // Canvas mở thành trang tính mới
+  const ck = out(span(t, [T.canvas, T.canvas + 350]));
+  $('#dash').style.opacity = ck; $('#cvbar').style.opacity = ck;
+  $('#tab2').style.opacity = out(span(t, [T.canvas - 200, T.canvas + 100]));
+  $('#tab1').classList.toggle('on', t < T.canvas); $('#tab2').classList.toggle('on', t >= T.canvas);
   $$('.kpi').forEach((k, i) => (k.style.opacity = out(span(t, [T.kpis + i * 90, T.kpis + i * 90 + 300]))));
-  // Số đếm tăng dần
   $$('.kpi b').forEach((b) => {
     const to = b.dataset.to; const k = ease(span(t, [T.kpis, T.kpis + 900]));
     b.textContent = to.includes(',') ? vi(parseFloat(to.replace(',', '.')) * k) : Math.round(Number(to) * k);
@@ -320,30 +367,34 @@ window.render = (t) => {
   donut(ease(span(t, [T.donut, T.donut + 900])));
   $$('#top5 tbody tr').forEach((r, i) => (r.style.opacity = out(span(t, [T.top + i * 110, T.top + i * 110 + 300]))));
 
-  // Con trỏ chuột: ô nhập, nút gửi, rồi rê lên cột Tiếng Anh
+  // Con trỏ chuột: nút Gemini, Công cụ, Tạo canvas, nút gửi, rồi rê lên cột Tiếng Anh
   const hotBar = $$('.bar')[HOT].querySelector('i');
   const hb = hotBar.getBoundingClientRect();
-  const P = { start: [1180, 760], input: centerOf($('#input')), send: centerOf($('#send')), hot: [hb.left + hb.width / 2, hb.top + 30] };
-  P.input[0] -= 60;
+  const P = { start: [760, 520], gem: centerOf($('#gem')), tools: centerOf(canvasMode ? $('#cchip') : $('#tools')), canvas: centerOf($('#mcanvas')), send: centerOf($('#send')), hot: [hb.left + hb.width / 2, hb.top + 30] };
+  P.tools = [P.tools[0] + 2, P.tools[1] + 2];
   const hovering = t >= T.hoverIn[1] && t < T.tipOff;
   $$('.bar').forEach((b, i) => b.classList.toggle('hot', i === HOT && hovering));
   let pos = P.start;
-  for (const [win, a, b] of [[T.cursorToInput, P.start, P.input], [T.cursorToSend, P.input, P.send], [T.hoverIn, P.send, P.hot]])
+  for (const [win, a, b] of [[T.cursorToGem, P.start, P.gem], [T.cursorToTools, P.gem, P.tools], [T.cursorToCanvas, P.tools, P.canvas], [T.cursorToSend, P.canvas, P.send], [T.hoverIn, P.send, P.hot]])
     if (t >= win[0]) { const k = ease(span(t, win)); pos = [lerp(a[0], b[0], k), lerp(a[1], b[1], k)]; }
-  const clicks = [T.clickInput, T.clickSend];
+  const clicks = [T.clickGem, T.clickTools, T.clickCanvas, T.clickSend];
   const pressed = clicks.some((x) => t >= x && t < x + 160);
   $('#cursor').style.transform = `translate(${pos[0] - 3}px, ${pos[1] - 2}px) scale(${pressed ? .85 : 1})`;
   $('#cursor').style.opacity = t < T.clickSend + 500 ? 1 : t < T.hoverIn[0] ? 1 - clamp(span(t, [T.clickSend + 500, T.clickSend + 800])) : clamp(span(t, [T.hoverIn[0], T.hoverIn[0] + 250]));
   const rc = clicks.find((x) => t >= x && t < x + 450);
   if (rc !== undefined) { const k = (t - rc) / 450; $('#ring').style.opacity = .9 * (1 - k); $('#ring').style.transform = `translate(${pos[0]}px, ${pos[1]}px) scale(${lerp(.4, 1.3, k)})`; }
   else $('#ring').style.opacity = 0;
-  // Chú thích khi rê chuột
   const tip = $('#tip');
   const pr = $('#pbar').getBoundingClientRect();
   tip.innerHTML = `<b>${SUBJECTS[HOT]}</b><br>Điểm TB: ${vi(subjAvg[HOT])}<br>Cao nhất: ${vi(Math.max(...STUDENTS.map((s) => s.scores[HOT])))} · Thấp nhất: ${vi(Math.min(...STUDENTS.map((s) => s.scores[HOT])))}`;
   tip.style.left = (hb.left - pr.left + hb.width / 2 + 14) + 'px';
   tip.style.top = (hb.top - pr.top + 6) + 'px';
   tip.style.opacity = t >= T.tipOn && t < T.tipOff ? out(span(t, [T.tipOn, T.tipOn + 200])) : 0;
+
+  // Phóng to vào canvas như video gốc
+  const z = lerp(1, T.zoomTo, ease(span(t, T.zoom)));
+  const [ox, oy] = T.zoomAt;
+  zoom.style.transform = `translate(${ox - ox * z}px, ${oy - oy * z}px) scale(${z})`;
 
   // Mờ đầu và cuối để GIF lặp lại êm
   $('#fade').style.opacity = Math.max(1 - clamp(span(t, T.fadeIn)), clamp(span(t, T.fadeOut)));
