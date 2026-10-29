@@ -1,0 +1,301 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<title>Gemini trong Google Slides</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Google+Sans+Flex:wght@400;500;700&display=block">
+<link rel="stylesheet" href="https://unpkg.com/@phosphor-icons/web@2.1.1/src/regular/style.css">
+<link rel="stylesheet" href="https://unpkg.com/@phosphor-icons/web@2.1.1/src/fill/style.css">
+<style>
+/* Cảnh minh họa Gemini trong Google Slides, khung 1272 x 788.
+   Mọi chuyển động nằm trên một trục thời gian (ms); render.js gọi window.render(t) để chụp từng khung. */
+:root { --ink: #1f1f1f; --muted: #5f6368; --line: #dadce0; --blue: #0b57d0; --green: #188038; --canvas: #f8fafd; --chip: #e9eef6; }
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html, body { width: 1272px; height: 788px; overflow: hidden; background: #fff; }
+body { font-family: 'Google Sans Flex', 'Google Sans', Roboto, Arial, sans-serif; color: var(--ink); -webkit-font-smoothing: antialiased; }
+.stage { position: relative; width: 1272px; height: 788px; overflow: hidden; background: var(--canvas); }
+
+/* Thanh trên của Slides */
+.top { position: absolute; inset: 0 0 auto 0; height: 64px; background: var(--canvas); display: flex; align-items: center; gap: 12px; padding: 0 16px; }
+.slides-ico { width: 30px; height: 40px; border-radius: 4px; background: #f4b400; display: grid; place-items: center; }
+.slides-ico::after { content: ''; width: 16px; height: 11px; border: 2.5px solid #fff; border-radius: 2px; }
+.name { display: grid; gap: 2px; }
+.name__title { display: grid; font-size: 18px; }
+.name__title span { grid-area: 1 / 1; white-space: nowrap; }
+.name__title .new { opacity: 0; }
+.name__menu { font-size: 13.5px; color: #444746; display: flex; gap: 13px; }
+.top__right { margin-left: auto; display: flex; align-items: center; gap: 16px; color: #444746; font-size: 22px; }
+.pill { font-size: 14px; font-weight: 500; border-radius: 20px; padding: 9px 16px; display: flex; gap: 6px; align-items: center; }
+.pill--show { border: 1px solid #747775; color: #1f1f1f; }
+.pill--share { background: #c2e7ff; color: #001d35; }
+.pill i { font-size: 17px; }
+.gem-btn { width: 38px; height: 38px; border-radius: 50%; background: #d3e3fd; display: grid; place-items: center; }
+.avatar { width: 34px; height: 34px; border-radius: 50%; background: linear-gradient(135deg,#81c995,#1e8e3e); color: #fff; display: grid; place-items: center; font-size: 15px; font-weight: 700; }
+.toolbar { position: absolute; left: 12px; top: 68px; width: 840px; height: 38px; border-radius: 20px; background: #edf2fa; display: flex; align-items: center; gap: 18px; padding: 0 16px; color: #444746; font-size: 18px; }
+.toolbar small { font-size: 13px; }
+
+/* Vùng trang chiếu bên trái */
+.canvas { position: absolute; left: 0; top: 110px; width: 866px; bottom: 0; }
+.empty { position: absolute; inset: 0; display: grid; place-content: center; justify-items: center; text-align: center; gap: 14px; }
+.empty h3 { font-size: 22px; font-weight: 400; margin-top: 8px; }
+.empty p { font-size: 14.5px; color: #444746; line-height: 1.5; max-width: 340px; }
+.grid { position: absolute; left: 34px; top: 18px; display: grid; grid-template-columns: repeat(3, 256px); gap: 30px 24px; opacity: 0; }
+.thumb { position: relative; }
+.thumb__box { position: relative; width: 256px; height: 144px; border-radius: 6px; overflow: hidden; background: linear-gradient(110deg, #e8f0fe 0%, #f3e8fd 40%, #e8f0fe 80%); background-size: 250% 100%; box-shadow: 0 0 0 1px #e3e3e3; }
+.thumb__box svg { position: absolute; inset: 0; width: 100%; height: 100%; opacity: 0; }
+.thumb__n { position: absolute; left: -2px; bottom: -20px; font-size: 12px; color: #444746; }
+.thumb.sel .thumb__box { box-shadow: 0 0 0 3px #f4b400; }
+
+/* Bảng Gemini bên phải */
+.panel { position: absolute; right: 10px; top: 72px; bottom: 10px; width: 392px; background: #fff; border-radius: 18px; padding: 14px 16px 0; }
+.panel__head { display: flex; align-items: center; gap: 10px; font-size: 17px; color: #1f1f1f; }
+.panel__head i { font-size: 20px; color: #444746; }
+.panel__head .r { margin-left: auto; display: flex; gap: 14px; }
+.spark { width: 18px; height: 18px; display: inline-block; flex: none; background: conic-gradient(from 200deg, #4285f4, #9b72cb, #d96570, #4285f4); -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M12 0C12 6.6 17.4 12 24 12C17.4 12 12 17.4 12 24C12 17.4 6.6 12 0 12C6.6 12 12 6.6 12 0Z'/%3E%3C/svg%3E") center/contain no-repeat; mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M12 0C12 6.6 17.4 12 24 12C17.4 12 12 17.4 12 24C12 17.4 6.6 12 0 12C6.6 12 12 6.6 12 0Z'/%3E%3C/svg%3E") center/contain no-repeat; }
+.hero { position: absolute; left: 0; right: 0; top: 230px; text-align: center; font-size: 23px; font-weight: 500; background: linear-gradient(90deg, #4285f4, #9b72cb, #d96570, #4285f4); background-size: 200% 100%; -webkit-background-clip: text; background-clip: text; color: transparent; }
+.convo { position: absolute; left: 16px; right: 16px; top: 52px; font-size: 13.5px; line-height: 1.5; }
+.bubble { margin-left: 46px; background: var(--chip); border-radius: 18px 4px 18px 18px; padding: 10px 14px; opacity: 0; }
+.reply { margin-top: 14px; opacity: 0; }
+.reply__lead { display: flex; gap: 10px; align-items: flex-start; }
+.reply__lead .spark { margin-top: 2px; }
+.plan { margin-top: 10px; background: #f0f4f9; border-radius: 14px; padding: 12px 14px 12px; }
+.plan h4 { font-size: 14px; font-weight: 500; display: flex; gap: 8px; align-items: center; }
+.plan h4 i { font-size: 17px; color: #444746; }
+.step { margin-top: 8px; font-size: 13px; font-weight: 500; display: flex; gap: 8px; }
+.step b { font-weight: 500; color: #444746; }
+.items { list-style: none; margin: 4px 0 0 22px; display: grid; gap: 1px; }
+.items li { display: flex; gap: 8px; align-items: center; font-size: 12.5px; color: #3c4043; opacity: 0; height: 21px; }
+.items li i { font-size: 14px; color: #80868b; width: 14px; }
+.items li.done i { color: var(--green); }
+.plan__foot { display: flex; justify-content: flex-end; margin-top: 8px; }
+.gen { background: var(--blue); color: #fff; border-radius: 18px; padding: 8px 20px; font-size: 13.5px; font-weight: 500; }
+.gen.used { background: #dde1e6; color: #8a8f95; }
+.status { margin-top: 12px; display: flex; gap: 10px; align-items: center; font-size: 13.5px; color: #444746; opacity: 0; }
+.status .spark { width: 20px; height: 20px; }
+.status__text { display: grid; }
+.status__text span { grid-area: 1 / 1; opacity: 0; white-space: nowrap; }
+.status__text .final { color: var(--ink); font-weight: 500; }
+.input { position: absolute; left: 14px; right: 14px; bottom: 30px; border-radius: 22px; border: 1px solid #c4c7c5; background: #fff; padding: 12px 14px 8px; }
+.input.focus { border: 2px solid var(--blue); padding: 11px 13px 7px; }
+.input__text { font-size: 13.5px; line-height: 1.5; min-height: 20px; }
+.hint { color: #5f6368; }
+.caret { display: inline-block; width: 2px; height: 16px; background: var(--blue); vertical-align: -3px; margin-left: 1px; }
+.input__row { display: flex; align-items: center; gap: 14px; margin-top: 8px; color: #444746; font-size: 18px; }
+.send { margin-left: auto; width: 32px; height: 32px; border-radius: 50%; background: #e9eef6; color: #a3a8ad; display: grid; place-items: center; font-size: 16px; }
+.input.ready .send { background: var(--blue); color: #fff; }
+.note { position: absolute; left: 0; right: 0; bottom: 9px; text-align: center; font-size: 10.5px; color: #5f6368; }
+
+.cursor { position: absolute; left: 0; top: 0; z-index: 20; width: 26px; height: 26px; }
+.ring { position: absolute; left: 0; top: 0; z-index: 19; width: 44px; height: 44px; margin: -22px 0 0 -22px; border-radius: 50%; background: rgba(11,87,208,.25); opacity: 0; }
+.fade { position: absolute; inset: 0; background: #fff; z-index: 30; opacity: 0; pointer-events: none; }
+</style>
+</head>
+<body>
+<div class="stage">
+  <header class="top">
+    <span class="slides-ico"></span>
+    <div class="name">
+      <p class="name__title"><span class="old">Bài trình chiếu không có tiêu đề</span><span class="new">Trái Đất trong hệ Mặt Trời</span></p>
+      <p class="name__menu"><span>Tệp</span><span>Chỉnh sửa</span><span>Xem</span><span>Chèn</span><span>Định dạng</span><span>Trang trình bày</span><span>Sắp xếp</span><span>Công cụ</span><span>Trợ giúp</span></p>
+    </div>
+    <div class="top__right"><i class="ph ph-clock-counter-clockwise"></i><i class="ph ph-chat-centered-text"></i><i class="ph ph-video-camera"></i>
+      <span class="pill pill--show">Trình chiếu <i class="ph ph-caret-down"></i></span>
+      <span class="pill pill--share"><i class="ph-fill ph-lock-simple"></i>Chia sẻ</span>
+      <span class="gem-btn"><span class="spark"></span></span>
+      <span class="avatar">L</span></div>
+  </header>
+  <div class="toolbar"><i class="ph ph-magnifying-glass"></i><i class="ph ph-plus"></i><i class="ph ph-arrow-counter-clockwise"></i><i class="ph ph-arrow-clockwise"></i><i class="ph ph-printer"></i><i class="ph ph-paint-roller"></i><i class="ph ph-magnifying-glass-plus"></i><small>Vừa khít</small><i class="ph ph-cursor"></i><i class="ph ph-text-t"></i><i class="ph ph-image"></i><i class="ph ph-shapes"></i><i class="ph ph-line-segment"></i></div>
+
+  <main class="canvas">
+    <div class="empty" id="empty">
+      <svg width="230" height="190" viewBox="0 0 230 190">
+        <path d="M30 150 C 70 40, 150 30, 200 120" fill="none" stroke="#202124" stroke-width="2.5"/>
+        <rect x="58" y="44" width="120" height="84" rx="6" fill="#fff59d" stroke="#202124" stroke-width="2.5" transform="rotate(-8 118 86)"/>
+        <rect x="70" y="58" width="44" height="30" rx="3" fill="#fff" stroke="#202124" stroke-width="2"/>
+        <text x="80" y="80" font-size="16" font-family="Google Sans Flex, Arial" font-weight="500">Aa</text>
+        <rect x="128" y="30" width="72" height="56" rx="5" fill="#f8bbd0" stroke="#202124" stroke-width="2.5" transform="rotate(12 164 58)"/>
+        <path d="M164 46l4 9 9 4-9 4-4 9-4-9-9-4 9-4z" fill="#fff" stroke="#202124" stroke-width="1.6"/>
+        <rect x="34" y="118" width="58" height="40" rx="4" fill="#fff" stroke="#202124" stroke-width="2.5"/>
+        <path d="M40 150l14-14 10 8 12-14 10 20" fill="none" stroke="#202124" stroke-width="2"/>
+        <path d="M24 60l4 9 9 4-9 4-4 9-4-9-9-4 9-4z" fill="#f48fb1"/>
+        <circle cx="196" cy="20" r="6" fill="#fbc02d" stroke="#202124" stroke-width="2"/>
+        <circle cx="210" cy="140" r="6" fill="#f8bbd0"/>
+        <path d="M16 120l3 7 7 3-7 3-3 7-3-7-7-3 7-3z" fill="#fbc02d"/>
+      </svg>
+      <h3>Đang chuẩn bị bài trình chiếu</h3>
+      <p>Thêm mẫu phong cách hoặc tài liệu nguồn để cá nhân hóa bài trình chiếu ngay từ đầu</p>
+    </div>
+    <div class="grid" id="grid"></div>
+  </main>
+
+  <aside class="panel">
+    <div class="panel__head"><i class="ph ph-list"></i>Gemini <i class="ph ph-caret-down" style="font-size:14px;margin-left:-4px"></i><span class="r"><i class="ph ph-square-split-horizontal"></i><i class="ph ph-x"></i></span></div>
+    <p class="hero" id="hero">Tạo bài trình chiếu thật ấn tượng</p>
+    <div class="convo" id="convo">
+      <p class="bubble" id="bubble"></p>
+      <div class="reply" id="reply">
+        <p class="reply__lead"><span class="spark"></span><span>Đây là dàn ý đề xuất. Gemini sẽ tạo nội dung ngay trong tệp này.</span></p>
+        <div class="plan">
+          <h4><i class="ph ph-presentation-chart"></i>Trái Đất trong hệ Mặt Trời · TN&amp;XH 3</h4>
+          <p class="step"><b>1</b>Tạo slide theo dàn ý</p>
+          <ul class="items" id="items"></ul>
+          <p class="step"><b>2</b>Rà soát và hoàn thiện bài trình chiếu</p>
+          <div class="plan__foot"><span class="gen" id="gen">Tạo</span></div>
+        </div>
+        <p class="status" id="status"><span class="spark" id="sspark"></span><span class="status__text"><span>Đang phân tích yêu cầu…</span><span>Đang tạo slide</span><span>Đang hoàn thiện slide</span><span class="final">Bài trình chiếu đã sẵn sàng, gồm 8 slide.</span></span></p>
+      </div>
+    </div>
+    <div class="input" id="input">
+      <p class="input__text"><span class="hint" id="hint">Hỏi Gemini</span><span id="typed"></span><span class="caret" id="caret"></span></p>
+      <div class="input__row"><i class="ph ph-plus"></i><i class="ph ph-sliders-horizontal"></i><i class="ph ph-palette"></i><span class="send" id="send"><i class="ph ph-arrow-up"></i></span></div>
+    </div>
+    <p class="note">Gemini cho Workspace có thể mắc lỗi. <u>Tìm hiểu thêm</u></p>
+  </aside>
+
+  <div class="ring" id="ring"></div>
+  <svg class="cursor" id="cursor" viewBox="0 0 26 26"><path d="M3 2l17 11-7.5 1.2L16.5 22l-3.2 1.5-4-7.8L3 20.5z" fill="#111" stroke="#fff" stroke-width="1.6" stroke-linejoin="round"/></svg>
+  <div class="fade" id="fade"></div>
+</div>
+
+<script>
+// Trục thời gian (ms). Đổi số ở đây để chỉnh nhịp.
+const T = {
+  total: 15000, fadeIn: [0, 350], fadeOut: [14550, 15000],
+  cursorToInput: [300, 850], clickInput: 950,
+  typeStart: 1100, typeStep: 17,
+  cursorToSend: [3700, 4000], clickSend: 4100,
+  reply: 4400, itemStep: 90,
+  cursorToGen: [5600, 6100], clickGen: 6200,
+  analyzing: 6300, grid: 6800,
+  slideStart: 7300, slideStep: 480,
+  polishing: 11400, ready: 12200,
+};
+const PROMPT = 'Tạo bài giảng khoảng 8 slide môn Tự nhiên và Xã hội lớp 3, bài Trái Đất trong hệ Mặt Trời: Mặt Trời, Trái Đất, Mặt Trăng. Hình minh họa vui nhộn, có câu hỏi cuối bài.';
+const OUTLINE = ['Mở đầu: Trái Đất trong hệ Mặt Trời', 'Mặt Trời', 'Trái Đất', 'Mặt Trăng', 'Trái Đất quay quanh Mặt Trời', 'Mặt Trăng quay quanh Trái Đất', 'Em có biết?', 'Cùng trả lời nhé!'];
+
+// Hình vẽ cho slide, hệ tọa độ 320 x 180
+const F = "font-family=\"Google Sans Flex, Arial\"";
+let uid = 0;
+const stars = (n, seed, color = '#fff') => { let s = seed, out = ''; for (let i = 0; i < n; i++) { s = (s * 9301 + 49297) % 233280; const x = s / 233280 * 320; s = (s * 9301 + 49297) % 233280; const y = s / 233280 * 180; out += `<circle cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="${(i % 3) * .35 + .5}" fill="${color}" opacity=".8"/>`; } return out; };
+const sun = (x, y, r, rays = true) => {
+  let g = rays ? Array.from({ length: 12 }, (_, i) => { const a = i * Math.PI / 6; return `<line x1="${x + Math.cos(a) * r * 1.15}" y1="${y + Math.sin(a) * r * 1.15}" x2="${x + Math.cos(a) * r * 1.42}" y2="${y + Math.sin(a) * r * 1.42}" stroke="#ffb300" stroke-width="${r / 9}" stroke-linecap="round"/>`; }).join('') : '';
+  return g + `<circle cx="${x}" cy="${y}" r="${r}" fill="#ffb300"/><circle cx="${x - r * .15}" cy="${y - r * .15}" r="${r * .72}" fill="#ffd54f"/>`;
+};
+const earth = (x, y, r) => { const id = 'e' + uid++; return `<clipPath id="${id}"><circle cx="${x}" cy="${y}" r="${r}"/></clipPath><circle cx="${x}" cy="${y}" r="${r}" fill="#42a5f5"/><g clip-path="url(#${id})" fill="#66bb6a"><ellipse cx="${x - r * .45}" cy="${y - r * .35}" rx="${r * .45}" ry="${r * .3}"/><ellipse cx="${x + r * .35}" cy="${y + r * .25}" rx="${r * .38}" ry="${r * .5}"/><ellipse cx="${x - r * .3}" cy="${y + r * .7}" rx="${r * .3}" ry="${r * .18}"/></g><circle cx="${x}" cy="${y}" r="${r}" fill="none" stroke="#1e88e5" stroke-width="${r / 14}"/>`; };
+const moon = (x, y, r) => `<circle cx="${x}" cy="${y}" r="${r}" fill="#cfd8dc"/><circle cx="${x - r * .3}" cy="${y - r * .25}" r="${r * .22}" fill="#b0bec5"/><circle cx="${x + r * .35}" cy="${y + r * .1}" r="${r * .16}" fill="#b0bec5"/><circle cx="${x - r * .05}" cy="${y + r * .45}" r="${r * .12}" fill="#b0bec5"/>`;
+const text = (x, y, s, size, color, weight = 400, anchor = 'start') => `<text x="${x}" y="${y}" ${F} font-size="${size}" font-weight="${weight}" fill="${color}" text-anchor="${anchor}">${s}</text>`;
+const bullets = (x, y, lines, color) => lines.map((l, i) => text(x, y + i * 17, '• ' + l, 10, color)).join('');
+const orbit = (cx, cy, rx, ry, color) => `<ellipse cx="${cx}" cy="${cy}" rx="${rx}" ry="${ry}" fill="none" stroke="${color}" stroke-width="1.4" stroke-dasharray="4 4"/>`;
+const arrow = (x, y, color, flip = false) => `<path d="M${x} ${y} l${flip ? 7 : -7} -4 l0 8 z" fill="${color}"/>`;
+
+const SLIDES = [
+  `<rect width="320" height="180" fill="#13204a"/>${stars(40, 7)}${sun(262, 46, 24)}${earth(206, 120, 22)}${moon(244, 150, 7)}
+   ${text(22, 72, 'Trái Đất trong', 22, '#fff', 700)}${text(22, 98, 'hệ Mặt Trời', 22, '#fff', 700)}
+   <rect x="22" y="112" width="112" height="18" rx="9" fill="#ffd54f"/>${text(78, 125, 'Tự nhiên và Xã hội 3', 9.5, '#13204a', 700, 'middle')}
+   ${text(22, 150, 'Chủ đề: Trái Đất và bầu trời', 9, '#c5cae9')}`,
+  `<rect width="320" height="180" fill="#fff8e1"/><circle cx="240" cy="92" r="70" fill="#ffecb3"/>${sun(240, 92, 40)}
+   ${text(22, 46, 'Mặt Trời', 22, '#e65100', 700)}${bullets(22, 76, ['Là một ngôi sao rất lớn', 'Tự phát ra ánh sáng và nhiệt', 'Chiếu sáng, sưởi ấm Trái Đất'], '#4e342e')}`,
+  `<rect width="320" height="180" fill="#e3f2fd"/><circle cx="240" cy="92" r="62" fill="#bbdefb"/>${earth(240, 92, 44)}
+   ${text(22, 46, 'Trái Đất', 22, '#0d47a1', 700)}${bullets(22, 76, ['Hành tinh chúng ta đang sống', 'Có nước, không khí, cây cối', 'Có hình gần giống quả cầu'], '#263238')}`,
+  `<rect width="320" height="180" fill="#1a237e"/>${stars(30, 3)}<circle cx="240" cy="92" r="58" fill="#283593"/>${moon(240, 92, 40)}
+   ${text(22, 46, 'Mặt Trăng', 22, '#fff', 700)}${bullets(22, 76, ['Là vệ tinh của Trái Đất', 'Không tự phát ra ánh sáng', 'Sáng nhờ ánh sáng Mặt Trời'], '#e8eaf6')}`,
+  `<rect width="320" height="180" fill="#fffde7"/>${text(160, 30, 'Trái Đất quay quanh Mặt Trời', 15, '#e65100', 700, 'middle')}
+   ${orbit(160, 102, 112, 42, '#8d6e63')}${sun(160, 102, 18)}${earth(272, 102, 11)}${arrow(158, 144, '#8d6e63')}${arrow(162, 60, '#8d6e63', true)}
+   ${text(160, 166, 'Một vòng hết khoảng 365 ngày, tức là 1 năm', 9.5, '#5d4037', 400, 'middle')}`,
+  `<rect width="320" height="180" fill="#e8eaf6"/>${text(160, 30, 'Mặt Trăng quay quanh Trái Đất', 15, '#283593', 700, 'middle')}
+   ${orbit(160, 102, 88, 36, '#5c6bc0')}${earth(160, 102, 22)}${moon(248, 102, 8)}${arrow(158, 138, '#5c6bc0')}${arrow(162, 66, '#5c6bc0', true)}
+   ${text(160, 166, 'Một vòng hết khoảng 1 tháng', 9.5, '#283593', 400, 'middle')}`,
+  `<rect width="320" height="180" fill="#fce4ec"/>${text(22, 40, 'Em có biết?', 20, '#ad1457', 700)}
+   ${sun(42, 112, 20, false)}${earth(278, 112, 14)}<line x1="68" y1="112" x2="258" y2="112" stroke="#f9a825" stroke-width="2" stroke-dasharray="6 5"/>${arrow(258, 112, '#f9a825', true)}
+   <rect x="96" y="82" width="132" height="20" rx="10" fill="#fff"/>${text(162, 96, 'khoảng 8 phút', 10.5, '#ad1457', 700, 'middle')}
+   ${text(22, 62, 'Ánh sáng Mặt Trời đi đến Trái Đất mất khoảng 8 phút.', 10, '#4a148c')}`,
+  `<rect width="320" height="180" fill="#e8f5e9"/>${text(160, 36, 'Cùng trả lời nhé!', 20, '#1b5e20', 700, 'middle')}
+   ${text(160, 66, 'Mặt Trăng quay quanh thiên thể nào?', 12, '#263238', 500, 'middle')}
+   <rect x="40" y="86" width="112" height="44" rx="10" fill="#fff" stroke="#a5d6a7" stroke-width="1.5"/>${sun(66, 108, 10, false)}${text(84, 112, 'A. Mặt Trời', 10.5, '#263238', 500)}
+   <rect x="168" y="86" width="112" height="44" rx="10" fill="#c8e6c9" stroke="#2e7d32" stroke-width="2"/>${earth(192, 108, 10)}${text(208, 112, 'B. Trái Đất', 10.5, '#1b5e20', 700)}
+   <circle cx="276" cy="88" r="9" fill="#2e7d32"/><path d="M271.5 88l3 3 5-6" fill="none" stroke="#fff" stroke-width="2"/>
+   ${text(160, 156, 'Giơ tay thật nhanh nào!', 9.5, '#2e7d32', 400, 'middle')}`,
+];
+
+const $ = (s) => document.querySelector(s);
+const $$ = (s) => [...document.querySelectorAll(s)];
+$('#grid').innerHTML = SLIDES.map((s, i) => `<div class="thumb${i ? '' : ' sel'}"><div class="thumb__box"><svg viewBox="0 0 320 180">${s}</svg></div><span class="thumb__n">${i + 1}</span></div>`).join('');
+$('#items').innerHTML = OUTLINE.map((o) => `<li><i class="ph ph-circle"></i>${o}</li>`).join('');
+
+const clamp = (x) => Math.min(1, Math.max(0, x));
+const ease = (x) => { x = clamp(x); return x < .5 ? 4 * x * x * x : 1 - Math.pow(-2 * x + 2, 3) / 2; };
+const out = (x) => 1 - Math.pow(1 - clamp(x), 3);
+const span = (t, [a, b]) => (t - a) / (b - a);
+const lerp = (a, b, k) => a + (b - a) * k;
+const centerOf = (el) => { const r = el.getBoundingClientRect(); return [r.left + r.width / 2, r.top + r.height / 2]; };
+
+window.render = (t) => {
+  // Gõ yêu cầu, gửi đi
+  const sent = t >= T.clickSend;
+  const n = t < T.typeStart || sent ? 0 : Math.min(PROMPT.length, Math.floor((t - T.typeStart) / T.typeStep) + 1);
+  $('#typed').textContent = PROMPT.slice(0, n);
+  const focused = t >= T.clickInput && !sent;
+  $('#input').classList.toggle('focus', focused);
+  $('#input').classList.toggle('ready', n > 0);
+  $('#hint').style.display = focused ? 'none' : '';
+  $('#caret').style.display = focused && Math.floor(t / 500) % 2 === 0 ? '' : 'none';
+  $('#hero').style.opacity = 1 - clamp(span(t, [T.clickSend, T.clickSend + 200]));
+  $('#hero').style.backgroundPosition = `${-(t / 30) % 200}% 0`;
+  $('#bubble').textContent = PROMPT;
+  $('#bubble').style.opacity = out(span(t, [T.clickSend, T.clickSend + 250]));
+
+  // Dàn ý
+  $('#reply').style.opacity = out(span(t, [T.reply, T.reply + 300]));
+  const slideAt = (i) => T.slideStart + i * T.slideStep;
+  $$('#items li').forEach((li, i) => {
+    li.style.opacity = out(span(t, [T.reply + 200 + i * T.itemStep, T.reply + 450 + i * T.itemStep]));
+    const done = t >= slideAt(i) + 300;
+    li.classList.toggle('done', done);
+    li.firstChild.className = done ? 'ph-fill ph-check-circle' : 'ph ph-circle';
+  });
+  $('#gen').classList.toggle('used', t >= T.clickGen);
+
+  // Trạng thái
+  $('#status').style.opacity = out(span(t, [T.analyzing, T.analyzing + 250]));
+  const states = [T.analyzing, T.slideStart, T.polishing, T.ready];
+  const cur = states.filter((s) => t >= s).length - 1;
+  $$('.status__text span').forEach((s, i) => (s.style.opacity = i === cur ? 1 : 0));
+  $('#sspark').style.transform = t < T.ready ? `rotate(${t * .3}deg)` : 'none';
+
+  // Lưới slide
+  $('#empty').style.opacity = 1 - clamp(span(t, [T.grid - 300, T.grid]));
+  $('#grid').style.opacity = out(span(t, [T.grid, T.grid + 300]));
+  $$('.thumb__box').forEach((b, i) => {
+    b.style.backgroundPosition = `${100 - ((t / 12 + i * 15) % 250)}% 0`;
+    const k = out(span(t, [slideAt(i), slideAt(i) + 400]));
+    const svg = b.firstChild;
+    svg.style.opacity = k;
+    svg.style.transform = `scale(${lerp(1.06, 1, k)})`;
+    // Lúc hoàn thiện: slide chớp sáng nhẹ lần lượt
+    const p = clamp(span(t, [T.polishing + i * 80, T.polishing + i * 80 + 400]));
+    svg.style.filter = p > 0 && p < 1 ? `brightness(${1 + Math.sin(p * Math.PI) * .18})` : '';
+  });
+  const nk = out(span(t, [T.ready, T.ready + 400]));
+  $('.name__title .old').style.opacity = 1 - nk; $('.name__title .new').style.opacity = nk;
+
+  // Con trỏ chuột
+  const P = { start: [1180, 760], input: centerOf($('#input')), send: centerOf($('#send')), gen: centerOf($('#gen')) };
+  P.input[0] -= 60;
+  const path = [[T.cursorToInput, P.start, P.input], [T.cursorToSend, P.input, P.send], [T.cursorToGen, P.send, P.gen]];
+  let pos = P.start;
+  for (const [win, a, b] of path) if (t >= win[0]) { const k = ease(span(t, win)); pos = [lerp(a[0], b[0], k), lerp(a[1], b[1], k)]; }
+  const clicks = [T.clickInput, T.clickSend, T.clickGen];
+  const pressed = clicks.some((c) => t >= c && t < c + 160);
+  $('#cursor').style.transform = `translate(${pos[0] - 3}px, ${pos[1] - 2}px) scale(${pressed ? .85 : 1})`;
+  $('#cursor').style.opacity = 1 - clamp(span(t, [T.clickGen + 600, T.clickGen + 900]));
+  const rc = clicks.find((c) => t >= c && t < c + 450);
+  if (rc !== undefined) { const k = (t - rc) / 450; $('#ring').style.opacity = .9 * (1 - k); $('#ring').style.transform = `translate(${pos[0]}px, ${pos[1]}px) scale(${lerp(.4, 1.3, k)})`; }
+  else $('#ring').style.opacity = 0;
+
+  // Mờ đầu và cuối để GIF lặp lại êm
+  $('#fade').style.opacity = Math.max(1 - clamp(span(t, T.fadeIn)), clamp(span(t, T.fadeOut)));
+};
+window.TOTAL = T.total;
+</script>
+</body>
+</html>

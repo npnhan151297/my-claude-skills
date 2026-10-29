@@ -1,17 +1,19 @@
-// Render scene.html thành GIF: node render.js [out.gif] [fps]
+// Render một cảnh HTML thành GIF: node render.js <canh.html> <out.gif> [fps]
+// Ví dụ: node render.js forms.html ../gemini-nanglucso/assets/gemini-forms.gif
 // Cần Playwright (Chromium) và ffmpeg.
 const { chromium } = require('playwright');
 const { execFileSync } = require('child_process');
 const fs = require('fs'); const path = require('path'); const os = require('os');
 
 (async () => {
-  const out = path.resolve(process.argv[2] || 'gemini-forms.gif');
-  const fps = Number(process.argv[3] || 15);
+  const scene = path.resolve(process.argv[2]);
+  const out = path.resolve(process.argv[3] || 'out.gif');
+  const fps = Number(process.argv[4] || 15);
   const only = process.env.ONLY ? process.env.ONLY.split(',').map(Number) : null; // chụp thử vài mốc thời gian
   const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'frames-'));
   const browser = await chromium.launch();
   const page = await browser.newPage({ viewport: { width: 1272, height: 788 } });
-  await page.goto('file://' + path.join(__dirname, 'scene.html'), { waitUntil: 'networkidle' });
+  await page.goto('file://' + scene, { waitUntil: 'networkidle' });
   await page.evaluate(() => document.fonts.ready);
   const total = await page.evaluate(() => window.TOTAL);
   const times = only || Array.from({ length: Math.round(total / 1000 * fps) }, (_, i) => i * 1000 / fps);
