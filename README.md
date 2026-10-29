@@ -19,6 +19,7 @@ git clone --depth 1 https://github.com/npnhan151297/my-claude-skills /tmp/my-cla
 | Tiền kỳ | `ad-script`, `hook-writer`, `on-screen-copy-vi`, `storyboard-preview`, `asset-to-scene`, `ad-reference-breakdown` |
 | Dựng | `pacing-rhythm`, `beat-sync`, `scene-assembly`, `b-roll-placement`, `cut-craft` |
 | Hiệu ứng | `motion-principles`, `kinetic-typography`, `vietnamese-type-safety`, `transitions-pro`, `stat-counter-chart`, `lower-thirds`, `keyword-emphasis`, `logo-reveal`, `cta-endcard` |
+| Phong cách Google for Education | `gfe-motion-style` (quét sọc 4 màu, lưới ô, lower-third đường kẻ, chữ số nổi khối, đường mạch) |
 | Màu và âm thanh | `brand-color-grade`, `text-contrast-guard`, `music-edit`, `sfx-layer`, `loudness-master` |
 | Phụ đề và xuất bản | `safe-zone-layout`, `reframe-16x9`, `captions-style`, `render-qc`, `cover-frame` |
 | Video sự kiện từ footage thô | `dung-video-tu-footage` |
