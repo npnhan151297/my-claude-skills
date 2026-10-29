@@ -1,0 +1,294 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<title>Gemini trong Gmail</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Google+Sans+Flex:wght@400;500;700&display=block">
+<link rel="stylesheet" href="https://unpkg.com/@phosphor-icons/web@2.1.1/src/regular/style.css">
+<link rel="stylesheet" href="https://unpkg.com/@phosphor-icons/web@2.1.1/src/fill/style.css">
+<style>
+/* Cảnh minh họa Gemini trong Gmail cho hiệu trưởng: Hộp thư AI gợi ý việc cần làm, mở thư, dùng câu trả lời gợi ý, viết gọn rồi gửi. Khung 1272 x 788.
+   Mọi chuyển động nằm trên một trục thời gian (ms); render.js gọi window.render(t) để chụp từng khung. */
+:root { --ink: #1f1f1f; --muted: #5f6368; --line: #eceff1; --blue: #0b57d0; --link: #0b57d0; --bg: #f6f8fc; }
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html, body { width: 1272px; height: 788px; overflow: hidden; background: #fff; }
+body { font-family: 'Google Sans Flex', 'Google Sans', Roboto, Arial, sans-serif; color: var(--ink); -webkit-font-smoothing: antialiased; }
+.stage { position: relative; width: 1272px; height: 788px; overflow: hidden; background: var(--bg); }
+.spark { width: 18px; height: 18px; display: inline-block; flex: none; background: conic-gradient(from 200deg, #4285f4, #9b72cb, #d96570, #4285f4); -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M12 0C12 6.6 17.4 12 24 12C17.4 12 12 17.4 12 24C12 17.4 6.6 12 0 12C6.6 12 12 6.6 12 0Z'/%3E%3C/svg%3E") center/contain no-repeat; mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M12 0C12 6.6 17.4 12 24 12C17.4 12 12 17.4 12 24C12 17.4 6.6 12 0 12C6.6 12 12 6.6 12 0Z'/%3E%3C/svg%3E") center/contain no-repeat; }
+
+/* Khung Gmail */
+.top { position: absolute; inset: 0 0 auto 0; height: 64px; display: flex; align-items: center; gap: 16px; padding: 0 18px; }
+.top > i { font-size: 22px; color: #444746; }
+.logo { display: flex; align-items: center; gap: 8px; font-size: 22px; color: #444746; width: 200px; }
+.search { width: 700px; height: 46px; border-radius: 23px; background: #e9eef6; display: flex; align-items: center; gap: 14px; padding: 0 18px; font-size: 15px; color: #444746; }
+.search i { font-size: 20px; }
+.search .r { margin-left: auto; }
+.top__r { margin-left: auto; display: flex; gap: 18px; align-items: center; font-size: 22px; color: #444746; }
+.avatar { width: 34px; height: 34px; border-radius: 50%; background: linear-gradient(135deg,#5e97f6,#3367d6); color: #fff; display: grid; place-items: center; font-size: 15px; font-weight: 700; }
+.nav { position: absolute; left: 0; top: 64px; width: 250px; padding: 4px 10px; font-size: 14px; }
+.compose { display: inline-flex; gap: 12px; align-items: center; background: #c2e7ff; border-radius: 16px; padding: 17px 22px; font-size: 14.5px; font-weight: 500; margin: 4px 0 12px 4px; }
+.compose i { font-size: 20px; }
+.nav p { display: flex; gap: 16px; align-items: center; padding: 6px 14px; border-radius: 16px; height: 32px; }
+.nav p i { font-size: 18px; color: #444746; }
+.nav p b { margin-left: auto; font-size: 12.5px; font-weight: 500; }
+.nav p.on { background: #d3e3fd; font-weight: 500; }
+.nav .labels { display: flex; justify-content: space-between; padding: 18px 14px 0; font-size: 15px; font-weight: 500; }
+.main { position: absolute; left: 252px; right: 58px; top: 64px; bottom: 14px; background: #fff; border-radius: 16px; overflow: hidden; }
+.side { position: absolute; right: 0; top: 64px; width: 58px; display: grid; justify-items: center; gap: 22px; padding-top: 14px; }
+.side span { width: 22px; height: 22px; border-radius: 5px; }
+.screen { position: absolute; inset: 0; opacity: 0; }
+
+/* Danh sách thư */
+.tools { display: flex; gap: 22px; align-items: center; padding: 14px 18px; color: #444746; font-size: 18px; }
+.tools small { margin-left: auto; font-size: 12.5px; }
+.tabs { display: flex; border-bottom: 1px solid var(--line); font-size: 14px; color: #444746; }
+.tabs span { width: 240px; padding: 14px 18px; display: flex; gap: 14px; align-items: center; }
+.tabs .on { color: var(--blue); font-weight: 500; border-bottom: 3px solid var(--blue); }
+.tabs em { font-style: normal; background: #188038; color: #fff; font-size: 11px; border-radius: 9px; padding: 1px 7px; }
+.mail { display: flex; align-items: center; gap: 14px; padding: 0 18px; height: 40px; border-bottom: 1px solid var(--line); font-size: 14px; white-space: nowrap; overflow: hidden; }
+.mail i { font-size: 17px; color: #80868b; }
+.mail .from { width: 190px; overflow: hidden; text-overflow: ellipsis; }
+.mail .sub { flex: 1; overflow: hidden; text-overflow: ellipsis; }
+.mail .sub span { color: var(--muted); font-weight: 400; }
+.mail .time { font-size: 12.5px; width: 50px; text-align: right; }
+.mail.unread { font-weight: 700; background: #fff; }
+.mail.read { background: #f2f6fc; }
+
+/* Hộp thư AI */
+.ai { padding: 22px 36px; }
+.beta { display: inline-block; font-size: 11px; border: 1px solid #c4c7c5; border-radius: 6px; padding: 1px 6px; color: #444746; }
+.ai h1 { margin-top: 8px; font-size: 27px; line-height: 1.25; font-weight: 500; }
+.ai h1 .g { background: linear-gradient(90deg, #4285f4, #9b72cb, #d96570, #4285f4); background-size: 200% 100%; -webkit-background-clip: text; background-clip: text; color: transparent; }
+.ai h1 .b { color: #1a73e8; }
+.upd { float: right; font-size: 12px; color: var(--muted); margin-top: 6px; }
+.ai h3 { font-size: 14px; font-weight: 500; margin: 20px 0 8px; }
+.todo { background: #f2f6fc; border-radius: 12px; padding: 4px 6px; }
+.todo p { padding: 9px 12px; font-size: 13.5px; line-height: 1.5; border-radius: 10px; opacity: 0; }
+.todo p.hover { background: #e3eaf7; }
+.todo b { font-weight: 500; }
+.src { color: var(--link); }
+.src span { color: var(--muted); }
+.topic { margin-top: 10px; opacity: 0; }
+.topic h4 { font-size: 13.5px; font-weight: 500; display: flex; gap: 8px; align-items: center; }
+.topic ul { padding-left: 34px; font-size: 13px; line-height: 1.6; color: #3c4043; }
+
+/* Mở thư */
+.thread { padding: 6px 0; }
+.thread .tools { padding: 10px 18px; }
+.thread h2 { font-size: 22px; font-weight: 400; padding: 10px 68px 14px; display: flex; gap: 14px; align-items: center; }
+.thread h2 small { font-size: 12px; background: #e8eaed; border-radius: 4px; padding: 1px 6px; color: #444746; }
+.msg { display: flex; gap: 14px; padding: 4px 22px 0; }
+.msg .av { width: 38px; height: 38px; border-radius: 50%; display: grid; place-items: center; color: #fff; font-weight: 700; font-size: 15px; flex: none; }
+.msg__body { flex: 1; font-size: 14px; line-height: 1.6; }
+.msg__head { display: flex; gap: 8px; align-items: baseline; }
+.msg__head small { color: var(--muted); font-size: 12px; }
+.msg__head .time { margin-left: auto; font-size: 12px; color: var(--muted); }
+.msg__text { margin-top: 10px; color: #222; }
+.msg__text p + p { margin-top: 8px; }
+.sugg { margin: 16px 0 0 74px; width: 640px; opacity: 0; }
+.sugg__label { font-size: 13px; display: flex; gap: 8px; align-items: center; color: #444746; }
+.sugg__box { margin-top: 8px; border: 1px solid #dadce0; border-radius: 12px; padding: 12px 16px; font-size: 13.5px; line-height: 1.6; color: #5f6368; }
+.sugg__box.hover { border-color: #a8c7fa; background: #f8fbff; }
+.rbtns { display: flex; gap: 10px; margin: 14px 0 0 74px; opacity: 0; }
+.rbtns span { border: 1px solid #747775; border-radius: 18px; padding: 7px 16px; font-size: 13.5px; display: flex; gap: 8px; align-items: center; }
+.cmp { position: absolute; left: 22px; right: 22px; top: 238px; opacity: 0; display: flex; gap: 14px; }
+.sent { position: absolute; left: 22px; right: 22px; opacity: 0; display: flex; gap: 14px; border-top: 1px solid var(--line); padding-top: 14px; font-size: 14px; }
+.sent .av { width: 38px; height: 38px; border-radius: 50%; background: #3367d6; color: #fff; display: grid; place-items: center; font-weight: 700; flex: none; }
+.sent p { color: var(--muted); font-size: 13.5px; margin-top: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 860px; }
+.cmp__card { flex: 1; border-radius: 14px; box-shadow: 0 1px 4px rgba(60,64,67,.3); padding: 12px 18px; background: #fff; font-size: 14px; line-height: 1.6; }
+.cmp__to { font-size: 13px; color: #444746; display: flex; gap: 8px; align-items: center; padding-bottom: 8px; }
+.cmp__text p + p { margin-top: 8px; }
+.sel { background: #c8dcfc; }
+.caret { display: inline-block; width: 2px; height: 16px; background: var(--ink); vertical-align: -3px; margin-left: 1px; }
+.cmp__bar { display: flex; gap: 18px; align-items: center; margin-top: 12px; color: #444746; font-size: 18px; }
+.send { display: inline-flex; border-radius: 18px; overflow: hidden; font-size: 14px; font-weight: 500; }
+.send span { background: var(--blue); color: #fff; padding: 9px 18px; }
+.send span + span { padding: 9px 10px; border-left: 1px solid #4c8df6; }
+.send.press span { background: #0842a0; }
+.pop { position: absolute; width: 300px; background: #fff; border-radius: 12px; box-shadow: 0 4px 18px rgba(60,64,67,.28); padding: 10px 12px 12px; z-index: 5; opacity: 0; }
+.pop__head { display: flex; gap: 8px; align-items: center; font-size: 13.5px; color: #7b3fb6; font-weight: 500; }
+.pop__head .x { margin-left: auto; color: #444746; font-size: 17px; }
+.pop__opt { margin-top: 8px; border: 1px solid #a8c7fa; border-radius: 8px; padding: 8px 10px; font-size: 13.5px; line-height: 1.5; color: #0b57d0; }
+.pop__opt.hover { background: #e8f0fe; }
+.toast { position: absolute; left: 24px; bottom: 24px; z-index: 8; background: #303030; color: #f2f2f2; border-radius: 8px; padding: 14px 18px; font-size: 14px; display: flex; gap: 22px; align-items: center; opacity: 0; box-shadow: 0 4px 14px rgba(0,0,0,.25); }
+.toast b { color: #a8c7fa; font-weight: 500; }
+
+.cursor { position: absolute; left: 0; top: 0; z-index: 20; width: 26px; height: 26px; }
+.ring { position: absolute; left: 0; top: 0; z-index: 19; width: 44px; height: 44px; margin: -22px 0 0 -22px; border-radius: 50%; background: rgba(11,87,208,.25); opacity: 0; }
+.fade { position: absolute; inset: 0; background: #fff; z-index: 30; opacity: 0; pointer-events: none; }
+</style>
+</head>
+<body>
+<div class="stage">
+  <header class="top">
+    <i class="ph ph-list"></i>
+    <span class="logo"><svg width="30" height="23" viewBox="0 0 30 23"><path d="M2 23h5V10L0 5v16a2 2 0 0 0 2 2z" fill="#4285f4"/><path d="M23 23h5a2 2 0 0 0 2-2V5l-7 5z" fill="#34a853"/><path d="M23 2v8l7-5V3c0-2.4-2.8-3.8-4.8-2.4z" fill="#fbbc04"/><path d="M7 10V2l8 6 8-6v8l-8 6z" fill="#ea4335"/><path d="M0 3v2l7 5V2L4.8.6C2.8-.8 0 .6 0 3z" fill="#c5221f"/></svg>Gmail</span>
+    <span class="search"><i class="ph ph-magnifying-glass"></i>Hỏi đáp từ Gmail<span class="r"><i class="ph ph-sliders-horizontal"></i></span></span>
+    <span class="top__r"><i class="ph ph-question"></i><i class="ph ph-gear"></i><i class="ph ph-dots-nine"></i><span class="avatar">T</span></span>
+  </header>
+  <nav class="nav">
+    <span class="compose"><i class="ph ph-pencil-simple"></i>Soạn thư</span>
+    <p id="navAI"><span class="spark"></span>Hộp thư AI</p>
+    <p id="navIn" class="on"><i class="ph ph-tray"></i>Hộp thư đến<b>12</b></p>
+    <p><i class="ph ph-star"></i>Có gắn dấu sao</p><p><i class="ph ph-clock"></i>Đã tạm ẩn</p><p><i class="ph ph-paper-plane-right"></i>Đã gửi</p><p><i class="ph ph-file"></i>Thư nháp<b>3</b></p><p><i class="ph ph-caret-down"></i>Thêm</p>
+    <p class="labels">Nhãn <i class="ph ph-plus" style="font-size:18px"></i></p>
+  </nav>
+  <aside class="side"><span style="background:#fbbc04"></span><span style="background:#4285f4"></span><span style="background:#188038"></span><span style="background:#a142f4"></span></aside>
+
+  <main class="main">
+    <section class="screen" id="s1">
+      <div class="tools"><i class="ph ph-square"></i><i class="ph ph-arrow-clockwise"></i><i class="ph ph-dots-three-vertical"></i><small>1–50 trong số 2.418</small></div>
+      <div class="tabs"><span class="on"><i class="ph ph-tray"></i>Chính</span><span><i class="ph ph-tag"></i>Quảng cáo <em>3 mới</em></span><span><i class="ph ph-users"></i>Mạng xã hội</span></div>
+      <div id="list"></div>
+    </section>
+
+    <section class="screen" id="s2">
+      <div class="ai">
+        <span class="beta">Beta</span><span class="upd">Cập nhật 2 phút trước</span>
+        <h1><span class="g">Chào thầy Tuấn. Thầy có <span class="b">3 việc cần làm</span> được gợi ý.</span><br><span class="g">Có thêm <span class="b">3 chủ đề</span> cần nắm bắt.</span></h1>
+        <h3>Việc cần làm được gợi ý</h3>
+        <div class="todo">
+          <p><b>Duyệt kế hoạch tham quan trải nghiệm khối 8</b> – Cô Lan đề nghị thầy duyệt trước thứ Sáu 23/1 để kịp liên hệ đơn vị tổ chức. <span class="src"><span>Từ:</span> Thư 1</span></p>
+          <p id="todo2"><b>Trả lời Phòng GD&amp;ĐT về báo cáo chuyển đổi số</b> – Phòng đề nghị trường xác nhận hạn nộp 25/1 và cử đầu mối phụ trách. <span class="src"><span>Từ:</span> Thư 1 · Thư 2</span></p>
+          <p><b>Ký hồ sơ thi đua học kỳ I</b> – Tổ Văn phòng đã chuẩn bị xong 12 hồ sơ, cần thầy ký trước 26/1. <span class="src"><span>Từ:</span> Thư 1</span></p>
+        </div>
+        <h3>Chủ đề cần nắm bắt</h3>
+        <div class="topic"><h4><i class="ph ph-arrows-clockwise"></i>Hội thi giáo viên dạy giỏi cấp trường</h4><ul><li>8 giáo viên đạt giải; lễ tổng kết dự kiến chiều 30/1. <span class="src"><span>Từ:</span> Thư 1 · Thư 2</span></li></ul></div>
+        <div class="topic"><h4><i class="ph ph-arrows-clockwise"></i>Tuyển sinh lớp 6 năm học 2026–2027</h4><ul><li>Phòng GD&amp;ĐT gửi lịch dự kiến; trường cần báo chỉ tiêu trước 15/2. <span class="src"><span>Từ:</span> Thư 1</span></li></ul></div>
+        <div class="topic"><h4><i class="ph ph-arrows-clockwise"></i>Ngày hội đọc sách</h4><ul><li>Hội Cha mẹ học sinh đề xuất tổ chức vào tuần thứ hai của tháng 3. <span class="src"><span>Từ:</span> Thư 1</span></li></ul></div>
+      </div>
+    </section>
+
+    <section class="screen" id="s3">
+      <div class="thread">
+        <div class="tools"><i class="ph ph-arrow-left"></i><i class="ph ph-archive"></i><i class="ph ph-warning-octagon"></i><i class="ph ph-trash"></i><i class="ph ph-envelope-simple"></i><i class="ph ph-clock"></i><i class="ph ph-check-circle"></i><i class="ph ph-dots-three-vertical"></i><small>3 trong số 2.418</small></div>
+        <h2>V/v báo cáo tiến độ chuyển đổi số học kỳ I <small>Hộp thư đến</small></h2>
+        <div class="msg"><span class="av" style="background:#1a73e8">P</span><div class="msg__body">
+          <p class="msg__head"><b>Lê Hoàng Phúc – Phòng GD&amp;ĐT</b><small>đến tôi, các hiệu trưởng</small><span class="time">8:42 (2 giờ trước)</span></p>
+          <div class="msg__text"><p>Kính gửi thầy Hiệu trưởng,</p><p>Phòng đề nghị nhà trường gửi báo cáo tiến độ chuyển đổi số học kỳ I trước ngày 25/1. Đề nghị thầy xác nhận thời hạn và cho biết cán bộ đầu mối phụ trách để Phòng tiện liên hệ.</p><p>Trân trọng,<br>Lê Hoàng Phúc</p></div>
+        </div></div>
+        <div class="sugg" id="sugg"><p class="sugg__label"><span class="spark" style="width:15px;height:15px"></span>Câu trả lời gợi ý</p>
+          <div class="sugg__box" id="suggBox">Kính gửi anh Phúc,<br>Nhà trường xác nhận sẽ gửi báo cáo trước ngày 25/1. Đầu mối phụ trách là cô Nguyễn Thị Lan, Phó Hiệu trưởng.<br>Trân trọng,<br>Trần Minh Tuấn</div></div>
+        <div class="rbtns" id="rbtns"><span><i class="ph ph-arrow-bend-double-up-left"></i>Trả lời tất cả</span><span><i class="ph ph-arrow-bend-up-left"></i>Trả lời</span><span><i class="ph ph-arrow-bend-up-right"></i>Chuyển tiếp</span></div>
+      </div>
+      <div class="cmp" id="cmp"><span class="av" style="width:38px;height:38px;border-radius:50%;background:#3367d6;color:#fff;display:grid;place-items:center;font-weight:700;flex:none">T</span>
+        <div class="cmp__card">
+          <p class="cmp__to"><i class="ph ph-arrow-bend-up-left"></i><i class="ph ph-caret-down" style="font-size:12px"></i>Lê Hoàng Phúc – Phòng GD&amp;ĐT</p>
+          <div class="cmp__text"><p>Kính gửi anh Phúc,</p><p>Nhà trường xác nhận sẽ gửi báo cáo trước ngày 25/1. Đầu mối phụ trách là cô Nguyễn Thị Lan, Phó Hiệu trưởng.</p><p id="extra"></p><p>Trân trọng,<br>Trần Minh Tuấn</p></div>
+          <div class="cmp__bar"><span class="send" id="send"><span>Gửi</span><span><i class="ph ph-caret-down" style="font-size:12px"></i></span></span><i class="ph ph-text-aa"></i><span class="spark" id="helpme" style="width:18px;height:18px"></span><i class="ph ph-paperclip"></i><i class="ph ph-link"></i><i class="ph ph-smiley"></i><i class="ph ph-image"></i><i class="ph ph-lock-simple"></i><i class="ph ph-pen-nib"></i><i class="ph ph-dots-three-vertical"></i><i class="ph ph-trash" style="margin-left:auto"></i></div>
+        </div></div>
+      <div class="sent" id="sentMsg"><span class="av">T</span><div><b style="font-weight:500">Trần Minh Tuấn</b> <small style="color:#5f6368;font-size:12px">đến Lê Hoàng Phúc · Vừa xong</small><p>Kính gửi anh Phúc, Nhà trường xác nhận sẽ gửi báo cáo trước ngày 25/1. Đầu mối phụ trách là cô Nguyễn Thị Lan, Phó Hiệu trưởng. Nhà trường cũng xin được chia sẻ…</p></div></div>
+      <div class="pop" id="pop"><p class="pop__head"><span class="spark" style="width:15px;height:15px"></span>Viết ngắn gọn hơn<i class="ph ph-x-circle x"></i></p><p class="pop__opt" id="popOpt"></p></div>
+    </section>
+  </main>
+
+  <div class="toast" id="toast"><span>Đã gửi thư.</span><b>Hoàn tác</b><b>Xem thư</b></div>
+  <div class="ring" id="ring"></div>
+  <svg class="cursor" id="cursor" viewBox="0 0 26 26"><path d="M3 2l17 11-7.5 1.2L16.5 22l-3.2 1.5-4-7.8L3 20.5z" fill="#111" stroke="#fff" stroke-width="1.6" stroke-linejoin="round"/></svg>
+  <div class="fade" id="fade"></div>
+</div>
+
+<script>
+// Trục thời gian (ms). Đổi số ở đây để chỉnh nhịp.
+const T = {
+  total: 15000, fadeIn: [0, 300], fadeOut: [14600, 15000],
+  cursorToAI: [300, 950], clickAI: 1050, toS2: [1150, 1450], todos: 1550, step: 180,
+  cursorToTodo: [3900, 4600], clickTodo: 4800, toS3: [4950, 5250], sugg: 5500,
+  cursorToSugg: [5900, 6400], clickSugg: 6550, cmp: [6650, 6900],
+  typeStart: 7050, typeStep: 12, select: [8900, 9300], pop: 9450,
+  cursorToOpt: [9600, 10150], clickOpt: 10300,
+  cursorToSend: [10600, 11200], clickSend: 11300, sent: [11400, 11700], toast: 11700,
+};
+const EXTRA = 'Ngoài ra, nếu Phòng thấy phù hợp, nhà trường xin được trình bày kết quả bồi dưỡng AI cho giáo viên tại buổi giao ban tháng 2 để các trường bạn có thể tham khảo.';
+const SHORT = 'Nhà trường cũng xin được chia sẻ kết quả bồi dưỡng AI cho giáo viên tại buổi giao ban tháng 2.';
+const MAILS = [
+  ['Phòng GD&ĐT Quận 3', 'V/v báo cáo tiến độ chuyển đổi số học kỳ I', 'Kính gửi Hiệu trưởng các trường, Phòng đề nghị…', '8:42', 1],
+  ['Nguyễn Thị Lan', 'Kế hoạch tham quan trải nghiệm khối 8', 'Kính trình thầy duyệt kế hoạch và dự toán…', '8:15', 1],
+  ['Tổ Văn phòng', 'Hồ sơ thi đua học kỳ I cần thầy ký', 'Tổ đã hoàn thiện 12 hồ sơ, kính mời thầy…', '7:58', 1],
+  ['Trần Văn Minh', 'Kết quả hội thi giáo viên dạy giỏi cấp trường', 'Ban tổ chức gửi thầy danh sách 8 giáo viên…', 'Hôm qua', 0],
+  ['Phòng GD&ĐT Quận 3', 'Lịch tuyển sinh lớp 6 năm học 2026–2027', 'Phòng gửi lịch dự kiến, đề nghị các trường…', 'Hôm qua', 1],
+  ['Hội Cha mẹ học sinh', 'Đề xuất tổ chức Ngày hội đọc sách', 'Ban đại diện xin đề xuất tổ chức vào tháng 3…', '20 thg 1', 0],
+  ['Công đoàn trường', 'Thông báo họp công đoàn tháng 1', 'Kính mời thầy cô dự họp vào 16h thứ Năm…', '19 thg 1', 0],
+  ['Nguyễn Thị Lan', 'Re: Lịch kiểm tra nội bộ tổ Toán – Tin', 'Em đã cập nhật lịch theo góp ý của thầy…', '19 thg 1', 0],
+  ['Google for Education', 'Gemini cho giáo dục: tính năng mới tháng 1', 'Khám phá các công cụ AI mới cho nhà trường…', '18 thg 1', 0],
+  ['Đoàn trường', 'Kế hoạch hoạt động mừng Xuân 2026', 'Kính trình Ban giám hiệu kế hoạch tổ chức…', '17 thg 1', 0],
+  ['Lê Thu Hà', 'Thời khóa biểu học kỳ II (bản chính thức)', 'Em gửi thầy bản thời khóa biểu đã điều chỉnh…', '16 thg 1', 0],
+  ['Phòng GD&ĐT Quận 3', 'Triệu tập họp giao ban hiệu trưởng tháng 1', 'Thời gian: 8h00 thứ Hai 26/1, địa điểm…', '15 thg 1', 0],
+  ['Bảo vệ – Y tế', 'Báo cáo công tác y tế học đường tháng 12', 'Kính gửi Ban giám hiệu báo cáo số liệu…', '14 thg 1', 0],
+];
+const $ = (s) => document.querySelector(s);
+const $$ = (s) => [...document.querySelectorAll(s)];
+$('#list').innerHTML = MAILS.map(([f, s, p, t, u]) => `<div class="mail ${u ? 'unread' : 'read'}"><i class="ph ph-square"></i><i class="ph ph-star"></i><span class="from">${f}</span><span class="sub">${s} <span>– ${p}</span></span><span class="time">${t}</span></div>`).join('');
+
+const clamp = (x) => Math.min(1, Math.max(0, x));
+const ease = (x) => { x = clamp(x); return x < .5 ? 4 * x * x * x : 1 - Math.pow(-2 * x + 2, 3) / 2; };
+const out = (x) => 1 - Math.pow(1 - clamp(x), 3);
+const span = (t, [a, b]) => (t - a) / (b - a);
+const lerp = (a, b, k) => a + (b - a) * k;
+const centerOf = (el, dx = 0) => { const r = el.getBoundingClientRect(); return [r.left + Math.min(r.width / 2, 120) + dx, r.top + r.height / 2]; };
+
+window.render = (t) => {
+  // Chuyển màn
+  const k2 = ease(span(t, T.toS2)), k3 = ease(span(t, T.toS3));
+  $('#s1').style.opacity = 1 - k2; $('#s2').style.opacity = k2 * (1 - k3); $('#s3').style.opacity = k3;
+  ['#s1', '#s2', '#s3'].forEach((s, i) => ($(s).style.visibility = [k2 < 1, k2 > 0 && k3 < 1, k3 > 0][i] ? 'visible' : 'hidden'));
+  $('#navAI').classList.toggle('on', t >= T.clickAI && t < T.clickTodo);
+  $('#navIn').classList.toggle('on', t < T.clickAI || t >= T.clickTodo);
+
+  // Hộp thư AI
+  const items = [...$$('.todo p'), ...$$('.topic')];
+  items.forEach((el, i) => { const k = out(span(t, [T.todos + i * T.step, T.todos + i * T.step + 350])); el.style.opacity = k; el.style.transform = `translateY(${(1 - k) * 8}px)`; });
+  $('#todo2').classList.toggle('hover', t >= T.cursorToTodo[1] - 100);
+  $('.ai h1').querySelectorAll('.g').forEach((g) => (g.style.backgroundPosition = `${-(t / 30) % 200}% 0`));
+
+  // Thư và câu trả lời gợi ý
+  const sk = out(span(t, [T.sugg, T.sugg + 350]));
+  const composing = t >= T.clickSugg;
+  $('#sugg').style.opacity = composing ? 0 : sk; $('#rbtns').style.opacity = composing ? 0 : sk;
+  $('#suggBox').classList.toggle('hover', t >= T.cursorToSugg[1] - 100);
+  const ck = Math.min(out(span(t, T.cmp)), 1 - clamp(span(t, T.sent)));
+  $('#cmp').style.opacity = ck; $('#cmp').style.transform = `translateY(${(1 - out(span(t, T.cmp))) * 10 + clamp(span(t, T.sent)) * 10}px)`;
+  const replaced = t >= T.clickOpt;
+  const n = t < T.typeStart ? 0 : Math.min(EXTRA.length, Math.floor((t - T.typeStart) / T.typeStep) + 1);
+  const selK = clamp(span(t, T.select));
+  const extra = $('#extra');
+  if (replaced) extra.innerHTML = SHORT;
+  else if (selK > 0) { const m = Math.round(EXTRA.length * selK); extra.innerHTML = `<span class="sel">${EXTRA.slice(0, m)}</span>${EXTRA.slice(m)}`; }
+  else extra.innerHTML = EXTRA.slice(0, n) + (composing && n < EXTRA.length || (n === EXTRA.length && Math.floor(t / 500) % 2 === 0) ? '<span class="caret"></span>' : '');
+  extra.style.display = n > 0 || replaced ? '' : 'none';
+  $('#send').classList.toggle('press', t >= T.clickSend && t < T.clickSend + 200);
+  // Bảng gợi ý viết gọn đặt ngay dưới đoạn được chọn
+  const er = extra.getBoundingClientRect(), mr = $('.main').getBoundingClientRect();
+  const pop = $('#pop');
+  $('#popOpt').textContent = SHORT;
+  pop.style.left = (er.left - mr.left + 120) + 'px'; pop.style.top = (er.bottom - mr.top + 6) + 'px';
+  pop.style.opacity = t >= T.pop && t < T.clickOpt + 120 ? out(span(t, [T.pop, T.pop + 200])) : 0;
+  $('#popOpt').classList.toggle('hover', t >= T.cursorToOpt[1] - 100);
+  $('#cmp').style.top = $('#sentMsg').style.top = $('#sugg').offsetTop + 'px';
+  $('#sentMsg').style.opacity = out(span(t, [T.toast, T.toast + 350]));
+  const tk = out(span(t, [T.toast, T.toast + 350]));
+  $('#toast').style.opacity = tk; $('#toast').style.transform = `translateY(${(1 - tk) * 16}px)`;
+
+  // Con trỏ chuột
+  if (!window.FIX) window.FIX = {};
+  const P = { start: [760, 560], ai: centerOf($('#navAI')), todo: centerOf($('#todo2'), -40), sugg: centerOf($('#suggBox')), selEnd: [er.right - 40, er.bottom - 10], opt: centerOf($('#popOpt')), send: centerOf($('#send')) };
+  const vis = { ai: true, todo: k2 === 1 && k3 === 0, sugg: k3 === 1 && !composing, selEnd: t < T.select[0], opt: t >= T.pop + 200 && t < T.clickOpt, send: ck === 1 };
+  for (const k in P) if (vis[k] !== false) FIX[k] = P[k];
+  const at = (k) => (k === 'start' ? P.start : FIX[k] || P[k]);
+  const path = [[T.cursorToAI, 'start', 'ai'], [T.cursorToTodo, 'ai', 'todo'], [T.cursorToSugg, 'todo', 'sugg'], [T.select, 'sugg', 'selEnd'], [T.cursorToOpt, 'selEnd', 'opt'], [T.cursorToSend, 'opt', 'send']];
+  let pos = P.start;
+  for (const [win, a, b] of path) if (t >= win[0]) { const k = ease(span(t, win)); const A = at(a), B = at(b); pos = [lerp(A[0], B[0], k), lerp(A[1], B[1], k)]; }
+  const clicks = [T.clickAI, T.clickTodo, T.clickSugg, T.clickOpt, T.clickSend];
+  const pressed = clicks.some((x) => t >= x && t < x + 160);
+  $('#cursor').style.transform = `translate(${pos[0] - 3}px, ${pos[1] - 2}px) scale(${pressed ? .85 : 1})`;
+  $('#cursor').style.opacity = 1 - clamp(span(t, [T.clickSend + 500, T.clickSend + 800]));
+  const rc = clicks.find((x) => t >= x && t < x + 450);
+  if (rc !== undefined) { const k = (t - rc) / 450; $('#ring').style.opacity = .9 * (1 - k); $('#ring').style.transform = `translate(${pos[0]}px, ${pos[1]}px) scale(${lerp(.4, 1.3, k)})`; }
+  else $('#ring').style.opacity = 0;
+
+  $('#fade').style.opacity = Math.max(1 - clamp(span(t, T.fadeIn)), clamp(span(t, T.fadeOut)));
+};
+window.TOTAL = T.total;
+</script>
+</body>
+</html>
