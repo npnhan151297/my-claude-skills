@@ -1,6 +1,6 @@
 """Tiền xử lý cảnh: cắt, chống rung, slow motion, chỉnh màu -> public/base.mp4 + src/timeline.json.
 
-Dùng: python3 -I prep.py <edl.tsv> <thư mục proxy> <thư mục project Remotion> [--bpm 130] [--fps 25]
+Dùng: python3 -I prep.py <edl.tsv> <thư mục proxy> <thư mục project Remotion> [--bpm 130] [--fps 25] [--stab-all]
 Chữ, thẻ kết và nhạc do project Remotion đảm nhận.
 """
 import argparse, json, os, subprocess, sys
@@ -12,6 +12,7 @@ ap.add_argument("project")
 ap.add_argument("--bpm", type=float, default=130)
 ap.add_argument("--fps", type=int, default=25)
 ap.add_argument("--size", default="1280x720")
+ap.add_argument("--stab-all", action="store_true", help="chống rung cả cảnh tốc độ thường (footage quay tay)")
 args = ap.parse_args()
 B = os.path.join(os.path.dirname(os.path.abspath(args.edl)), "build")
 PROXY = args.proxy
@@ -56,7 +57,7 @@ for e in edl:
     out = os.path.join(seg_dir, f"{e['i']:02d}.mp4")
     dur_out = e["frames"] / FPS
     tail = f"fps={FPS},{GRADE},scale={W}:{H}:flags=lanczos,setsar=1,format=yuv420p"
-    if e["speed"] < 1:
+    if e["speed"] < 1 or args.stab_all:
         src_dur = dur_out * e["speed"]
         ss = max(0, e["tin"] - MARGIN)
         lead = e["tin"] - ss
@@ -65,9 +66,9 @@ for e in edl:
         run(["ffmpeg", "-v", "error", "-y", "-ss", str(ss), "-t", str(src_dur + lead + MARGIN), "-i", src,
              "-vf", f"vidstabdetect=shakiness=6:accuracy=15:result={trf}", "-f", "null", "-"])
         slow = 30 / e["speed"]
-        vf = (f"vidstabtransform=input={trf}:smoothing=30:optzoom=1:interpol=bicubic,unsharp=5:5:0.6,"
-              f"{trim},minterpolate=fps={slow:g}:mi_mode=mci:mc_mode=aobmc:me_mode=bidir:vsbmc=1,"
-              f"setpts=PTS*{1 / e['speed']:g},{tail}")
+        interp = f"minterpolate=fps={slow:g}:mi_mode=mci:mc_mode=aobmc:me_mode=bidir:vsbmc=1," if e["speed"] < 1 else ""
+        vf = (f"vidstabtransform=input={trf}:smoothing={30 if e['speed'] < 1 else 40}:optzoom=1:interpol=bicubic,unsharp=5:5:0.6,"
+              f"{trim},{interp}setpts=PTS*{1 / e['speed']:g},{tail}")
         run(["ffmpeg", "-v", "error", "-y", "-ss", str(ss), "-t", str(src_dur + lead + MARGIN), "-i", src,
              "-an", "-vf", vf, "-frames:v", str(e["frames"]), "-c:v", "libx264", "-preset", "veryfast",
              "-crf", "16", out])

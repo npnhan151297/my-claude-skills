@@ -1,4 +1,4 @@
-// Ví dụ áp dụng: video tặng THCS Trần Quốc Toản v3 (footage + timeline.json từ dung-video-tu-footage).
+// Ví dụ áp dụng: video tặng THCS Trần Quốc Toản v4 (footage + timeline.json từ dung-video-tu-footage).
 // Video tặng Trường THCS Trần Quốc Toản – 10 năm thành lập. AI Edu gửi lời cảm ơn 5 năm đồng hành.
 // v3: ngôn ngữ chuyển động Google for Education (quét sọc 4 màu, lưới ô xanh, lower-third đường kẻ,
 // chữ số nổi khối, đường mạch + chấm màu, khung cửa sổ, 4 chấm mở logo).
@@ -104,9 +104,9 @@ const ChapterFive: React.FC = () => {
           <Extruded text="5" size={330} depth={14} font={FONT} />
         </div>
         <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
-          <Typewriter text="năm đồng hành" delay={8} cps={30} size={54} font={FONT} weight={800} />
+          <Typewriter text="năm Google for Education" delay={8} cps={30} size={50} font={FONT} weight={800} color={G.blue} cursorUntil={34} />
           <div style={{ minHeight: 72 }}>
-            <Typewriter text="cùng Google for Education" delay={22} cps={34} size={54} font={FONT} weight={800} color={G.blue} />
+            <Typewriter text="đồng hành cùng nhà trường" delay={34} cps={30} size={50} font={FONT} weight={800} />
           </div>
         </div>
       </AbsoluteFill>
@@ -230,13 +230,13 @@ const EndCard: React.FC = () => {
   );
 };
 
-/** Nền footage; slow motion đẩy máy chậm, các cú cắt đoạn cao trào có zoom punch. */
+/** Nền footage đã chống rung; slow motion đẩy máy rất chậm. */
 const Footage: React.FC = () => {
   const frame = useCurrentFrame();
   const cur = timeline.shots.find((s) => frame >= s.from_ && frame < s.from_ + s.frames);
   let scale = 1;
-  if (cur && cur.speed < 1) scale = interpolate(frame, [cur.from_, cur.from_ + cur.frames], [1, 1.07], { easing: Easing.inOut(Easing.quad) });
-  else if (cur && cur.sec === "C") scale = interpolate(frame - cur.from_, [0, 7], [1.08, 1], { ...clamp, easing: easeOut });
+  // v4: bỏ zoom punch, chỉ đẩy máy rất chậm ở cảnh slow motion cho êm mắt
+  if (cur && cur.speed < 1) scale = interpolate(frame, [cur.from_, cur.from_ + cur.frames], [1, 1.035], { easing: Easing.inOut(Easing.quad) });
   return (
     <AbsoluteFill style={{ scale }}>
       <Video src={staticFile("base.mp4")} muted />
@@ -245,7 +245,7 @@ const Footage: React.FC = () => {
 };
 
 export const TQTVideo: React.FC = () => {
-  const card = shot(46);
+  const card = shot(27);
   const at = (from: number, to: number, el: React.ReactNode, name: string) => (
     <Sequence name={name} from={from} durationInFrames={to - from}>
       {el}
@@ -253,21 +253,21 @@ export const TQTVideo: React.FC = () => {
   );
   const end = (i: number) => shot(i).from_ + shot(i).frames;
   const TITLE_CUT = 60;
-  const chap = shot(34).from_;
-  const chapEnd = shot(36).from_;
-  const thanks = shot(44).from_;
-  const congrats = shot(45).from_;
+  const chap = shot(20).from_;
+  const chapEnd = shot(22).from_;
+  const thanks = shot(25).from_;
+  const congrats = shot(26).from_;
   return (
     <AbsoluteFill style={{ background: "white" }}>
       <Sequence name="Footage" durationInFrames={card.from_}>
         <Footage />
       </Sequence>
       {at(0, TITLE_CUT, <TitleCard />, "1 Thẻ mở")}
-      {at(shot(2).from_ + 6, end(2) - 2, <LineBar dur={end(2) - shot(2).from_ - 8} title="Mười năm vun đắp một mái trường" font={FONT} />, "2 Mười năm")}
-      {at(shot(3).from_ + 10, end(5), <LineBar dur={end(5) - shot(3).from_ - 10} title="Nơi mỗi tiết học là một hành trình khám phá" font={FONT} />, "3 Tiết học")}
-      {at(shot(10).from_ + 6, end(11), <LineBar dur={end(11) - shot(10).from_ - 6} title="Thầy cô không ngừng đổi mới" font={FONT} />, "4 Thầy cô")}
-      {at(shot(28).from_ + 2, end(30), <LineBar dur={end(30) - shot(28).from_ - 2} title="Học trò tự tin bước vào thời đại số" font={FONT} />, "5 Học trò")}
-      {at(chap, chapEnd, <ChapterFive />, "6 Thẻ chương 5 năm")}
+      {at(shot(3).from_ + 4, end(4), <LineBar dur={end(4) - shot(3).from_ - 4} title="Mười năm vun đắp một mái trường" font={FONT} />, "2 Mười năm")}
+      {at(shot(9).from_ + 10, end(10), <LineBar dur={end(10) - shot(9).from_ - 10} title="Nơi mỗi tiết học là một hành trình khám phá" font={FONT} />, "3 Tiết học")}
+      {at(shot(13).from_ + 6, end(13), <LineBar dur={end(13) - shot(13).from_ - 6} title="Thầy cô không ngừng đổi mới" font={FONT} />, "4 Thầy cô")}
+      {at(shot(16).from_ + 8, end(17), <LineBar dur={end(17) - shot(16).from_ - 8} title="Học trò tự tin bước vào thời đại số" font={FONT} />, "5 Học trò")}
+      {at(chap, chapEnd, <ChapterFive />, "6 Thẻ chương 5 năm GfE đồng hành")}
       {at(thanks, congrats, <ThanksCard videoFrom={thanks} />, "7 Cảm ơn")}
       {at(congrats, card.from_, <CongratsCard />, "8 Chúc mừng")}
       <Sequence name="9 Thẻ kết" from={card.from_} durationInFrames={card.frames}>
@@ -275,8 +275,8 @@ export const TQTVideo: React.FC = () => {
       </Sequence>
       {/* chuyển cảnh */}
       {at(TITLE_CUT - 10, TITLE_CUT + 10, <StripeWipe dur={20} />, "Quét sọc: mở → cổng trường")}
-      {at(shot(3).from_ - 10, shot(3).from_ + 10, <BlockWipe dur={20} />, "Lưới ô: vào lớp học")}
-      {at(shot(24).from_ - 10, shot(24).from_ + 10, <BlockWipe dur={20} />, "Lưới ô: vào cao trào")}
+      {at(shot(9).from_ - 12, shot(9).from_ + 12, <BlockWipe dur={24} />, "Lưới ô: vào lớp học")}
+      {at(shot(16).from_ - 12, shot(16).from_ + 12, <BlockWipe dur={24} />, "Lưới ô: vào cao trào")}
       {at(chap - 10, chap + 10, <StripeWipe dur={20} />, "Quét sọc: thẻ chương")}
       {at(thanks - 10, thanks + 10, <StripeWipe dur={20} />, "Quét sọc: cảm ơn")}
       {at(card.from_ - 10, card.from_ + 10, <StripeWipe dur={20} />, "Quét sọc: thẻ kết")}

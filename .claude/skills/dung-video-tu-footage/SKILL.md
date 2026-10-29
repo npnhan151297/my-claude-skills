@@ -16,7 +16,8 @@ Bản thô dựng ở đây dùng để duyệt nội dung. Bản final do edito
 5. **Chọn điểm In tự động** cho các cảnh ngắn: `python3 -I scripts/pick.py <proxy> <giây> CLIP... --motion 0.8` (độ nét + chuyển động; dùng `--motion 0` cho cảnh tĩnh). Vẫn phải xem lưới khung giữa của từng cảnh để loại cảnh toàn cây, rổ bóng, người ngoài.
 6. **Viết EDL** (`templates/edl.example.tsv`), độ dài mỗi cảnh tính bằng **số phách**. Cột `speed` < 1 nghĩa là slow motion và sẽ tự động chống rung.
 7. **Đo rung** cho các cảnh rộng và cảnh quay tay: `scripts/shake.py clip.mp4`. Chọn đoạn có độ rung < 0,1px **và không có vật cản đi ngang tiền cảnh** (xe, người). Phải xem ảnh khung hình, không chỉ nhìn số.
-8. **Tiền xử lý**: `python3 -I scripts/prep.py edl.tsv <proxy> <project> --bpm N`. Script tạo `public/base.mp4` và `src/timeline.json`.
+   Chọn nhanh điểm In ổn định nhất cho cả loạt clip: `python3 -I scripts/stable.py <giây> <proxy> CLIP...`. Loại clip có rung > 1px hoặc trôi > 20px/s, kể cả khi hình đẹp.
+8. **Tiền xử lý**: `python3 -I scripts/prep.py edl.tsv <proxy> <project> --bpm N`. Script tạo `public/base.mp4` và `src/timeline.json`. Footage quay tay thì thêm `--stab-all` để chống rung mọi cảnh, không riêng cảnh slow motion.
 9. **Ghép bằng Remotion**: dùng `templates/Composition.tsx` (chữ vào từng từ bằng spring, lower third, số đếm tăng kèm chớp sáng, push-in ở các cảnh slow motion, thẻ kết). Render ảnh kiểm tra trước khi render cả video.
 10. **Giao**: bản thô mp4 kèm tài liệu kế hoạch có bảng cảnh (clip, giây bắt đầu, tốc độ, nội dung) và danh sách các điểm còn chờ xác nhận.
 
@@ -34,6 +35,7 @@ Bản thô dựng ở đây dùng để duyệt nội dung. Bản final do edito
 - **Footage log** (Sony S-Log3) ra màu nhạt. Chỉnh màu cho bản thô: `eq=contrast=1.28:saturation=1.55:gamma=0.92` cộng ấm nhẹ. Bản final dùng LUT chính hãng.
 - **Slow motion trên proxy 30p**: trình tự `vidstabdetect`/`vidstabtransform` → `minterpolate=fps=30/speed:mi_mode=mci` → `setpts=PTS/speed`. Với bản final: file gốc 59,94p đặt trên timeline 25p cho slow motion thật ở khoảng 42%, không cần nội suy. Máy có gyro (FX3) thì nên chống rung bằng Gyroflow hoặc Catalyst.
 - **Đo rung**: đo bằng phase correlation ở độ phân giải 640px, có nội suy dưới pixel. Đo ở 160px không bắt được rung nhỏ.
+- **Video tặng, người xem lớn tuổi**: mỗi cảnh ≥ 4 phách (khoảng 2s), không zoom punch, không cảnh quay tay rung. Cắt 1–2 phách/cảnh kèm zoom punch đã làm người xem chóng mặt (bản v3 của video THCS Trần Quốc Toản).
 - **Phong cách năng động**: nhạc 130–140 BPM có drop rõ; cắt 1–2 phách/cảnh, zoom punch 1.13→1 trong 7 khung mỗi lần cắt, chớp trắng ở drop, chữ khối cam chạy ra (xem `Block`/`Slam` trong mẫu). Bản điện ảnh thì cắt 4–10 phách, slow motion nhiều hơn.
 - **Cắt theo phách**: số khung của cảnh = `round(phách_cuối*beat*fps) - round(phách_đầu*beat*fps)`, tính theo vị trí cộng dồn để không bị trôi. `prep.py` kiểm tra lại số khung thực tế của từng cảnh.
 - **Nhạc miễn phí bản quyền**: pixabay và chosic thường bị proxy chặn. incompetech.com (Kevin MacLeod, CC BY 4.0, có `pieces.json` để lọc theo feel và nhạc cụ) tải được. Giấy phép CC BY bắt buộc ghi nguồn ở thẻ kết. **Mình không nghe được nhạc**, nên phải nói rõ với người dùng và nhờ họ nghe duyệt.

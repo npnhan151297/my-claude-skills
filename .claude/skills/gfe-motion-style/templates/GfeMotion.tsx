@@ -124,7 +124,7 @@ export const Extruded: React.FC<{ text: string; size: number; color?: string; de
 };
 
 /** Gõ chữ từng ký tự kèm con trỏ gạch dưới nhấp nháy (ký tự = grapheme, không cắt dấu tiếng Việt). */
-export const Typewriter: React.FC<{ text: string; delay?: number; cps?: number; size: number; color?: string; font: string; weight?: number }> = ({
+export const Typewriter: React.FC<{ text: string; delay?: number; cps?: number; size: number; color?: string; font: string; weight?: number; cursorUntil?: number }> = ({
   text,
   delay = 0,
   cps = 28,
@@ -132,6 +132,7 @@ export const Typewriter: React.FC<{ text: string; delay?: number; cps?: number; 
   color = INK,
   font,
   weight = 700,
+  cursorUntil = Infinity,
 }) => {
   const f = useCurrentFrame();
   const { fps } = useVideoConfig();
@@ -142,7 +143,7 @@ export const Typewriter: React.FC<{ text: string; delay?: number; cps?: number; 
   return (
     <span style={{ fontFamily: font, fontWeight: weight, fontSize: size, color, whiteSpace: "pre-wrap", lineHeight: 1.3 }}>
       {chars.slice(0, n).join("")}
-      <span style={{ display: "inline-block", width: size * 0.5, height: 3, marginLeft: 2, background: color, opacity: blink && f >= delay ? 1 : 0 }} />
+      <span style={{ display: "inline-block", width: size * 0.5, height: 3, marginLeft: 2, background: color, opacity: blink && f >= delay && f < cursorUntil ? 1 : 0 }} />
     </span>
   );
 };
