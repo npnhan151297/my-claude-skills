@@ -1,0 +1,354 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<title>Gemini trong Google Sheets</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Google+Sans+Flex:wght@400;500;700&display=block">
+<link rel="stylesheet" href="https://unpkg.com/@phosphor-icons/web@2.1.1/src/regular/style.css">
+<link rel="stylesheet" href="https://unpkg.com/@phosphor-icons/web@2.1.1/src/fill/style.css">
+<style>
+/* Cảnh minh họa Gemini trong Google Sheets: từ bảng điểm cuối năm tạo dashboard. Khung 1272 x 788.
+   Mọi chuyển động nằm trên một trục thời gian (ms); render.js gọi window.render(t) để chụp từng khung. */
+:root { --ink: #1f1f1f; --muted: #5f6368; --line: #e1e3e1; --blue: #0b57d0; --green: #188038; --canvas: #f9fbfd; --chip: #e9eef6; }
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html, body { width: 1272px; height: 788px; overflow: hidden; background: #fff; }
+body { font-family: 'Google Sans Flex', 'Google Sans', Roboto, Arial, sans-serif; color: var(--ink); -webkit-font-smoothing: antialiased; }
+.stage { position: relative; width: 1272px; height: 788px; overflow: hidden; background: var(--canvas); }
+
+/* Thanh trên của Sheets */
+.top { position: absolute; inset: 0 0 auto 0; height: 64px; display: flex; align-items: center; gap: 12px; padding: 0 16px; }
+.sheets-ico { width: 30px; height: 40px; border-radius: 4px; background: #188038; display: grid; place-items: center; }
+.sheets-ico::after { content: ''; width: 16px; height: 14px; border: 2.5px solid #fff; border-radius: 1px; background: linear-gradient(#fff,#fff) center/2.5px 100% no-repeat, linear-gradient(#fff,#fff) center/100% 2.5px no-repeat; }
+.name { display: grid; gap: 2px; }
+.name__title { font-size: 18px; }
+.name__menu { font-size: 13.5px; color: #444746; display: flex; gap: 13px; }
+.top__right { margin-left: auto; display: flex; align-items: center; gap: 16px; color: #444746; font-size: 22px; }
+.pill { font-size: 14px; font-weight: 500; border-radius: 20px; padding: 9px 16px; display: flex; gap: 6px; align-items: center; }
+.pill--share { background: #c2e7ff; color: #001d35; }
+.pill i { font-size: 17px; }
+.gem-btn { width: 38px; height: 38px; border-radius: 50%; background: #d3e3fd; display: grid; place-items: center; }
+.avatar { width: 34px; height: 34px; border-radius: 50%; background: linear-gradient(135deg,#a1c2fa,#4285f4); color: #fff; display: grid; place-items: center; font-size: 15px; font-weight: 700; }
+.toolbar { position: absolute; left: 12px; top: 68px; width: 840px; height: 38px; border-radius: 20px; background: #edf2fa; display: flex; align-items: center; gap: 17px; padding: 0 16px; color: #444746; font-size: 18px; }
+.toolbar small { font-size: 13px; }
+.fx { position: absolute; left: 0; top: 110px; width: 866px; height: 30px; display: flex; align-items: center; border-bottom: 1px solid var(--line); font-size: 13px; color: #444746; background: #fff; }
+.fx__ref { width: 90px; padding-left: 12px; border-right: 1px solid var(--line); }
+.fx__val { padding-left: 12px; }
+
+/* Trang tính */
+.sheet { position: absolute; left: 0; top: 140px; width: 866px; bottom: 34px; overflow: hidden; background: #fff; }
+table { border-collapse: collapse; font-size: 13px; table-layout: fixed; }
+th, td { border: 1px solid var(--line); height: 25px; padding: 0 7px; white-space: nowrap; overflow: hidden; }
+thead th { background: #f8f9fa; color: #444746; font-weight: 400; font-size: 12px; height: 22px; }
+td.rh { background: #f8f9fa; color: #444746; text-align: center; font-size: 12px; padding: 0; }
+tr.head td { font-weight: 700; background: #e6f4ea; color: #0d652d; }
+td.num { text-align: right; }
+td.tag span { font-size: 11.5px; border-radius: 10px; padding: 2px 8px; font-weight: 500; }
+.k-tot { background: #e6f4ea; color: #137333; } .k-kha { background: #e8f0fe; color: #1967d2; } .k-dat { background: #fef7e0; color: #b06000; } .k-chua { background: #fce8e6; color: #c5221f; }
+.tabsbar { position: absolute; left: 0; bottom: 0; width: 866px; height: 34px; display: flex; align-items: center; gap: 14px; padding: 0 14px; font-size: 13px; color: #444746; border-top: 1px solid var(--line); background: var(--canvas); }
+.tabsbar .on { background: #e1e9f7; color: #0b57d0; font-weight: 500; padding: 5px 12px; border-radius: 6px; }
+
+/* Dashboard do Gemini tạo */
+.dash { position: absolute; left: 10px; top: 72px; width: 846px; bottom: 10px; background: #fff; border-radius: 16px; box-shadow: 0 6px 24px rgba(60,64,67,.18); padding: 18px 20px; opacity: 0; z-index: 4; }
+.dash__head { display: flex; align-items: center; gap: 12px; }
+.dash__ico { width: 36px; height: 36px; border-radius: 9px; background: #e6f4ea; color: #188038; display: grid; place-items: center; font-size: 20px; }
+.dash__head h2 { font-size: 19px; font-weight: 700; }
+.dash__head p { font-size: 12px; color: var(--muted); }
+.dash__filters { margin-left: auto; display: flex; gap: 8px; }
+.chip { font-size: 12px; border: 1px solid #c4c7c5; border-radius: 8px; padding: 5px 10px; color: #444746; display: flex; gap: 4px; align-items: center; }
+.kpis { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-top: 14px; }
+.kpi { border-radius: 12px; padding: 10px 14px; background: #f8fafd; border: 1px solid #edf0f2; opacity: 0; }
+.kpi small { font-size: 11px; letter-spacing: .3px; color: var(--muted); text-transform: uppercase; font-weight: 500; }
+.kpi b { display: block; font-size: 26px; font-weight: 700; margin-top: 2px; }
+.kpi span { font-size: 11.5px; color: var(--muted); }
+.kpi--g b { color: #137333; } .kpi--b b { color: #1967d2; }
+.row2 { display: grid; grid-template-columns: 1.55fr 1fr; gap: 12px; margin-top: 12px; }
+.panelc { border: 1px solid #edf0f2; border-radius: 12px; padding: 12px 14px; opacity: 0; position: relative; }
+.panelc h3 { font-size: 13.5px; font-weight: 500; margin-bottom: 8px; }
+.bars { display: flex; align-items: flex-end; gap: 22px; height: 170px; padding: 0 8px 0 30px; position: relative; }
+.bars .axis { position: absolute; left: 0; right: 0; bottom: 0; top: 0; }
+.axis span { position: absolute; left: 0; right: 0; border-top: 1px dashed #e3e3e3; font-size: 10.5px; color: #80868b; }
+.axis span em { position: absolute; left: 0; top: -8px; font-style: normal; }
+.bar { flex: 1; position: relative; display: flex; flex-direction: column; justify-content: flex-end; height: 100%; z-index: 1; }
+.bar i { display: block; border-radius: 6px 6px 0 0; background: #4285f4; height: 0; }
+.bar.hot i { background: #1a73e8; box-shadow: 0 0 0 2px #d2e3fc; }
+.bar b { position: absolute; left: 0; right: 0; text-align: center; font-size: 11.5px; font-weight: 500; color: #3c4043; }
+.blabels { display: flex; gap: 22px; padding: 6px 8px 0 30px; }
+.blabels span { flex: 1; text-align: center; font-size: 11px; color: #444746; }
+.tip { position: absolute; z-index: 3; background: #202124; color: #fff; font-size: 11.5px; border-radius: 6px; padding: 6px 9px; white-space: nowrap; opacity: 0; line-height: 1.4; }
+.donut { display: flex; align-items: center; gap: 14px; }
+.legend { list-style: none; display: grid; gap: 8px; font-size: 12px; }
+.legend li { display: flex; align-items: center; gap: 7px; }
+.legend i { width: 10px; height: 10px; border-radius: 3px; }
+.legend b { margin-left: auto; padding-left: 10px; font-weight: 500; }
+.top5 { width: 100%; font-size: 12.5px; }
+.top5 td, .top5 th { border: 0; border-bottom: 1px solid #f1f3f4; height: 25px; padding: 0 6px; text-align: left; }
+.top5 th { font-size: 11px; color: var(--muted); font-weight: 500; background: none; text-transform: uppercase; height: 22px; }
+.top5 td.num, .top5 th.num { text-align: right; }
+.top5 tr { opacity: 0; }
+.top5 thead tr { opacity: 1; }
+.medal { display: inline-grid; place-items: center; width: 20px; height: 20px; border-radius: 50%; font-size: 11px; font-weight: 700; background: #f1f3f4; color: #444746; }
+.m1 { background: #fde293; color: #7a5800; } .m2 { background: #e3e3e3; } .m3 { background: #f6c8a8; color: #7a3d0c; }
+.skel { position: absolute; left: 10px; top: 72px; width: 846px; bottom: 10px; border-radius: 16px; background: #fff; z-index: 3; opacity: 0; padding: 22px; display: grid; gap: 14px; align-content: start; box-shadow: 0 6px 24px rgba(60,64,67,.12); }
+.skel span { height: 18px; border-radius: 9px; background: linear-gradient(90deg, #e8eaf6 0%, #c9d7f8 25%, #e5d4f3 50%, #e8eaf6 75%); background-size: 300% 100%; }
+.skel .big { height: 120px; border-radius: 14px; }
+
+/* Bảng Gemini bên phải */
+.panel { position: absolute; right: 10px; top: 72px; bottom: 10px; width: 392px; background: #fff; border-radius: 18px; padding: 14px 16px 0; z-index: 5; }
+.panel__head { display: flex; align-items: center; gap: 10px; font-size: 17px; }
+.panel__head i { font-size: 20px; color: #444746; }
+.panel__head .r { margin-left: auto; display: flex; gap: 14px; }
+.spark { width: 18px; height: 18px; display: inline-block; flex: none; background: conic-gradient(from 200deg, #4285f4, #9b72cb, #d96570, #4285f4); -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M12 0C12 6.6 17.4 12 24 12C17.4 12 12 17.4 12 24C12 17.4 6.6 12 0 12C6.6 12 12 6.6 12 0Z'/%3E%3C/svg%3E") center/contain no-repeat; mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M12 0C12 6.6 17.4 12 24 12C17.4 12 12 17.4 12 24C12 17.4 6.6 12 0 12C6.6 12 12 6.6 12 0Z'/%3E%3C/svg%3E") center/contain no-repeat; }
+.welcome { position: absolute; left: 22px; right: 22px; top: 190px; }
+.welcome h2 { font-size: 24px; font-weight: 500; background: linear-gradient(90deg, #4285f4, #9b72cb, #d96570, #4285f4); background-size: 200% 100%; -webkit-background-clip: text; background-clip: text; color: transparent; }
+.sugs { list-style: none; margin-top: 18px; display: grid; gap: 12px; font-size: 14px; color: #3c4043; }
+.sugs li { display: flex; gap: 10px; align-items: center; }
+.sugs i { font-size: 17px; color: #5f6368; }
+.convo { position: absolute; left: 16px; right: 16px; top: 52px; font-size: 13.5px; line-height: 1.5; }
+.bubble { margin-left: 46px; background: var(--chip); border-radius: 18px 4px 18px 18px; padding: 10px 14px; opacity: 0; }
+.reply { margin-top: 16px; display: flex; gap: 10px; align-items: flex-start; opacity: 0; }
+.reply .spark { width: 20px; height: 20px; margin-top: 1px; }
+.reply__text { display: grid; }
+.reply__text > span { grid-area: 1 / 1; opacity: 0; }
+.made { margin-top: 12px; margin-left: 30px; border: 1px solid var(--line); border-radius: 12px; padding: 10px 12px; display: flex; gap: 10px; align-items: center; font-size: 13px; opacity: 0; }
+.made .dash__ico { width: 30px; height: 30px; font-size: 16px; }
+.made small { display: block; color: var(--muted); font-size: 11.5px; }
+.input { position: absolute; left: 14px; right: 14px; bottom: 30px; border-radius: 22px; border: 1px solid #c4c7c5; background: #fff; padding: 12px 14px 8px; }
+.input.focus { border: 2px solid var(--blue); padding: 11px 13px 7px; }
+.input__text { font-size: 13.5px; line-height: 1.5; min-height: 20px; }
+.hint { color: #5f6368; }
+.caret { display: inline-block; width: 2px; height: 16px; background: var(--blue); vertical-align: -3px; margin-left: 1px; }
+.input__row { display: flex; align-items: center; gap: 14px; margin-top: 8px; color: #444746; font-size: 18px; }
+.send { margin-left: auto; width: 32px; height: 32px; border-radius: 50%; background: #e9eef6; color: #a3a8ad; display: grid; place-items: center; font-size: 16px; }
+.input.ready .send { background: var(--blue); color: #fff; }
+.note { position: absolute; left: 0; right: 0; bottom: 9px; text-align: center; font-size: 10.5px; color: #5f6368; }
+
+.cursor { position: absolute; left: 0; top: 0; z-index: 20; width: 26px; height: 26px; }
+.ring { position: absolute; left: 0; top: 0; z-index: 19; width: 44px; height: 44px; margin: -22px 0 0 -22px; border-radius: 50%; background: rgba(11,87,208,.25); opacity: 0; }
+.fade { position: absolute; inset: 0; background: #fff; z-index: 30; opacity: 0; pointer-events: none; }
+</style>
+</head>
+<body>
+<div class="stage">
+  <header class="top">
+    <span class="sheets-ico"></span>
+    <div class="name">
+      <p class="name__title">Bảng điểm cuối năm – Lớp 7A</p>
+      <p class="name__menu"><span>Tệp</span><span>Chỉnh sửa</span><span>Xem</span><span>Chèn</span><span>Định dạng</span><span>Dữ liệu</span><span>Công cụ</span><span>Tiện ích</span><span>Trợ giúp</span></p>
+    </div>
+    <div class="top__right"><i class="ph ph-clock-counter-clockwise"></i><i class="ph ph-chat-centered-text"></i><i class="ph ph-video-camera"></i>
+      <span class="pill pill--share"><i class="ph-fill ph-lock-simple"></i>Chia sẻ</span>
+      <span class="gem-btn"><span class="spark"></span></span>
+      <span class="avatar">T</span></div>
+  </header>
+  <div class="toolbar"><i class="ph ph-magnifying-glass"></i><i class="ph ph-arrow-counter-clockwise"></i><i class="ph ph-arrow-clockwise"></i><i class="ph ph-printer"></i><i class="ph ph-paint-roller"></i><small>100%</small><small>₫</small><small>%</small><small>.0</small><small>123</small><small>Mặc định</small><i class="ph ph-text-b"></i><i class="ph ph-text-italic"></i><i class="ph ph-paint-bucket"></i><i class="ph ph-funnel"></i><i class="ph ph-chart-bar"></i></div>
+  <div class="fx"><span class="fx__ref">A1</span><span class="fx__val"><i>fx</i>&nbsp;&nbsp;STT</span></div>
+  <main class="sheet"><table id="table"></table></main>
+  <div class="tabsbar"><i class="ph ph-plus"></i><i class="ph ph-list"></i><span class="on">Bảng điểm</span><span>Điểm danh</span></div>
+
+  <div class="skel" id="skel"><span style="width:40%"></span><span style="width:25%"></span><span class="big"></span><span></span><span style="width:85%"></span><span class="big"></span></div>
+
+  <section class="dash" id="dash">
+    <div class="dash__head">
+      <span class="dash__ico"><i class="ph-fill ph-chart-pie-slice"></i></span>
+      <div><h2>Tổng kết cuối năm · Lớp 7A</h2><p>Năm học 2025–2026 · Dữ liệu từ trang tính “Bảng điểm”</p></div>
+      <div class="dash__filters"><span class="chip">Tất cả môn <i class="ph ph-caret-down"></i></span><span class="chip">Cả năm <i class="ph ph-caret-down"></i></span></div>
+    </div>
+    <div class="kpis" id="kpis"></div>
+    <div class="row2">
+      <div class="panelc" id="pbar"><h3>Điểm trung bình theo môn</h3>
+        <div class="bars" id="bars"><div class="axis"><span style="bottom:100%"><em>10</em></span><span style="bottom:50%"><em>5</em></span><span style="bottom:0"><em>0</em></span></div></div>
+        <div class="blabels" id="blabels"></div>
+        <div class="tip" id="tip"></div>
+      </div>
+      <div class="panelc" id="pdonut"><h3>Kết quả học tập</h3>
+        <div class="donut"><svg id="donut" width="150" height="150" viewBox="0 0 150 150"></svg><ul class="legend" id="legend"></ul></div>
+      </div>
+    </div>
+    <div class="panelc" id="ptop" style="margin-top:12px"><h3>Top 5 học sinh có điểm trung bình cao nhất</h3><table class="top5" id="top5"></table></div>
+  </section>
+
+  <aside class="panel">
+    <div class="panel__head"><i class="ph ph-list"></i>Gemini <i class="ph ph-caret-down" style="font-size:14px;margin-left:-4px"></i><span class="r"><i class="ph ph-square-split-horizontal"></i><i class="ph ph-x"></i></span></div>
+    <div class="welcome" id="welcome">
+      <h2>Thầy cô muốn tạo gì?</h2>
+      <ul class="sugs"><li><i class="ph ph-arrow-bend-down-right"></i>Tạo dashboard</li><li><i class="ph ph-arrow-bend-down-right"></i>Tạo bảng Kanban</li><li><i class="ph ph-arrow-bend-down-right"></i>Tạo chế độ xem dạng thẻ</li></ul>
+    </div>
+    <div class="convo">
+      <p class="bubble" id="bubble"></p>
+      <div class="reply" id="reply"><span class="spark" id="rspark"></span><span class="reply__text"><span>Đang đọc dữ liệu trang tính “Bảng điểm”…</span><span>Đang dựng dashboard…</span><span>Đã tạo dashboard từ 40 học sinh trong bảng điểm. Dashboard tự cập nhật khi thầy cô sửa điểm.</span></span></div>
+      <div class="made" id="made"><span class="dash__ico"><i class="ph-fill ph-chart-pie-slice"></i></span><span><b style="font-weight:500">Tổng kết cuối năm · Lớp 7A</b><small>Ứng dụng tương tác · Mở trong trang tính</small></span></div>
+    </div>
+    <div class="input" id="input">
+      <p class="input__text"><span class="hint" id="hint">Hỏi Gemini</span><span id="typed"></span><span class="caret" id="caret"></span></p>
+      <div class="input__row"><i class="ph ph-table"></i><i class="ph ph-sliders-horizontal"></i><span class="send" id="send"><i class="ph ph-arrow-up"></i></span></div>
+    </div>
+    <p class="note">Gemini cho Workspace có thể mắc lỗi. <u>Tìm hiểu thêm</u></p>
+  </aside>
+
+  <div class="ring" id="ring"></div>
+  <svg class="cursor" id="cursor" viewBox="0 0 26 26"><path d="M3 2l17 11-7.5 1.2L16.5 22l-3.2 1.5-4-7.8L3 20.5z" fill="#111" stroke="#fff" stroke-width="1.6" stroke-linejoin="round"/></svg>
+  <div class="fade" id="fade"></div>
+</div>
+
+<script>
+// Trục thời gian (ms). Đổi số ở đây để chỉnh nhịp.
+const T = {
+  total: 13000, fadeIn: [0, 300], fadeOut: [12600, 13000],
+  cursorToInput: [250, 750], clickInput: 850,
+  typeStart: 1000, typeStep: 21,
+  cursorToSend: [3700, 4000], clickSend: 4100,
+  reading: 4300, building: 5000, skel: 5000, dash: 6200,
+  kpis: 6500, bars: 7000, donut: 7300, top: 7800, done: 7600,
+  hoverIn: [9100, 9700], tipOn: 9750, tipOff: 11900,
+};
+const PROMPT = 'Tạo dashboard tổng kết điểm cuối năm lớp 7A từ bảng này: điểm trung bình từng môn, tỉ lệ kết quả học tập và top 5 học sinh.';
+const SUBJECTS = ['Toán', 'Ngữ văn', 'Tiếng Anh', 'KHTN', 'LS & ĐL'];
+const NAMES = ['Nguyễn Minh Anh', 'Trần Gia Bảo', 'Lê Ngọc Châu', 'Phạm Đức Duy', 'Hoàng Thu Hà', 'Vũ Quốc Huy', 'Đặng Khánh Linh', 'Bùi Tuấn Kiệt', 'Đỗ Mai Phương', 'Ngô Thanh Tâm', 'Dương Bảo Ngọc', 'Lý Hoàng Nam', 'Phan Thảo Vy', 'Võ Đăng Khoa', 'Trịnh Hải Yến', 'Huỳnh Gia Hân', 'Mai Đức Thắng', 'Tô Minh Thư', 'Hồ Nhật Quang', 'Châu Ngọc Diệp', 'Lâm Phúc Hưng', 'Cao Thùy Dung', 'Đinh Trọng Nhân', 'Quách Bảo Trâm', 'Tạ Quang Vinh', 'Lương Hà My', 'Kiều Minh Khôi', 'Âu Thanh Trúc', 'La Gia Huy', 'Thái An Nhiên', 'Mạc Đức Long', 'Triệu Khả Hân', 'Từ Hoài An', 'Lục Thiên Phúc', 'Ông Mỹ Duyên', 'Giang Tấn Phát', 'Văn Ngọc Hân', 'Hà Quốc Bảo', 'Tiêu Kim Ngân', 'Khúc Minh Trí'];
+
+// Điểm giả lập cố định (cùng hạt giống thì cùng kết quả), làm tròn 0,1
+let seed = 20260528;
+const rnd = () => (seed = (seed * 1103515245 + 12345) % 2147483648) / 2147483648;
+const bias = [-.3, -.55, .25, 0, .35];
+const STUDENTS = NAMES.map((name, i) => {
+  const level = 5.2 + rnd() * 4.3;
+  const scores = bias.map((b) => Math.round(Math.min(10, Math.max(3.5, level + b + (rnd() - .5) * 1.6)) * 10) / 10);
+  const avg = Math.round(scores.reduce((a, b) => a + b, 0) / scores.length * 10) / 10;
+  const result = avg >= 8 ? 'Tốt' : avg >= 6.5 ? 'Khá' : avg >= 5 ? 'Đạt' : 'Chưa đạt';
+  return { stt: i + 1, name, scores, avg, result };
+});
+const vi = (x) => x.toFixed(1).replace('.', ',');
+const cls = { 'Tốt': 'k-tot', 'Khá': 'k-kha', 'Đạt': 'k-dat', 'Chưa đạt': 'k-chua' };
+
+// Trang tính
+const cols = ['', 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I'];
+const widths = [40, 46, 168, 64, 70, 78, 64, 70, 70, 96];
+let html = '<colgroup>' + widths.map((w) => `<col style="width:${w}px">`).join('') + '</colgroup>';
+html += '<thead><tr>' + cols.map((c) => `<th>${c}</th>`).join('') + '</tr></thead><tbody>';
+html += `<tr class="head"><td class="rh">1</td><td>STT</td><td>Họ và tên</td>${SUBJECTS.map((s) => `<td>${s}</td>`).join('')}<td>ĐTB</td><td>Kết quả</td></tr>`;
+STUDENTS.slice(0, 22).forEach((s, i) => {
+  html += `<tr><td class="rh">${i + 2}</td><td class="num">${s.stt}</td><td>${s.name}</td>${s.scores.map((x) => `<td class="num">${vi(x)}</td>`).join('')}<td class="num"><b style="font-weight:500">${vi(s.avg)}</b></td><td class="tag"><span class="${cls[s.result]}">${s.result}</span></td></tr>`;
+});
+document.getElementById('table').innerHTML = html + '</tbody>';
+
+// Số liệu cho dashboard, tính thẳng từ bảng điểm
+const n = STUDENTS.length;
+const classAvg = STUDENTS.reduce((a, s) => a + s.avg, 0) / n;
+const subjAvg = SUBJECTS.map((_, j) => STUDENTS.reduce((a, s) => a + s.scores[j], 0) / n);
+const counts = ['Tốt', 'Khá', 'Đạt', 'Chưa đạt'].map((k) => STUDENTS.filter((s) => s.result === k).length);
+const pct = (c) => Math.round(c / n * 1000) / 10;
+const top5 = [...STUDENTS].sort((a, b) => b.avg - a.avg || a.stt - b.stt).slice(0, 5);
+window.STATS = { classAvg, subjAvg, counts, top5: top5.map((s) => s.name + ' ' + s.avg) };
+
+document.getElementById('kpis').innerHTML = [
+  ['', 'Sĩ số', n, 'học sinh'],
+  ['', 'Điểm TB cả lớp', vi(classAvg), 'trên thang 10'],
+  ['kpi--g', 'Kết quả Tốt', counts[0], `${String(pct(counts[0])).replace('.', ',')}% cả lớp`],
+  ['kpi--b', 'Kết quả Khá', counts[1], `${String(pct(counts[1])).replace('.', ',')}% cả lớp`],
+].map(([c, l, v, s]) => `<div class="kpi ${c}"><small>${l}</small><b data-to="${v}">${v}</b><span>${s}</span></div>`).join('');
+document.getElementById('bars').insertAdjacentHTML('beforeend', subjAvg.map((a) => `<div class="bar"><b></b><i></i></div>`).join(''));
+document.getElementById('blabels').innerHTML = SUBJECTS.map((s) => `<span>${s}</span>`).join('');
+const COLORS = ['#34a853', '#4285f4', '#fbbc04', '#ea4335'];
+document.getElementById('legend').innerHTML = ['Tốt', 'Khá', 'Đạt', 'Chưa đạt'].map((k, i) => `<li><i style="background:${COLORS[i]}"></i>${k}<b>${counts[i]} HS</b></li>`).join('');
+document.getElementById('top5').innerHTML = '<thead><tr><th>#</th><th>Họ và tên</th>' + SUBJECTS.slice(0, 3).map((s) => `<th class="num">${s}</th>`).join('') + '<th class="num">ĐTB</th><th>Kết quả</th></tr></thead><tbody>' +
+  top5.map((s, i) => `<tr><td><span class="medal ${i < 3 ? 'm' + (i + 1) : ''}">${i + 1}</span></td><td>${s.name}</td>${s.scores.slice(0, 3).map((x) => `<td class="num">${vi(x)}</td>`).join('')}<td class="num"><b>${vi(s.avg)}</b></td><td class="tag"><span class="${cls[s.result]}" style="font-size:11px;border-radius:10px;padding:2px 8px">${s.result}</span></td></tr>`).join('') + '</tbody>';
+
+const $ = (s) => document.querySelector(s);
+const $$ = (s) => [...document.querySelectorAll(s)];
+const clamp = (x) => Math.min(1, Math.max(0, x));
+const ease = (x) => { x = clamp(x); return x < .5 ? 4 * x * x * x : 1 - Math.pow(-2 * x + 2, 3) / 2; };
+const out = (x) => 1 - Math.pow(1 - clamp(x), 3);
+const span = (t, [a, b]) => (t - a) / (b - a);
+const lerp = (a, b, k) => a + (b - a) * k;
+const centerOf = (el) => { const r = el.getBoundingClientRect(); return [r.left + r.width / 2, r.top + r.height / 2]; };
+const HOT = 2; // cột được rê chuột: Tiếng Anh
+
+function donut(k) {
+  const r = 52, c = 75, w = 22; let a0 = -Math.PI / 2, s = '';
+  counts.forEach((cnt, i) => {
+    const a1 = a0 + cnt / n * Math.PI * 2 * k;
+    if (a1 - a0 > 0.001) {
+      const large = a1 - a0 > Math.PI ? 1 : 0;
+      s += `<path d="M${c + r * Math.cos(a0)} ${c + r * Math.sin(a0)} A${r} ${r} 0 ${large} 1 ${c + r * Math.cos(a1)} ${c + r * Math.sin(a1)}" fill="none" stroke="${COLORS[i]}" stroke-width="${w}"/>`;
+    }
+    a0 = a1;
+  });
+  s += `<text x="75" y="72" text-anchor="middle" font-family="Google Sans Flex, Arial" font-size="22" font-weight="700" fill="#1f1f1f">${String(pct(counts[0] + counts[1])).replace('.', ',')}%</text><text x="75" y="90" text-anchor="middle" font-family="Google Sans Flex, Arial" font-size="10.5" fill="#5f6368">Tốt và Khá</text>`;
+  $('#donut').innerHTML = s;
+}
+
+window.render = (t) => {
+  // Gõ yêu cầu, gửi đi
+  const sent = t >= T.clickSend;
+  const c = t < T.typeStart || sent ? 0 : Math.min(PROMPT.length, Math.floor((t - T.typeStart) / T.typeStep) + 1);
+  $('#typed').textContent = PROMPT.slice(0, c);
+  const focused = t >= T.clickInput && !sent;
+  $('#input').classList.toggle('focus', focused);
+  $('#input').classList.toggle('ready', c > 0);
+  $('#hint').style.display = focused ? 'none' : '';
+  $('#caret').style.display = focused && Math.floor(t / 500) % 2 === 0 ? '' : 'none';
+  $('#welcome').style.opacity = 1 - clamp(span(t, [T.clickSend, T.clickSend + 200]));
+  $('.welcome h2').style.backgroundPosition = `${-(t / 30) % 200}% 0`;
+  $('#bubble').textContent = PROMPT;
+  $('#bubble').style.opacity = out(span(t, [T.clickSend, T.clickSend + 250]));
+
+  // Phản hồi của Gemini
+  $('#reply').style.opacity = out(span(t, [T.reading, T.reading + 250]));
+  const st = [T.reading, T.building, T.done].filter((s) => t >= s).length - 1;
+  $$('.reply__text > span').forEach((s, i) => (s.style.opacity = i === st ? 1 : 0));
+  $('#rspark').style.transform = t < T.done ? `rotate(${t * .3}deg)` : 'none';
+  $('#made').style.opacity = out(span(t, [T.done + 150, T.done + 450]));
+
+  // Khung chờ rồi dashboard
+  $('#skel').style.opacity = Math.min(out(span(t, [T.skel, T.skel + 300])), 1 - clamp(span(t, [T.dash, T.dash + 300])));
+  $$('.skel span').forEach((b, i) => (b.style.backgroundPosition = `${100 - ((t / 14 + i * 20) % 300)}% 0`));
+  const dk = out(span(t, [T.dash, T.dash + 400]));
+  $('#dash').style.opacity = dk;
+  $('#dash').style.transform = `translateY(${(1 - dk) * 14}px)`;
+  $$('.kpi').forEach((k, i) => (k.style.opacity = out(span(t, [T.kpis + i * 90, T.kpis + i * 90 + 300]))));
+  // Số đếm tăng dần
+  $$('.kpi b').forEach((b) => {
+    const to = b.dataset.to; const k = ease(span(t, [T.kpis, T.kpis + 900]));
+    b.textContent = to.includes(',') ? vi(parseFloat(to.replace(',', '.')) * k) : Math.round(Number(to) * k);
+  });
+  ['#pbar', '#pdonut', '#ptop'].forEach((p, i) => ($(p).style.opacity = out(span(t, [T.kpis + 150 + i * 120, T.kpis + 450 + i * 120]))));
+  $$('.bar').forEach((b, i) => {
+    const k = ease(span(t, [T.bars + i * 90, T.bars + i * 90 + 700]));
+    const h = subjAvg[i] / 10 * 100 * k;
+    b.querySelector('i').style.height = h + '%';
+    const lab = b.querySelector('b'); lab.textContent = vi(subjAvg[i]); lab.style.bottom = `calc(${h}% + 4px)`; lab.style.opacity = k;
+  });
+  donut(ease(span(t, [T.donut, T.donut + 900])));
+  $$('#top5 tbody tr').forEach((r, i) => (r.style.opacity = out(span(t, [T.top + i * 110, T.top + i * 110 + 300]))));
+
+  // Con trỏ chuột: ô nhập, nút gửi, rồi rê lên cột Tiếng Anh
+  const hotBar = $$('.bar')[HOT].querySelector('i');
+  const hb = hotBar.getBoundingClientRect();
+  const P = { start: [1180, 760], input: centerOf($('#input')), send: centerOf($('#send')), hot: [hb.left + hb.width / 2, hb.top + 30] };
+  P.input[0] -= 60;
+  const hovering = t >= T.hoverIn[1] && t < T.tipOff;
+  $$('.bar').forEach((b, i) => b.classList.toggle('hot', i === HOT && hovering));
+  let pos = P.start;
+  for (const [win, a, b] of [[T.cursorToInput, P.start, P.input], [T.cursorToSend, P.input, P.send], [T.hoverIn, P.send, P.hot]])
+    if (t >= win[0]) { const k = ease(span(t, win)); pos = [lerp(a[0], b[0], k), lerp(a[1], b[1], k)]; }
+  const clicks = [T.clickInput, T.clickSend];
+  const pressed = clicks.some((x) => t >= x && t < x + 160);
+  $('#cursor').style.transform = `translate(${pos[0] - 3}px, ${pos[1] - 2}px) scale(${pressed ? .85 : 1})`;
+  $('#cursor').style.opacity = t < T.clickSend + 500 ? 1 : t < T.hoverIn[0] ? 1 - clamp(span(t, [T.clickSend + 500, T.clickSend + 800])) : clamp(span(t, [T.hoverIn[0], T.hoverIn[0] + 250]));
+  const rc = clicks.find((x) => t >= x && t < x + 450);
+  if (rc !== undefined) { const k = (t - rc) / 450; $('#ring').style.opacity = .9 * (1 - k); $('#ring').style.transform = `translate(${pos[0]}px, ${pos[1]}px) scale(${lerp(.4, 1.3, k)})`; }
+  else $('#ring').style.opacity = 0;
+  // Chú thích khi rê chuột
+  const tip = $('#tip');
+  const pr = $('#pbar').getBoundingClientRect();
+  tip.innerHTML = `<b>${SUBJECTS[HOT]}</b><br>Điểm TB: ${vi(subjAvg[HOT])}<br>Cao nhất: ${vi(Math.max(...STUDENTS.map((s) => s.scores[HOT])))} · Thấp nhất: ${vi(Math.min(...STUDENTS.map((s) => s.scores[HOT])))}`;
+  tip.style.left = (hb.left - pr.left + hb.width / 2 + 14) + 'px';
+  tip.style.top = (hb.top - pr.top + 6) + 'px';
+  tip.style.opacity = t >= T.tipOn && t < T.tipOff ? out(span(t, [T.tipOn, T.tipOn + 200])) : 0;
+
+  // Mờ đầu và cuối để GIF lặp lại êm
+  $('#fade').style.opacity = Math.max(1 - clamp(span(t, T.fadeIn)), clamp(span(t, T.fadeOut)));
+};
+window.TOTAL = T.total;
+</script>
+</body>
+</html>
