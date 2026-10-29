@@ -1,0 +1,278 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<title>Gemini trong Google Classroom</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Google+Sans+Flex:wght@400;500;700&display=block">
+<link rel="stylesheet" href="https://unpkg.com/@phosphor-icons/web@2.1.1/src/regular/style.css">
+<link rel="stylesheet" href="https://unpkg.com/@phosphor-icons/web@2.1.1/src/fill/style.css">
+<style>
+/* Cảnh minh họa tab Gemini trong Google Classroom: chọn công cụ Tạo bài kiểm tra, Gemini gợi ý mục tiêu học tập rồi soạn câu hỏi. Khung 1272 x 788.
+   Mọi chuyển động nằm trên một trục thời gian (ms); render.js gọi window.render(t) để chụp từng khung. */
+:root { --ink: #1f1f1f; --muted: #5f6368; --line: #dadce0; --blue: #0b57d0; --green: #188038; --chip: #e9eef6; }
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html, body { width: 1272px; height: 788px; overflow: hidden; background: #fff; }
+body { font-family: 'Google Sans Flex', 'Google Sans', Roboto, Arial, sans-serif; color: var(--ink); -webkit-font-smoothing: antialiased; }
+.stage { position: relative; width: 1272px; height: 788px; overflow: hidden; background: #fff; }
+
+/* Khung Classroom */
+.top { position: absolute; inset: 0 0 auto 0; height: 60px; display: flex; align-items: center; gap: 14px; padding: 0 20px; border-bottom: 1px solid #e8eaed; background: #fff; z-index: 3; }
+.top > i { font-size: 22px; color: #444746; }
+.cls-ico { width: 28px; height: 22px; border-radius: 3px; background: #1e8e3e; position: relative; }
+.cls-ico::before { content: ''; position: absolute; left: 4px; right: 4px; top: 4px; bottom: 4px; background: #fbbc04; border-radius: 1px; }
+.cls-ico::after { content: ''; position: absolute; left: 10px; top: 7px; width: 8px; height: 8px; border-radius: 50%; background: #fff; }
+.crumb { font-size: 20px; color: #444746; display: flex; gap: 10px; align-items: center; }
+.crumb i { font-size: 16px; }
+.crumb b { font-weight: 400; color: #1f1f1f; }
+.top__r { margin-left: auto; display: flex; gap: 18px; align-items: center; font-size: 22px; color: #444746; }
+.avatar { width: 34px; height: 34px; border-radius: 50%; background: linear-gradient(135deg,#f6b26b,#e06666); color: #fff; display: grid; place-items: center; font-size: 15px; font-weight: 700; }
+.rail { position: absolute; left: 0; top: 60px; bottom: 0; width: 76px; display: grid; align-content: start; justify-items: center; gap: 22px; padding-top: 20px; color: #444746; font-size: 22px; border-right: 1px solid #f1f3f4; background: #fff; z-index: 3; }
+.rail .on { width: 48px; height: 32px; border-radius: 16px; background: #d3e3fd; display: grid; place-items: center; }
+.spark { width: 18px; height: 18px; display: inline-block; flex: none; background: conic-gradient(from 200deg, #4285f4, #9b72cb, #d96570, #4285f4); -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M12 0C12 6.6 17.4 12 24 12C17.4 12 12 17.4 12 24C12 17.4 6.6 12 0 12C6.6 12 12 6.6 12 0Z'/%3E%3C/svg%3E") center/contain no-repeat; mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M12 0C12 6.6 17.4 12 24 12C17.4 12 12 17.4 12 24C12 17.4 6.6 12 0 12C6.6 12 12 6.6 12 0Z'/%3E%3C/svg%3E") center/contain no-repeat; }
+.solid { background: #1a73e8; }
+.main { position: absolute; left: 77px; right: 0; top: 61px; bottom: 0; overflow: hidden; background: #f8fafd; }
+.screen { position: absolute; inset: 0; opacity: 0; }
+
+/* Màn 1: danh sách công cụ */
+.hero { display: flex; align-items: center; justify-content: center; gap: 26px; height: 120px; }
+.hero h1 { font-size: 30px; font-weight: 400; }
+.tools { width: 1040px; margin: 0 auto; background: #fff; border-radius: 20px; padding: 22px 26px; box-shadow: 0 1px 3px rgba(60,64,67,.12); }
+.tools h2 { font-size: 17px; font-weight: 400; }
+.cats { display: flex; gap: 8px; margin-top: 14px; }
+.cats span { border: 1px solid #c4c7c5; border-radius: 8px; padding: 6px 12px; font-size: 13px; display: flex; gap: 6px; align-items: center; color: #444746; }
+.cats span.on { background: #d3e3fd; border-color: #d3e3fd; color: #041e49; }
+.cats i { font-size: 15px; }
+.grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-top: 18px; }
+.tool { border: 1px solid #dadce0; border-radius: 12px; padding: 12px 14px; display: flex; gap: 12px; align-items: center; font-size: 14px; min-height: 58px; background: #fff; }
+.tool .ic { width: 30px; height: 30px; border-radius: 50%; display: grid; place-items: center; font-size: 16px; flex: none; }
+.tool.hover { background: #e9eef6; border-color: #c2d4f5; }
+.c-blue { background: #d3e3fd; color: #0b57d0; } .c-yellow { background: #feefc3; color: #b06000; } .c-purple { background: #eadcf8; color: #7b3fb6; } .c-teal { background: #c4eed0; color: #0d652d; } .c-orange { background: #fde3cf; color: #c5591a; } .c-pink { background: #fbd9e8; color: #b3261e; } .c-cyan { background: #c2e7ff; color: #00639b; }
+
+/* Màn 2: biểu mẫu Tạo bài kiểm tra */
+.form { width: 760px; margin: 34px 0 0 150px; }
+.form h1 { font-size: 30px; font-weight: 400; }
+.fields { display: flex; gap: 16px; margin-top: 22px; }
+.field { position: relative; border: 1px solid #8e918f; border-radius: 6px; height: 50px; padding: 14px 14px 0; font-size: 15px; width: 220px; background: #fff; }
+.field.wide { width: 100%; }
+.field.focus { border: 2px solid var(--blue); padding: 13px 13px 0; }
+.field label { position: absolute; left: 10px; top: -9px; background: #f8fafd; padding: 0 4px; font-size: 12px; color: #444746; }
+.field.focus label { color: var(--blue); }
+.field .ph-hint { color: #80868b; }
+.desc { margin-top: 22px; font-size: 14.5px; color: #1f1f1f; }
+.desc + .field { margin-top: 10px; }
+.btn { display: inline-flex; gap: 8px; align-items: center; border-radius: 18px; padding: 9px 18px; font-size: 14px; font-weight: 500; margin-top: 18px; background: #e3e3e3; color: #8a8f95; }
+.btn.on { background: var(--blue); color: #fff; }
+.btn.load { background: #d3e3fd; color: #0b57d0; }
+.objs { margin-top: 18px; opacity: 0; }
+.objs h3 { font-size: 14px; font-weight: 500; }
+.objs__box { margin-top: 8px; border: 1px solid #8e918f; border-radius: 6px; padding: 10px 14px; font-size: 14px; line-height: 1.6; background: #fff; }
+.objs__box p { opacity: 0; }
+.objs small { display: block; margin-top: 6px; font-size: 12px; color: var(--muted); }
+.qtypes { margin-top: 16px; opacity: 0; }
+.qtypes h3 { font-size: 14px; font-weight: 500; }
+.qtypes div { display: flex; gap: 8px; margin-top: 8px; }
+.qtypes div span { border: 1px solid #c4c7c5; border-radius: 8px; padding: 6px 12px; font-size: 13px; color: #444746; display: flex; gap: 6px; align-items: center; }
+.qtypes div span.on { background: #d3e3fd; border-color: #d3e3fd; color: #041e49; }
+.qtypes div span i { display: none; }
+.qtypes div span.on i { display: inline; }
+
+/* Màn 3: bộ câu hỏi */
+.quiz { width: 900px; margin: 18px 0 0 110px; }
+.quiz__title { background: #eef2fb; border-radius: 16px; padding: 16px 22px; font-size: 22px; display: flex; justify-content: space-between; align-items: center; }
+.quiz__body { margin-top: 14px; background: #fff; border-radius: 16px; padding: 16px 22px; font-size: 14px; line-height: 1.55; box-shadow: 0 1px 3px rgba(60,64,67,.12); }
+.qa { opacity: 0; margin-bottom: 12px; }
+.qa b { font-weight: 500; }
+.qa ol { list-style: none; padding-left: 4px; color: #3c4043; }
+.qa .ok { color: var(--green); font-weight: 500; }
+.qa .key { color: var(--green); font-size: 13px; }
+.acts { display: flex; align-items: center; gap: 12px; margin-top: 4px; opacity: 0; }
+.export { display: inline-flex; gap: 8px; align-items: center; background: #d3e3fd; color: #041e49; border-radius: 10px; padding: 8px 14px; font-size: 14px; font-weight: 500; }
+.export.press { background: #a8c7fa; }
+.acts .r { margin-left: auto; display: flex; gap: 16px; font-size: 18px; color: #444746; }
+.refine { display: flex; gap: 10px; margin-top: 12px; opacity: 0; }
+.refine span { border: 1px solid #dadce0; border-radius: 10px; padding: 8px 12px; font-size: 12.5px; color: #3c4043; background: #fff; }
+.menu { position: absolute; background: #fff; border-radius: 10px; box-shadow: 0 4px 18px rgba(60,64,67,.28); padding: 8px 0; font-size: 14px; opacity: 0; z-index: 4; width: 260px; }
+.menu p { display: flex; gap: 12px; align-items: center; padding: 9px 16px; }
+.menu p.hl { background: #e9eef6; }
+.menu .forms { width: 18px; height: 22px; border-radius: 3px; background: #673ab7; }
+.menu .docs { width: 18px; height: 22px; border-radius: 3px; background: #4285f4; }
+.toast { position: absolute; left: 24px; bottom: 24px; z-index: 8; background: #303030; color: #f2f2f2; border-radius: 8px; padding: 14px 18px; font-size: 14px; display: flex; gap: 18px; align-items: center; opacity: 0; box-shadow: 0 4px 14px rgba(0,0,0,.25); }
+.toast b { color: #a8c7fa; font-weight: 500; }
+.loader { display: inline-block; width: 16px; height: 16px; border-radius: 50%; border: 2.5px solid #a8c7fa; border-top-color: #0b57d0; }
+
+.cursor { position: absolute; left: 0; top: 0; z-index: 20; width: 26px; height: 26px; }
+.ring { position: absolute; left: 0; top: 0; z-index: 19; width: 44px; height: 44px; margin: -22px 0 0 -22px; border-radius: 50%; background: rgba(11,87,208,.25); opacity: 0; }
+.fade { position: absolute; inset: 0; background: #fff; z-index: 30; opacity: 0; pointer-events: none; }
+</style>
+</head>
+<body>
+<div class="stage">
+  <header class="top">
+    <i class="ph ph-list"></i><span class="cls-ico"></span>
+    <p class="crumb">Classroom <i class="ph ph-caret-right"></i><b>Gemini</b></p>
+    <span class="top__r"><i class="ph ph-dots-nine"></i><span class="avatar">H</span></span>
+  </header>
+  <nav class="rail"><i class="ph ph-house"></i><i class="ph ph-calendar-blank"></i><i class="ph ph-books"></i><span class="on"><span class="spark"></span></span><i class="ph ph-magnifying-glass"></i><i class="ph ph-users"></i><i class="ph ph-graduation-cap"></i><i class="ph ph-archive"></i><i class="ph ph-gear"></i></nav>
+
+  <main class="main">
+    <section class="screen" id="s1">
+      <div class="hero"><h1>Công cụ AI của Google dành cho giáo viên</h1>
+        <svg width="150" height="90" viewBox="0 0 150 90"><ellipse cx="80" cy="50" rx="68" ry="34" fill="#e3f2fd"/><rect x="34" y="34" width="62" height="40" rx="5" fill="#fff" stroke="#4285f4" stroke-width="2"/><rect x="42" y="42" width="30" height="5" rx="2" fill="#a8c7fa"/><rect x="42" y="52" width="44" height="4" rx="2" fill="#d3e3fd"/><rect x="42" y="60" width="38" height="4" rx="2" fill="#d3e3fd"/><rect x="72" y="18" width="40" height="30" rx="4" fill="#fff" stroke="#9b72cb" stroke-width="2" transform="rotate(10 92 33)"/><path d="M92 26l2.5 5.5 5.5 2.5-5.5 2.5-2.5 5.5-2.5-5.5-5.5-2.5 5.5-2.5z" fill="#9b72cb"/><circle cx="124" cy="64" r="10" fill="#fbbc04"/><path d="M118 70c2 8 10 8 12 0" fill="#f6b26b"/></svg>
+      </div>
+      <div class="tools">
+        <h2>Tạo nội dung và học liệu với sự trợ giúp của Gemini</h2>
+        <p class="cats"><span class="on"><i class="ph ph-check"></i>Tất cả</span><span><i class="ph ph-notebook"></i>Lập kế hoạch</span><span><i class="ph ph-book-open"></i>Học liệu</span><span><i class="ph ph-clipboard-text"></i>Đánh giá</span><span><i class="ph ph-hand-heart"></i>Hỗ trợ học sinh</span><span><i class="ph ph-briefcase"></i>Công việc hành chính</span></p>
+        <div class="grid" id="grid"></div>
+      </div>
+    </section>
+
+    <section class="screen" id="s2">
+      <div class="form">
+        <h1>Tạo bài kiểm tra</h1>
+        <div class="fields">
+          <div class="field" id="fGrade"><label>Khối lớp</label><span class="ph-hint" id="gHint">VD: 6</span><span id="gVal"></span></div>
+          <div class="field"><label>Số câu hỏi</label>3</div>
+        </div>
+        <p class="desc">Mô tả chủ đề và kiến thức, kỹ năng thầy cô muốn học sinh thể hiện</p>
+        <div class="field wide" id="fTopic"><span class="ph-hint" id="tHint">VD: yêu cầu cần đạt, kỹ năng, kết quả đo được</span><span id="tVal"></span></div>
+        <span class="btn" id="bObj"><i class="ph ph-magic-wand"></i><span id="bObjText">Tạo mục tiêu học tập</span></span>
+        <div class="objs" id="objs"><h3>Mục tiêu học tập gợi ý</h3>
+          <div class="objs__box"><p>• Nêu được khái niệm quang hợp.</p><p>• Viết được phương trình quang hợp dạng chữ.</p><p>• Nêu được vai trò của lá cây trong quang hợp.</p><p>• Giải thích được vì sao cây cần ánh sáng để quang hợp.</p></div>
+          <small>Thầy cô có thể sửa mục tiêu cho phù hợp với lớp mình.</small></div>
+        <div class="qtypes" id="qtypes"><h3>Chọn dạng câu hỏi (không bắt buộc)</h3>
+          <div><span id="qMC"><i class="ph ph-check"></i>Trắc nghiệm</span><span>Điền vào chỗ trống</span><span>Đúng hoặc sai</span><span>Trả lời ngắn</span><span>Tự luận</span></div>
+          <span class="btn on" id="bQ"><i class="ph ph-magic-wand"></i><span id="bQText">Tạo câu hỏi</span></span></div>
+      </div>
+    </section>
+
+    <section class="screen" id="s3">
+      <div class="quiz">
+        <div class="quiz__title">KHTN 7: Quang hợp ở thực vật (3 câu hỏi)<i class="ph ph-caret-down" style="font-size:18px;color:#444746"></i></div>
+        <div class="quiz__body">
+          <div class="qa"><b>1) Quá trình quang hợp diễn ra chủ yếu ở bộ phận nào của cây?</b><ol><li>a) Rễ</li><li>b) Thân</li><li class="ok">c) Lá</li><li>d) Hoa</li></ol><p class="key">Đáp án đúng: c) Lá</p></div>
+          <div class="qa"><b>2) Nguyên liệu của quá trình quang hợp là</b><ol><li class="ok">a) nước và khí carbon dioxide</li><li>b) khí oxygen và glucose</li><li>c) nước và khí oxygen</li><li>d) tinh bột và nước</li></ol><p class="key">Đáp án đúng: a) nước và khí carbon dioxide</p></div>
+          <div class="qa"><b>3) Trong quá trình quang hợp, cây thải ra môi trường khí nào?</b><ol><li class="ok">a) Oxygen</li><li>b) Carbon dioxide</li><li>c) Nitrogen</li><li>d) Hydrogen</li></ol><p class="key">Đáp án đúng: a) Oxygen</p></div>
+          <div class="acts" id="acts"><span class="export" id="export"><i class="ph ph-export"></i>Xuất</span><i class="ph ph-dots-three-vertical" style="color:#444746"></i><span class="r"><i class="ph ph-thumbs-up"></i><i class="ph ph-thumbs-down"></i></span></div>
+        </div>
+        <div class="refine" id="refine"><span>Tạo phiên bản khó hơn</span><span>Thay câu 2 bằng câu hỏi mới</span><span>Tạo nhiều phiên bản theo mức độ</span></div>
+      </div>
+      <div class="menu" id="menu"><p id="mForms"><span class="forms"></span>Xuất sang Google Biểu mẫu</p><p><span class="docs"></span>Xuất sang Google Tài liệu</p></div>
+    </section>
+  </main>
+
+  <div class="toast" id="toast"><span><b>Đã tạo biểu mẫu</b> “KHTN 7: Quang hợp ở thực vật” trong Google Drive.</span><b>Mở</b></div>
+  <div class="ring" id="ring"></div>
+  <svg class="cursor" id="cursor" viewBox="0 0 26 26"><path d="M3 2l17 11-7.5 1.2L16.5 22l-3.2 1.5-4-7.8L3 20.5z" fill="#111" stroke="#fff" stroke-width="1.6" stroke-linejoin="round"/></svg>
+  <div class="fade" id="fade"></div>
+</div>
+
+<script>
+// Trục thời gian (ms). Đổi số ở đây để chỉnh nhịp.
+const T = {
+  total: 14000, fadeIn: [0, 300], fadeOut: [13600, 14000],
+  cursorToTool: [300, 1300], clickTool: 1450, toS2: [1600, 1950],
+  cursorToGrade: [1950, 2350], clickGrade: 2450, typeGrade: 2600,
+  cursorToTopic: [2700, 3050], clickTopic: 3150, typeTopic: 3250, topicStep: 26,
+  cursorToObj: [4250, 4600], clickObj: 4700, objs: 5300,
+  cursorToMC: [6100, 6500], clickMC: 6600,
+  cursorToQ: [6750, 7100], clickQ: 7200, toS3: [7900, 8250],
+  questions: [8350, 8700, 9050], acts: 9450,
+  cursorToExport: [10000, 10600], clickExport: 10700,
+  cursorToForms: [10900, 11250], clickForms: 11350, toast: 11500,
+};
+const TOPIC = 'Quang hợp ở thực vật, Khoa học tự nhiên 7';
+const TOOLS = [
+  ['ph-list-checks', 'c-blue', 'Soạn dàn ý giáo án'], ['ph-presentation', 'c-yellow', 'Tạo bài trình chiếu'], ['ph-exam', 'c-purple', 'Tạo bài kiểm tra'], ['ph-text-aa', 'c-cyan', 'Điều chỉnh độ khó văn bản'],
+  ['ph-table', 'c-orange', 'Tạo hoặc chuyển đổi rubric'], ['spark', '', 'Tìm ví dụ thực tế'], ['ph-lightbulb', 'c-teal', 'Gợi ý ý tưởng dự án'], ['spark', '', 'Câu hỏi thảo luận hấp dẫn'],
+  ['spark', '', 'Chiến lược dạy học phân hóa'], ['spark', '', 'Trò chơi hóa hoạt động'], ['spark', '', 'Bài mẫu đạt và chưa đạt'], ['ph-article', 'c-teal', 'Viết văn bản thông tin'],
+  ['spark', '', 'Câu hỏi theo mức độ tư duy'], ['ph-file-text', 'c-purple', 'Câu hỏi bám sát văn bản'], ['ph-grid-four', 'c-pink', 'Tạo bảng lựa chọn'], ['ph-translate', 'c-pink', 'Tạo danh sách từ vựng'],
+];
+const $ = (s) => document.querySelector(s);
+const $$ = (s) => [...document.querySelectorAll(s)];
+$('#grid').innerHTML = TOOLS.map(([i, c, l], k) => `<div class="tool" ${k === 2 ? 'id="quizTool"' : ''}>${i === 'spark' ? '<span class="ic"><span class="spark solid" style="width:20px;height:20px;background:#1a73e8"></span></span>' : `<span class="ic ${c}"><i class="ph ${i}"></i></span>`}${l}</div>`).join('');
+
+const clamp = (x) => Math.min(1, Math.max(0, x));
+const ease = (x) => { x = clamp(x); return x < .5 ? 4 * x * x * x : 1 - Math.pow(-2 * x + 2, 3) / 2; };
+const out = (x) => 1 - Math.pow(1 - clamp(x), 3);
+const span = (t, [a, b]) => (t - a) / (b - a);
+const lerp = (a, b, k) => a + (b - a) * k;
+const centerOf = (el) => { const r = el.getBoundingClientRect(); return [r.left + Math.min(r.width / 2, 60), r.top + r.height / 2]; };
+const show = (el, on) => { el.style.visibility = on ? 'visible' : 'hidden'; };
+
+window.render = (t) => {
+  // Chuyển màn
+  const k2 = ease(span(t, T.toS2)), k3 = ease(span(t, T.toS3));
+  $('#s1').style.opacity = 1 - k2; $('#s1').style.transform = `translateX(${-k2 * 40}px)`;
+  $('#s2').style.opacity = k2 * (1 - k3); $('#s2').style.transform = `translateX(${(1 - k2) * 40 - k3 * 40}px)`;
+  $('#s3').style.opacity = k3; $('#s3').style.transform = `translateX(${(1 - k3) * 40}px)`;
+  [['#s1', k2 < 1], ['#s2', k2 > 0 && k3 < 1], ['#s3', k3 > 0]].forEach(([s, on]) => show($(s), on));
+  $('#quizTool').classList.toggle('hover', t >= T.cursorToTool[1] - 150);
+
+  // Màn 2: điền biểu mẫu
+  const gOn = t >= T.typeGrade;
+  $('#gHint').style.display = gOn ? 'none' : ''; $('#gVal').textContent = gOn ? '7' : '';
+  $('#fGrade').classList.toggle('focus', t >= T.clickGrade && t < T.clickTopic);
+  const n = t < T.typeTopic ? 0 : Math.min(TOPIC.length, Math.floor((t - T.typeTopic) / T.topicStep) + 1);
+  $('#tHint').style.display = t >= T.clickTopic ? 'none' : ''; $('#tVal').textContent = TOPIC.slice(0, n);
+  $('#fTopic').classList.toggle('focus', t >= T.clickTopic && t < T.clickObj);
+  const objLoading = t >= T.clickObj && t < T.objs;
+  $('#bObj').className = 'btn' + (objLoading ? ' load' : n > 0 ? ' on' : '');
+  $('#bObjText').textContent = objLoading ? 'Đang tạo mục tiêu…' : t >= T.objs ? 'Tạo lại mục tiêu học tập' : 'Tạo mục tiêu học tập';
+  $('#bObj').firstChild.className = objLoading ? 'loader' : 'ph ph-magic-wand';
+  if (objLoading) $('#bObj').firstChild.style.transform = `rotate(${t * .6}deg)`;
+  $('#objs').style.opacity = out(span(t, [T.objs, T.objs + 300]));
+  $$('.objs__box p').forEach((p, i) => (p.style.opacity = out(span(t, [T.objs + 100 + i * 140, T.objs + 350 + i * 140]))));
+  $('#qtypes').style.opacity = out(span(t, [T.objs + 650, T.objs + 950]));
+  $('#qMC').classList.toggle('on', t >= T.clickMC);
+  const qLoading = t >= T.clickQ;
+  $('#bQ').className = 'btn ' + (qLoading ? 'load' : 'on');
+  $('#bQText').textContent = qLoading ? 'Đang soạn câu hỏi…' : 'Tạo câu hỏi';
+  $('#bQ').firstChild.className = qLoading ? 'loader' : 'ph ph-magic-wand';
+  if (qLoading) $('#bQ').firstChild.style.transform = `rotate(${t * .6}deg)`;
+  // Đẩy nội dung lên khi biểu mẫu dài ra
+  $('#s2 .form').style.transform = `translateY(${-90 * ease(span(t, [T.objs + 500, T.objs + 1100]))}px)`;
+
+  // Màn 3: câu hỏi
+  $$('.qa').forEach((q, i) => { const k = out(span(t, [T.questions[i], T.questions[i] + 400])); q.style.opacity = k; q.style.transform = `translateY(${(1 - k) * 12}px)`; });
+  $('#acts').style.opacity = out(span(t, [T.acts, T.acts + 300]));
+  $('#refine').style.opacity = out(span(t, [T.acts + 200, T.acts + 500]));
+  $('#export').classList.toggle('press', t >= T.clickExport && t < T.clickForms);
+  const er = $('#export').getBoundingClientRect(), mr = $('.main').getBoundingClientRect();
+  const menu = $('#menu');
+  menu.style.left = (er.left - mr.left) + 'px'; menu.style.top = (er.bottom - mr.top + 6) + 'px';
+  menu.style.opacity = t >= T.clickExport && t < T.clickForms + 150 ? out(span(t, [T.clickExport, T.clickExport + 150])) : 0;
+  $('#mForms').classList.toggle('hl', t >= T.cursorToForms[1] - 100);
+  const tk = out(span(t, [T.toast, T.toast + 350]));
+  $('#toast').style.opacity = tk; $('#toast').style.transform = `translateY(${(1 - tk) * 16}px)`;
+
+  // Con trỏ chuột
+  const P = {
+    start: [880, 700], tool: centerOf($('#quizTool')), grade: centerOf($('#fGrade')), topic: centerOf($('#fTopic')),
+    obj: centerOf($('#bObj')), mc: centerOf($('#qMC')), q: centerOf($('#bQ')), exp: centerOf($('#export')), forms: centerOf($('#mForms')),
+  };
+  // Vị trí đo lúc màn đang trượt: bỏ phần dịch ngang để con trỏ không trôi
+  const path = [[T.cursorToTool, 'start', 'tool'], [T.cursorToGrade, 'tool', 'grade'], [T.cursorToTopic, 'grade', 'topic'], [T.cursorToObj, 'topic', 'obj'], [T.cursorToMC, 'obj', 'mc'], [T.cursorToQ, 'mc', 'q'], [T.cursorToExport, 'q', 'exp'], [T.cursorToForms, 'exp', 'forms']];
+  if (!window.FIX) window.FIX = {}; // vị trí đo lúc màn chứa nó đứng yên
+  const stable = (key) => {
+    const scr = { tool: k2 === 0, grade: k2 === 1 && k3 === 0, topic: k2 === 1 && k3 === 0, obj: k2 === 1 && k3 === 0, mc: k2 === 1 && k3 === 0, q: k2 === 1 && k3 === 0, exp: k3 === 1, forms: k3 === 1 }[key];
+    if (key === 'start') return P.start;
+    if (scr) FIX[key] = P[key];
+    return FIX[key] || P[key];
+  };
+  let pos = P.start;
+  for (const [win, a, b] of path) if (t >= win[0]) { const k = ease(span(t, win)); const A = stable(a), B = stable(b); pos = [lerp(A[0], B[0], k), lerp(A[1], B[1], k)]; }
+  const clicks = [T.clickTool, T.clickGrade, T.clickTopic, T.clickObj, T.clickMC, T.clickQ, T.clickExport, T.clickForms];
+  const pressed = clicks.some((x) => t >= x && t < x + 160);
+  $('#cursor').style.transform = `translate(${pos[0] - 3}px, ${pos[1] - 2}px) scale(${pressed ? .85 : 1})`;
+  $('#cursor').style.opacity = t < T.clickQ + 400 ? 1 : t < T.cursorToExport[0] ? 1 - clamp(span(t, [T.clickQ + 400, T.clickQ + 700])) : clamp(span(t, [T.cursorToExport[0], T.cursorToExport[0] + 250]));
+  const rc = clicks.find((x) => t >= x && t < x + 450);
+  if (rc !== undefined) { const k = (t - rc) / 450; $('#ring').style.opacity = .9 * (1 - k); $('#ring').style.transform = `translate(${pos[0]}px, ${pos[1]}px) scale(${lerp(.4, 1.3, k)})`; }
+  else $('#ring').style.opacity = 0;
+
+  // Mờ đầu và cuối để GIF lặp lại êm
+  $('#fade').style.opacity = Math.max(1 - clamp(span(t, T.fadeIn)), clamp(span(t, T.fadeOut)));
+};
+window.TOTAL = T.total;
+</script>
+</body>
+</html>
