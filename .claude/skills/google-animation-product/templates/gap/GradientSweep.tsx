@@ -8,21 +8,22 @@ import { C, clamp, EASE, FONT, ramp, velocityBlur } from "./tokens";
  * frame while spinning, shrinks onto the wordmark's left, then the wordmark letters
  * slide out from behind it with motion blur. Place it over the outgoing scene.
  */
-export const GradientSweep: React.FC<{ word: string; from?: "br" | "bl"; size?: number }> = ({ word, from = "br", size = 130 }) => {
+export const GradientSweep: React.FC<{ word: string; from?: "br" | "bl"; size?: number; markX?: number; bg?: boolean }> = ({ word, from = "br", size = 130, markX, bg = true }) => {
   const frame = useCurrentFrame();
   const { width, height } = useVideoConfig();
   const sx = from === "br" ? 1 : -1;
   // 0–10 sweep in big, 10–16 shrink to mark, 14–30 letters
   const scale = (fr: number) => interpolate(fr, [0, 9, 16], [7, 12, 1], { ...clamp, easing: EASE });
-  const x = (fr: number) => interpolate(fr, [0, 9, 16], [sx * width * 0.55, sx * width * 0.1, -size * 1.9], { ...clamp, easing: EASE });
+  const x = (fr: number) => interpolate(fr, [0, 9, 16], [sx * width * 0.55, sx * width * 0.1, markX ?? -size * 1.9], { ...clamp, easing: EASE });
   const y = (fr: number) => interpolate(fr, [0, 9, 16], [height * 0.6, 0, 0], { ...clamp, easing: EASE });
   const rot = interpolate(frame, [0, 16], [-70, 0], { ...clamp, easing: EASE });
   const blur = velocityBlur((fr) => x(fr) + y(fr), frame, 0.03, 8);
   const wordStart = 13;
+  // markX: vị trí cuối của ngôi sao so với tâm khung (tên dài cần đặt xa hơn mặc định)
   const chars = [...word];
   return (
     <AbsoluteFill style={{ alignItems: "center", justifyContent: "center" }}>
-      <AbsoluteFill style={{ background: C.bg, opacity: ramp(frame, 6, 10) }} />
+      {bg && <AbsoluteFill style={{ background: C.bg, opacity: ramp(frame, 6, 10) }} />}
       <div style={{ display: "flex", alignItems: "center", fontFamily: FONT, fontSize: size, fontWeight: 500, letterSpacing: "-0.02em" }}>
         <div style={{ width: size * 0.95 }} />
         {chars.map((ch, i) => {
