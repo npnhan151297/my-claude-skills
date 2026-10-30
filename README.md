@@ -22,6 +22,7 @@ git clone --depth 1 https://github.com/npnhan151297/my-claude-skills /tmp/my-cla
 | Phong cách Google for Education | `gfe-motion-style` (quét sọc 4 màu, lưới ô, lower-third đường kẻ, chữ số nổi khối, đường mạch) |
 | Màu và âm thanh | `brand-color-grade`, `text-contrast-guard`, `music-edit`, `sfx-layer`, `loudness-master` |
 | Phụ đề và xuất bản | `safe-zone-layout`, `reframe-16x9`, `captions-style`, `render-qc`, `cover-frame` |
+| Google Animation Product (video sản phẩm kiểu Google) | `google-animation-product`, `gap-style`, `gap-logo-burst`, `gap-typing-icons`, `gap-gradient-sweep`, `gap-word-carousel`, `gap-floating-chips`, `gap-ui-demo`, `gap-3d-cards`, `gap-outro` |
 | Video sự kiện từ footage thô | `dung-video-tu-footage` |
 | Khác | `grill-with-docs`, `grilling`, `domain-modeling` (Matt Pocock) |
 
