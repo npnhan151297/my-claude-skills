@@ -37,20 +37,21 @@ Các tiêu chí chấm thang 1–4, chia hai nhóm: **Tiêu chí chuyên môn** 
 _Avoid_: tiêu chí tham khảo, điểm tổng
 
 **Tiêu chí chuyên môn**:
-Ba tiêu chí về hiểu biết: hiểu sản phẩm, hiểu cách phân phối sản phẩm hệ thống Google Workspace, hiểu kỹ thuật tính năng sản phẩm.
+Ba tiêu chí về hiểu biết: hiểu sản phẩm (gồm cả lợi ích, cơ sở pháp lý và Bộ tiêu chuẩn Trường học số), hiểu cách phân phối sản phẩm hệ thống Google Workspace (gói license, mô hình kênh, phương án thiết bị và chi phí), hiểu kỹ thuật tính năng sản phẩm.
 
 **Tiêu chí kỹ năng mềm**:
-Tám kỹ năng: tư vấn – trình bày – giao tiếp – thuyết trình; nghiên cứu khách hàng; đặt câu hỏi; xây dựng niềm tin; đàm phán – chốt deal; quan sát – kể chuyện; giải quyết vấn đề; follow up sau đàm phán.
+Năm kỹ năng quan sát được trong **Role-play**: tư vấn – trình bày – giao tiếp – thuyết trình; đặt câu hỏi; xây dựng niềm tin; quan sát – kể chuyện; giải quyết vấn đề. Nghiên cứu khách hàng, đàm phán – chốt deal, follow up sau đàm phán không chấm trong lần đánh giá này.
 
 **Chứng chỉ bắt buộc**:
 Ba chứng chỉ mỗi sales phải có: Sales Credential, Chromebook for Educator, Google Certified Educator Level 1 (GCE Level 1).
+Chỉ hỏi và ghi nhận ngoài **Role-play** để đưa vào báo cáo sau đào tạo, không ảnh hưởng **Kết quả đánh giá**.
 _Avoid_: bằng cấp, certificate
 
 **Câu hỏi bắt buộc**:
 Bảy câu hỏi/phản bác mà **Khách hàng giả lập** phải đưa ra với mọi nhân sự, cùng thứ tự, trên cùng một hồ sơ trường.
 
 **Kết quả đánh giá**:
-Một trong ba mức: **Đạt** (mọi tiêu chí từ 3), **Đạt có điều kiện** (không có điểm 1, có 1–2 tiêu chí điểm 2), **Chưa đạt** (có điểm 1, hoặc từ 3 tiêu chí điểm 2). Chỉ dựa trên **Tiêu chí tính điểm** của **Role-play**; mắc **Lỗi nghiêm trọng** là **Chưa đạt**.
+Một trong ba mức: **Đạt**, **Đạt có điều kiện**, **Chưa đạt**. **Tiêu chí chuyên môn** là điều kiện cần và chấm chặt; **Tiêu chí kỹ năng mềm** được nới hơn. Kết quả chung lấy theo nhóm thấp hơn; mắc **Lỗi nghiêm trọng** là **Chưa đạt**.
 _Avoid_: điểm tổng, xếp loại
 
 **Lỗi nghiêm trọng**:
