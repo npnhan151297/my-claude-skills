@@ -1,7 +1,6 @@
 ---
 name: grill-with-docs
-description: "A relentless interview to sharpen a plan or design, which also creates docs (ADR's and glossary) as we go."
-disable-model-invocation: true
+description: "Phỏng vấn dồn dập để mài sắc một kế hoạch/thiết kế, vừa hỏi vừa ghi tài liệu (CONTEXT.md, ADR). Dùng khi người dùng nói 'grill with docs', 'grill-with-docs', 'hỏi vặn tôi và ghi tài liệu', hoặc muốn được hỏi kỹ trước khi làm."
 ---
 
 Call the Skill tool twice, for "grilling" and "domain-modeling".
