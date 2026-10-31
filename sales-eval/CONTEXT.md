@@ -32,11 +32,15 @@ _Avoid_: khách, đối tác
 Manager sales và Teamlead chuyên môn. Hai người cùng thảo luận và chấm chung một phiếu cho mỗi nhân sự.
 _Avoid_: giám khảo, hội đồng
 
-**Tiêu chí tính điểm / Tiêu chí tham khảo**:
-**Tiêu chí tính điểm** đo những gì đã được dạy (kiến thức giải pháp vận dụng khi tư vấn) và quyết định **Kết quả đánh giá**. **Tiêu chí tham khảo** đo kỹ năng bán (khai thác nhu cầu, xử lý từ chối, chốt bước tiếp) — chưa được dạy nên chỉ ghi nhận, không tính.
+**Tiêu chí tính điểm**:
+Chín tiêu chí chấm trong **Role-play**, mỗi tiêu chí thang 1–4: sáu tiêu chí kiến thức giải pháp (Buổi 1–2) và ba tiêu chí kỹ năng bán (Buổi 3: khai thác nhu cầu, xử lý từ chối, chốt bước tiếp theo).
+_Avoid_: tiêu chí tham khảo, điểm tổng
+
+**Câu hỏi bắt buộc**:
+Bảy câu hỏi/phản bác mà **Khách hàng giả lập** phải đưa ra với mọi nhân sự, cùng thứ tự, trên cùng một hồ sơ trường.
 
 **Kết quả đánh giá**:
-Một trong ba mức: **Đạt**, **Đạt có điều kiện** (cần kèm thêm), **Chưa đạt**. Chỉ dựa trên **Tiêu chí tính điểm** của **Role-play**; mắc **Lỗi nghiêm trọng** là **Chưa đạt**.
+Một trong ba mức: **Đạt** (mọi tiêu chí từ 3), **Đạt có điều kiện** (không có điểm 1, có 1–2 tiêu chí điểm 2), **Chưa đạt** (có điểm 1, hoặc từ 3 tiêu chí điểm 2). Chỉ dựa trên **Tiêu chí tính điểm** của **Role-play**; mắc **Lỗi nghiêm trọng** là **Chưa đạt**.
 _Avoid_: điểm tổng, xếp loại
 
 **Lỗi nghiêm trọng**:
