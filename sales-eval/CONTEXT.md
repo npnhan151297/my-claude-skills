@@ -33,8 +33,18 @@ Manager sales và Teamlead chuyên môn. Hai người cùng thảo luận và ch
 _Avoid_: giám khảo, hội đồng
 
 **Tiêu chí tính điểm**:
-Chín tiêu chí chấm trong **Role-play**, mỗi tiêu chí thang 1–4: sáu tiêu chí kiến thức giải pháp (Buổi 1–2) và ba tiêu chí kỹ năng bán (Buổi 3: khai thác nhu cầu, xử lý từ chối, chốt bước tiếp theo).
+Các tiêu chí chấm thang 1–4, chia hai nhóm: **Tiêu chí chuyên môn** và **Tiêu chí kỹ năng mềm**.
 _Avoid_: tiêu chí tham khảo, điểm tổng
+
+**Tiêu chí chuyên môn**:
+Ba tiêu chí về hiểu biết: hiểu sản phẩm, hiểu cách phân phối sản phẩm hệ thống Google Workspace, hiểu kỹ thuật tính năng sản phẩm.
+
+**Tiêu chí kỹ năng mềm**:
+Tám kỹ năng: tư vấn – trình bày – giao tiếp – thuyết trình; nghiên cứu khách hàng; đặt câu hỏi; xây dựng niềm tin; đàm phán – chốt deal; quan sát – kể chuyện; giải quyết vấn đề; follow up sau đàm phán.
+
+**Chứng chỉ bắt buộc**:
+Ba chứng chỉ mỗi sales phải có: Sales Credential, Chromebook for Educator, Google Certified Educator Level 1 (GCE Level 1).
+_Avoid_: bằng cấp, certificate
 
 **Câu hỏi bắt buộc**:
 Bảy câu hỏi/phản bác mà **Khách hàng giả lập** phải đưa ra với mọi nhân sự, cùng thứ tự, trên cùng một hồ sơ trường.
