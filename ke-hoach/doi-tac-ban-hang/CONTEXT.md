@@ -36,6 +36,10 @@ _Avoid_: trainer, CTV
 **Đợt nhanh / Đợt chính**:
 Hai lớp trong lộ trình. **Đợt nhanh** chốt và chạy trong học kỳ II năm học 2026–2027. **Đợt chính** chốt trước khi trường lập kế hoạch năm học 2027–2028.
 
+**Trường chốt**:
+Trường đã ký hợp đồng hoặc gửi xác nhận bằng văn bản, kèm danh sách giáo viên tham gia. Lời hứa miệng hay đồng ý chủ trương của xã/phường chưa tính.
+_Avoid_: trường cam kết, trường tiềm năng
+
 ## Relationships
 
 - Một **Đối tác bán hàng** có một hoặc nhiều **Thị trường**; một phần trong đó có thể là **Địa bàn ưu tiên**.
