@@ -17,7 +17,7 @@ _Avoid_: bài test, bài thi
 ### Đánh giá
 
 **Đánh giá sau đào tạo**:
-Buổi phỏng vấn có cấu trúc dưới dạng **Role-play** để đánh giá **từng nhân sự**, không đánh giá khoá học. Chỉ áp dụng cho người đã học đủ các **Buổi đào tạo** được đánh giá.
+Buổi phỏng vấn có cấu trúc dưới dạng **Role-play** để đánh giá **từng nhân sự**, không đánh giá khoá học. Chỉ áp dụng cho người đã học đủ các **Buổi đào tạo** được đánh giá. Tổ chức ngay sau Buổi 3 (Roleplay – Soft skill).
 _Avoid_: phỏng vấn, kiểm tra miệng, review nhân sự
 
 **Role-play**:
@@ -25,7 +25,8 @@ Người chấm đóng vai **Khách hàng giả lập**, nhân sự tư vấn nh
 _Avoid_: đóng kịch, mock call
 
 **Khách hàng giả lập**:
-Vai một người ở trường học (khách hàng B2B) do người chấm đóng trong **Role-play**.
+Vai Hiệu trưởng một trường phổ thông (khách hàng B2B) do **Người chấm** đóng trong **Role-play**. Là vai duy nhất được dùng.
+_Avoid_: khách, đối tác
 
 **Người chấm**:
 Manager sales và Teamlead chuyên môn. Hai người cùng thảo luận và chấm chung một phiếu cho mỗi nhân sự.
@@ -35,5 +36,11 @@ _Avoid_: giám khảo, hội đồng
 **Tiêu chí tính điểm** đo những gì đã được dạy (kiến thức giải pháp vận dụng khi tư vấn) và quyết định **Kết quả đánh giá**. **Tiêu chí tham khảo** đo kỹ năng bán (khai thác nhu cầu, xử lý từ chối, chốt bước tiếp) — chưa được dạy nên chỉ ghi nhận, không tính.
 
 **Kết quả đánh giá**:
-Một trong ba mức: **Đạt**, **Đạt có điều kiện** (cần kèm thêm), **Chưa đạt**. Chỉ dựa trên **Tiêu chí tính điểm** của **Role-play**.
+Một trong ba mức: **Đạt**, **Đạt có điều kiện** (cần kèm thêm), **Chưa đạt**. Chỉ dựa trên **Tiêu chí tính điểm** của **Role-play**; mắc **Lỗi nghiêm trọng** là **Chưa đạt**.
 _Avoid_: điểm tổng, xếp loại
+
+**Lỗi nghiêm trọng**:
+Nói sai giá, thời hạn hợp đồng, văn bản pháp lý, hoặc hứa điều giải pháp không làm được. Mắc một lần là **Chưa đạt**, bất kể các tiêu chí khác.
+
+**Đánh giá lại**:
+Lần **Đánh giá sau đào tạo** tiếp theo cho người chưa **Đạt**: với **Đạt có điều kiện** là sau 1 buổi kèm, trong vòng 1 tuần, chỉ chấm lại tiêu chí dưới 3; với **Chưa đạt** là tối đa 1 lần sau 1–2 tuần.
