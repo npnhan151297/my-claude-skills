@@ -13,4 +13,9 @@ Logo công cụ ngoài Google: `canva-icon`, `canva-wordmark`, `padlet`, `waygro
 
 ## Còn thiếu
 - Logo Google for Education (bản màu, một màu, đảo màu).
-- Logo AIE.
+
+
+## partner/
+- `gfe-pd-partner.png`: **Huy hiệu đối tác** "Google for Education Professional Development Partner" (chữ xám, chỉ dùng trên nền trắng).
+- `aie.png`: logo AI Edu.
+- `aie-x-gfe-pd-partner.png`: ảnh gốc người dùng gửi, hai logo đặt cạnh nhau. Không dùng nguyên khối trên slide; dùng hai file tách riêng.

@@ -5,7 +5,7 @@ Bộ **Skill** giúp Claude thiết kế bộ slide theo phong cách Google for 
 ## Language
 
 **Bộ slide**:
-Một file Google Slides hoàn chỉnh trong Drive của người dùng, tạo bằng cách sao chép **Slide mẫu** rồi điền nội dung. Chữ trên slide bằng tiếng Việt; tên sản phẩm Google giữ nguyên tiếng Anh. Ba loại được ưu tiên: **Slide giới thiệu chương trình**, **Slide sự kiện**, **Slide đề xuất**.
+Một file Google Slides hoàn chỉnh trong Drive của người dùng, tạo bằng cách sao chép **Slide mẫu** rồi điền nội dung. Chữ trên slide bằng tiếng Việt; tên sản phẩm Google giữ nguyên tiếng Anh. Luôn theo phong cách Google for Education, dùng để AIE đào tạo **Đối tác của AIE**.
 _Avoid_: deck, bài thuyết trình, presentation
 
 **Slide giới thiệu chương trình**:
@@ -22,15 +22,15 @@ _Avoid_: pitch deck
 Bộ Google for Education Slide Template chính thức của Google; mọi **Bộ slide** kế thừa master, layout, font Google Sans và hình minh hoạ từ đây.
 _Avoid_: template, theme
 
-**Thương hiệu dẫn**:
-Thương hiệu quyết định màu, font, giọng văn của một **Bộ slide**. Có hai giá trị: **Google dẫn** (mặc định) và **Đối tác dẫn**. Thương hiệu còn lại chỉ xuất hiện như logo đồng hành.
-_Avoid_: theme, chủ đề màu
+**AIE**:
+Phòng Đào tạo AI Edu — đối tác Google for Education hạng Professional Development Partner, chủ sở hữu mọi **Bộ slide**.
 
-**Google dẫn**:
-**Bộ slide** dùng nhận diện Google for Education: nền trắng/xám nhạt, Google Sans, bốn màu Google làm điểm nhấn có chủ đích.
+**Đối tác của AIE**:
+Tổ chức mà AIE đào tạo về các chương trình Google for Education (đại lý, trung tâm…); là người xem **Bộ slide**.
+_Avoid_: khách hàng, học viên
 
-**Đối tác dẫn**:
-**Bộ slide** dùng nhận diện của AIE — đối tác duy nhất mà bộ **Skill** phục vụ; Google for Education chỉ là logo đồng hành, không trộn màu, icon Google vào đồ hoạ của đối tác.
+**Huy hiệu đối tác**:
+Logo "Google for Education Professional Development Partner" dùng để thể hiện AIE là đối tác của Google.
 
 **Dàn ý**:
 Một Google Doc liệt kê slide theo thứ tự, mỗi slide có layout dự kiến, tiêu đề và nội dung chữ. Claude viết từ chủ đề hoặc chuyển từ tài liệu người dùng đưa; người dùng sửa thẳng trên Doc.
@@ -47,7 +47,7 @@ Chỗ quy trình dừng lại chờ người dùng đồng ý **Dàn ý** trư�
 
 ## Relationships
 
-- Mỗi **Bộ slide** có đúng một **Thương hiệu dẫn**, chọn trước khi viết **Dàn ý**.
+- Bộ slide do AIE dẫn về nhận diện thuộc skill `aie-theme`, nằm ngoài bộ **Skill** này.
 - Bộ **Skill** slide gồm một **Skill điều phối** và các **Skill** con, mỗi skill một việc.
 - Bộ **Skill** slide đứng riêng, không thay thế skill `aie-theme`.
 - **Bộ slide** không có ghi chú người nói, không có slide số liệu hay biểu đồ.
@@ -56,5 +56,5 @@ Chỗ quy trình dừng lại chờ người dùng đồng ý **Dàn ý** trư�
 ## Flagged ambiguities
 
 - Đầu ra từng được chọn là .pptx — đã chốt: Google Slides, vì **Slide mẫu** là Google Slides và giữ được Google Sans.
-
-- "Phong cách Google for Education" ban đầu có thể hiểu là chỉ **Google dẫn** — đã chốt: bộ **Skill** hỗ trợ cả hai **Thương hiệu dẫn**, mặc định **Google dẫn**.
+- Từng định hỗ trợ cả "Google dẫn" và "Đối tác dẫn" — đã chốt: chỉ phong cách Google for Education; khái niệm "Thương hiệu dẫn" bị bỏ.
+- "Training đối tác AIE" — đã chốt: AIE đào tạo **Đối tác của AIE**, không phải Google đào tạo AIE.
