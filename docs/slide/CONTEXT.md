@@ -33,7 +33,14 @@ _Avoid_: theme, chủ đề màu
 **Bộ slide** dùng nhận diện của AIE — đối tác duy nhất mà bộ **Skill** phục vụ; Google for Education chỉ là logo đồng hành, không trộn màu, icon Google vào đồ hoạ của đối tác.
 
 **Dàn ý**:
-Danh sách slide theo thứ tự, mỗi slide có ý chính, nội dung chữ và layout dự kiến. Claude viết từ chủ đề hoặc chuyển từ tài liệu người dùng đưa.
+Một Google Doc liệt kê slide theo thứ tự, mỗi slide có layout dự kiến, tiêu đề và nội dung chữ. Claude viết từ chủ đề hoặc chuyển từ tài liệu người dùng đưa; người dùng sửa thẳng trên Doc.
+
+**Khung chèn ảnh**:
+Khối giữ chỗ trên slide ghi mô tả ảnh cần đặt vào. Claude không tự chèn ảnh; người dùng thay bằng ảnh thật.
+_Avoid_: ảnh minh hoạ, placeholder
+
+**Bản gốc**:
+Bản sao **Slide mẫu** nằm trong thư mục `GfE Slides` trên Drive của người dùng; mọi **Bộ slide** được sao chép từ đây.
 
 **Điểm duyệt dàn ý**:
 Chỗ quy trình dừng lại chờ người dùng đồng ý **Dàn ý** trước khi dựng slide.
@@ -43,7 +50,8 @@ Chỗ quy trình dừng lại chờ người dùng đồng ý **Dàn ý** trư�
 - Mỗi **Bộ slide** có đúng một **Thương hiệu dẫn**, chọn trước khi viết **Dàn ý**.
 - Bộ **Skill** slide gồm một **Skill điều phối** và các **Skill** con, mỗi skill một việc.
 - Bộ **Skill** slide đứng riêng, không thay thế skill `aie-theme`.
-- **Bộ slide** không có ghi chú người nói.
+- **Bộ slide** không có ghi chú người nói, không có slide số liệu hay biểu đồ.
+- Bộ **Skill** slide không dùng chung quy tắc hay tài nguyên với `aie-theme`.
 
 ## Flagged ambiguities
 
