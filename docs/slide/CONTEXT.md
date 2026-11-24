@@ -8,15 +8,12 @@ Bộ **Skill** giúp Claude thiết kế bộ slide theo phong cách Google for 
 Một file Google Slides hoàn chỉnh trong Drive của người dùng, tạo bằng cách sao chép **Slide mẫu** rồi điền nội dung. Chữ trên slide bằng tiếng Việt; tên sản phẩm Google giữ nguyên tiếng Anh. Luôn theo phong cách Google for Education, dùng để AIE đào tạo **Đối tác của AIE**.
 _Avoid_: deck, bài thuyết trình, presentation
 
-**Slide giới thiệu chương trình**:
-**Bộ slide** giới thiệu chương trình hoặc gói Google for Education (Workspace for Education, Chromebook, Gemini…) cho trường học.
+**Slide đào tạo đối tác**:
+Loại **Bộ slide** duy nhất: dạy **Đối tác của AIE** về một chương trình hoặc sản phẩm Google for Education, cách triển khai và cách giới thiệu lại.
+_Avoid_: slide giới thiệu, pitch deck, slide sự kiện
 
-**Slide sự kiện**:
-**Bộ slide** dùng ở hội thảo, sự kiện: có agenda, diễn giả, ngăn chương.
-
-**Slide đề xuất**:
-**Bộ slide** thuyết phục một đối tác hợp tác hoặc mua giải pháp.
-_Avoid_: pitch deck
+**Cụm logo**:
+Logo AIE và **Huy hiệu đối tác**, có mặt trên mọi slide; vị trí linh hoạt theo layout của từng slide.
 
 **Slide mẫu**:
 Bộ Google for Education Slide Template chính thức của Google; mọi **Bộ slide** kế thừa master, layout, font Google Sans và hình minh hoạ từ đây.
@@ -50,6 +47,7 @@ Chỗ quy trình dừng lại chờ người dùng đồng ý **Dàn ý** trư�
 - Bộ slide do AIE dẫn về nhận diện thuộc skill `aie-theme`, nằm ngoài bộ **Skill** này.
 - Bộ **Skill** slide gồm một **Skill điều phối** và các **Skill** con, mỗi skill một việc.
 - Bộ **Skill** slide đứng riêng, không thay thế skill `aie-theme`.
+- **Bản gốc** chỉ giữ các layout dùng được; slide hướng dẫn, Appendix, sticker, số liệu, biểu đồ đã bị xoá.
 - **Bộ slide** không có ghi chú người nói, không có slide số liệu hay biểu đồ.
 - Bộ **Skill** slide không dùng chung quy tắc hay tài nguyên với `aie-theme`.
 
