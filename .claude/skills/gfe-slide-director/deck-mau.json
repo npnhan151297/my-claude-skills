@@ -1,0 +1,215 @@
+{
+ "title": "Gemini cho giáo viên",
+ "slides": [
+  {
+   "layout": "bia",
+   "tieu_de": "Gemini cho giáo viên",
+   "phu_de": "Đào tạo đối tác · Tháng 12/2026"
+  },
+  {
+   "layout": "agenda",
+   "muc": [
+    "Gemini là gì",
+    "Các phiên bản Workspace",
+    "Soạn bài với Gemini",
+    "Hỏi đáp"
+   ]
+  },
+  {
+   "layout": "muc-luc",
+   "tieu_de": "Tổng quan",
+   "muc": [
+    {
+     "dau": "Gemini",
+     "than": "Trợ lý AI trong Google Workspace for Education."
+    },
+    {
+     "dau": "NotebookLM",
+     "than": "Học từ chính tài liệu của bạn."
+    },
+    {
+     "dau": "Classroom",
+     "than": "Gemini ngay trong lớp học."
+    }
+   ]
+  },
+  {
+   "layout": "ngan-chuong-so",
+   "tieu_de": "Gemini là gì",
+   "so": 1,
+   "tong": 3
+  },
+  {
+   "layout": "dien-gia-1",
+   "ten": {
+    "ten": "Nguyễn Văn A",
+    "don_vi": "Chuyên gia đào tạo AIE"
+   },
+   "anh": "chân dung người đào tạo"
+  },
+  {
+   "layout": "trich-dan",
+   "loi": "Gemini giúp tôi soạn xong giáo án cho cả tuần chỉ trong một buổi chiều.",
+   "nguoi": {
+    "ten": "Cô Lê Thị C",
+    "mo_ta": "Giáo viên Ngữ văn, THCS Lê Quý Đôn"
+   }
+  },
+  {
+   "layout": "tieu-de-laptop",
+   "tieu_de": "Gemini trên trình duyệt",
+   "noi_dung": "Truy cập gemini.google.com bằng tài khoản Google Workspace for Education của trường.",
+   "anh": "trang chủ gemini.google.com"
+  },
+  {
+   "layout": "anh-tablet",
+   "tieu_de": "Học mọi lúc",
+   "noi_dung": "Học sinh dùng Gemini trên Chromebook để ôn bài.",
+   "anh": "màn hình Gemini trên Chromebook"
+  },
+  {
+   "layout": "anh-lon-phai",
+   "tieu_de": "Lớp học thực tế",
+   "noi_dung": "Giáo viên THCS dùng Gemini để chuẩn bị câu hỏi thảo luận.",
+   "anh": "giáo viên đứng lớp cùng học sinh"
+  },
+  {
+   "layout": "so-sanh-2",
+   "tieu_de": "Gemini và NotebookLM",
+   "nhan_trai": "Gemini",
+   "trai": {
+    "y": "Trò chuyện, soạn thảo, lên ý tưởng",
+    "chi_tiet": "Phù hợp khi bắt đầu từ trang trắng."
+   },
+   "nhan_phai": "NotebookLM",
+   "phai": {
+    "y": "Hỏi đáp dựa trên tài liệu",
+    "chi_tiet": "Phù hợp khi đã có tài liệu nguồn."
+   },
+   "anh_trai": "giao diện Gemini",
+   "anh_phai": "giao diện NotebookLM"
+  },
+  {
+   "layout": "ba-cot-anh",
+   "tieu_de": "Ba cách dùng trong lớp",
+   "cot": [
+    {
+     "dau": "Soạn bài",
+     "than": "Gợi ý dàn ý và hoạt động cho tiết học.",
+     "anh": "giáo viên soạn bài"
+    },
+    {
+     "dau": "Chấm bài",
+     "than": "Gợi ý nhận xét cho bài viết của học sinh.",
+     "anh": "màn hình chấm bài"
+    },
+    {
+     "dau": "Ôn tập",
+     "than": "Tạo câu hỏi ôn tập theo chủ đề.",
+     "anh": "học sinh ôn tập"
+    }
+   ]
+  },
+  {
+   "layout": "anh-ghep",
+   "tieu_de": "Không khí lớp học",
+   "y": [
+    {
+     "dau": "Học sinh chủ động",
+     "than": "Học sinh tự đặt câu hỏi và kiểm chứng câu trả lời."
+    },
+    {
+     "dau": "Giáo viên dẫn dắt",
+     "than": "Giáo viên định hướng cách dùng AI có trách nhiệm."
+    }
+   ],
+   "anh_1": "học sinh làm nhóm",
+   "anh_2": "giáo viên hướng dẫn",
+   "anh_3": "học sinh thuyết trình",
+   "anh_4": "lớp học"
+  },
+  {
+   "layout": "tieu-de-doan-van",
+   "tieu_de": "Dùng AI an toàn",
+   "noi_dung": {
+    "doan_1": "Gemini for Education không dùng dữ liệu của trường để huấn luyện mô hình.",
+    "doan_2": "Giáo viên luôn kiểm tra lại nội dung trước khi dùng với học sinh."
+   }
+  },
+  {
+   "layout": "tieu-de-2-y",
+   "tieu_de": "Bắt đầu thế nào",
+   "dan": "Hai bước để giáo viên dùng Gemini ngay hôm nay.",
+   "y": [
+    {
+     "dau": "Đăng nhập",
+     "than": "Dùng tài khoản trường tại gemini.google.com."
+    },
+    {
+     "dau": "Thử câu lệnh đầu tiên",
+     "than": "Nhờ Gemini gợi ý 5 câu hỏi khởi động cho tiết học."
+    }
+   ]
+  },
+  {
+   "layout": "bon-y",
+   "tieu_de": "Bốn lưu ý khi viết câu lệnh",
+   "y": [
+    {
+     "dau": "Vai trò",
+     "than": "Cho Gemini biết bạn là ai."
+    },
+    {
+     "dau": "Nhiệm vụ",
+     "than": "Nói rõ việc cần làm."
+    },
+    {
+     "dau": "Bối cảnh",
+     "than": "Lớp mấy, môn gì, mục tiêu gì."
+    },
+    {
+     "dau": "Định dạng",
+     "than": "Bảng, danh sách hay đoạn văn."
+    }
+   ]
+  },
+  {
+   "layout": "timeline",
+   "tieu_de": "Lộ trình 4 tuần",
+   "moc": [
+    {
+     "dau": "Tuần 1",
+     "than": "Làm quen Gemini."
+    },
+    {
+     "dau": "Tuần 2",
+     "than": "Soạn bài."
+    },
+    {
+     "dau": "Tuần 3",
+     "than": "Chấm bài."
+    },
+    {
+     "dau": "Tuần 4",
+     "than": "Chia sẻ kinh nghiệm."
+    }
+   ]
+  },
+  {
+   "layout": "dien-gia-3",
+   "nguoi": [
+    {
+     "dau": "Nguyễn Văn A",
+     "than": "Chuyên gia đào tạo"
+    },
+    {
+     "dau": "Trần Thị B",
+     "than": "Điều phối dự án"
+    }
+   ]
+  },
+  {
+   "layout": "cam-on"
+  }
+ ]
+}

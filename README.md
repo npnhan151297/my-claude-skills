@@ -1,6 +1,6 @@
 # my-claude-skills
 
-Bộ skill giúp Claude dựng **video quảng cáo dịch vụ/khoá học 15–60 giây** bằng Remotion, theo cách của nhà sản xuất video chuyên nghiệp. Thuật ngữ: `CONTEXT.md`. Quyết định: `docs/adr/`.
+Bộ skill giúp Claude dựng **video quảng cáo dịch vụ/khoá học 15–60 giây** bằng Remotion, theo cách của nhà sản xuất video chuyên nghiệp, và **slide đào tạo đối tác theo phong cách Google for Education**. Bản đồ ngữ cảnh: `CONTEXT-MAP.md`. Quyết định: `docs/adr/`, `docs/slide/adr/`.
 
 ## Dùng
 
@@ -23,6 +23,7 @@ git clone --depth 1 https://github.com/npnhan151297/my-claude-skills /tmp/my-cla
 | Phụ đề và xuất bản | `safe-zone-layout`, `reframe-16x9`, `captions-style`, `render-qc`, `cover-frame` |
 | Google Animation Product (video sản phẩm kiểu Google) | `google-animation-product`, `gap-style`, `gap-logo-burst`, `gap-typing-icons`, `gap-gradient-sweep`, `gap-word-carousel`, `gap-floating-chips`, `gap-ui-demo`, `gap-3d-cards`, `gap-outro` |
 | Video sự kiện từ footage thô | `dung-video-tu-footage` |
+| Slide Google for Education (đào tạo đối tác AIE, Google Slides) | `gfe-slide-director`, `gfe-slide-layouts`, `gfe-slide-style`, `gfe-slide-copy`, `gfe-slide-qc` — thuật ngữ: `docs/slide/CONTEXT.md` |
 | Khác | `grill-with-docs`, `grilling`, `domain-modeling` (Matt Pocock) |
 
 ## Thêm skill mới

@@ -19,3 +19,7 @@ Logo công cụ ngoài Google: `canva-icon`, `canva-wordmark`, `padlet`, `waygro
 - `gfe-pd-partner.png`: **Huy hiệu đối tác** "Google for Education Professional Development Partner" (chữ xám, chỉ dùng trên nền trắng).
 - `aie.png`: logo AI Edu.
 - `aie-x-gfe-pd-partner.png`: ảnh gốc người dùng gửi, hai logo đặt cạnh nhau. Không dùng nguyên khối trên slide; dùng hai file tách riêng.
+
+## Đường dẫn công khai
+
+Slides tải logo qua `logo_base_url` trong `.claude/skills/gfe-slide-director/config.json` (GitHub raw của repo công khai này). Khi gộp nhánh vào `main`, đổi `logo_base_url` sang `.../my-claude-skills/main/assets/gfe/logos`. Logo đã chèn vào Bản gốc thì nằm luôn trong file, không phụ thuộc đường dẫn này.

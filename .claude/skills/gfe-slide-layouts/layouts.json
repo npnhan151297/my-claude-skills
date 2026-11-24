@@ -1,0 +1,1263 @@
+{
+ "_ghi_chu": "Thư viện layout của Bản gốc (GfE Slide mẫu). Toạ độ tính bằng pt trên trang 720x405. 'id' là objectId trong Bản gốc. Kiểu ô: text (một kiểu chữ, giữ kiểu của mẫu), parts (nhiều phần trong một ô: phần đầu giữ kiểu mẫu, các phần sau áp kiểu ghi ở đây), image (thay bằng Khung chèn ảnh). Sửa file này khi Bản gốc thay đổi. 'fit': [[số ký tự tối đa, cỡ chữ]] — chọn cỡ chữ đầu tiên vừa độ dài; null = giữ cỡ của mẫu.",
+ "styles": {
+  "than": {
+   "size": 12,
+   "color": "#5F6368"
+  },
+  "than10": {
+   "size": 10,
+   "color": "#5F6368"
+  },
+  "than9": {
+   "size": 9,
+   "color": "#5F6368"
+  },
+  "than11": {
+   "size": 11,
+   "color": "#5F6368"
+  },
+  "cty21": {
+   "size": 21,
+   "color": "#5F6368"
+  },
+  "cty14": {
+   "size": 14,
+   "color": "#5F6368"
+  },
+  "mota13": {
+   "size": 13,
+   "color": "#5F6368",
+   "bold": false
+  },
+  "lienket_xanh": {
+   "size": 10,
+   "color": "#4285F4"
+  },
+  "lienket_luc": {
+   "size": 10,
+   "color": "#34A853"
+  },
+  "dau16": {
+   "size": 16,
+   "color": "#202124"
+  },
+  "dau14": {
+   "size": 14,
+   "color": "#202124"
+  },
+  "dau12": {
+   "size": 12,
+   "color": "#3C4043"
+  },
+  "ten25": {
+   "size": 25,
+   "color": "#202124"
+  },
+  "ten18": {
+   "size": 18,
+   "color": "#202124"
+  },
+  "ten13": {
+   "size": 13,
+   "bold": true,
+   "color": "theme:ACCENT4"
+  },
+  "doan13": {
+   "size": 13,
+   "color": "#3C4043"
+  }
+ },
+ "layouts": {
+  "bia": {
+   "slide": "p2",
+   "dung_khi": "Slide đầu tiên của mọi Bộ slide.",
+   "fields": {
+    "tieu_de": {
+     "type": "text",
+     "id": "p2_i1696",
+     "box": [
+      36,
+      133,
+      321,
+      145
+     ],
+     "size": 48,
+     "max": 50,
+     "fit": [
+      [
+       22,
+       null
+      ],
+      [
+       36,
+       34
+      ],
+      [
+       50,
+       28
+      ]
+     ]
+    },
+    "phu_de": {
+     "type": "text",
+     "id": "p2_i1732",
+     "box": [
+      36,
+      305,
+      159,
+      35
+     ],
+     "size": 14,
+     "max": 45,
+     "optional": true,
+     "widen": {
+      "scaleX": 1.887,
+      "x_emu": 457200
+     }
+    }
+   }
+  },
+  "agenda": {
+   "slide": "p3",
+   "dung_khi": "Liệt kê 3–8 phần của buổi đào tạo, ngay sau bìa.",
+   "fields": {
+    "tieu_de": {
+     "type": "text",
+     "id": "p3_i1742",
+     "box": [
+      36,
+      131,
+      212,
+      69
+     ],
+     "size": 50,
+     "max": 10,
+     "default": "Nội dung",
+     "fit": [
+      [
+       6,
+       null
+      ],
+      [
+       12,
+       40
+      ]
+     ]
+    }
+   },
+   "list": {
+    "key": "muc",
+    "min": 3,
+    "max": 8,
+    "item_max": 30,
+    "slots": [
+     {
+      "text": "p3_i1744",
+      "num": "p3_i1748"
+     },
+     {
+      "text": "p3_i1745",
+      "num": "p3_i1749"
+     },
+     {
+      "text": "p3_i1746",
+      "num": "p3_i1750"
+     },
+     {
+      "text": "p3_i1751",
+      "num": "p3_i1743"
+     },
+     {
+      "text": "p3_i1747",
+      "num": "p3_i1755"
+     },
+     {
+      "text": "p3_i1752",
+      "num": "p3_i1756"
+     },
+     {
+      "text": "p3_i1753",
+      "num": "p3_i1757"
+     },
+     {
+      "text": "p3_i1754",
+      "num": "p3_i1758"
+     }
+    ],
+    "widen": {
+     "scaleX": 1.636,
+     "x_emu": 3892610,
+     "note": "nới ô chữ từ 165pt lên 270pt (hệ số nhân với scale hiện có)"
+    }
+   }
+  },
+  "muc-luc": {
+   "slide": "p4",
+   "dung_khi": "Tổng quan 3–6 phần, mỗi phần có một câu mô tả ngắn.",
+   "fields": {
+    "tieu_de": {
+     "type": "text",
+     "id": "p4_i1792",
+     "box": [
+      37,
+      36,
+      647,
+      52
+     ],
+     "size": 50,
+     "max": 22
+    }
+   },
+   "list": {
+    "key": "muc",
+    "min": 3,
+    "max": 6,
+    "head_max": 22,
+    "body_max": 60,
+    "parts_style": [
+     "than"
+    ],
+    "sep": "\n",
+    "slots": [
+     {
+      "text": "p4_i1780",
+      "num": "p4_i1781"
+     },
+     {
+      "text": "p4_i1787",
+      "num": "p4_i1783"
+     },
+     {
+      "text": "p4_i1788",
+      "num": "p4_i1785"
+     },
+     {
+      "text": "p4_i1789",
+      "num": "p4_i1782"
+     },
+     {
+      "text": "p4_i1790",
+      "num": "p4_i1784"
+     },
+     {
+      "text": "p4_i1791",
+      "num": "p4_i1786"
+     }
+    ],
+    "head_style": "dau16"
+   }
+  },
+  "ngan-chuong-so": {
+   "slide": "p5",
+   "dung_khi": "Mở đầu mỗi phần khi Bộ slide có Agenda; dãy chấm 01–08 ở góc trên tô xanh phần hiện tại.",
+   "fields": {
+    "tieu_de": {
+     "type": "text",
+     "id": "p5_i1805",
+     "box": [
+      114,
+      202,
+      494,
+      104
+     ],
+     "size": 50,
+     "max": 24,
+     "fit": [
+      [
+       18,
+       null
+      ],
+      [
+       24,
+       40
+      ]
+     ]
+    }
+   },
+   "dots": {
+    "style": "fill",
+    "ids": [
+     "p5_i1815",
+     "p5_i1816",
+     "p5_i1817",
+     "p5_i1818",
+     "p5_i1819",
+     "p5_i1820",
+     "p5_i1821",
+     "p5_i1822"
+    ],
+    "ring": "p5_i1804"
+   }
+  },
+  "ngan-chuong": {
+   "slide": "p6",
+   "dung_khi": "Mở đầu phần, tiêu đề ở giữa slide; dùng xen kẽ với ngan-chuong-so cho đỡ lặp.",
+   "fields": {
+    "tieu_de": {
+     "type": "text",
+     "id": "p6_i1827",
+     "box": [
+      114,
+      162,
+      494,
+      80
+     ],
+     "size": 50,
+     "max": 34,
+     "fit": [
+      [
+       18,
+       null
+      ],
+      [
+       34,
+       40
+      ]
+     ]
+    }
+   },
+   "dots": {
+    "style": "fill",
+    "ring": "p6_i1829",
+    "ids": [
+     "p6_i1830",
+     "p6_i1831",
+     "p6_i1832",
+     "p6_i1833",
+     "p6_i1834",
+     "p6_i1835",
+     "p6_i1836",
+     "p6_i1837"
+    ]
+   }
+  },
+  "dien-gia-1": {
+   "slide": "p7",
+   "dung_khi": "Giới thiệu một người đào tạo.",
+   "fields": {
+    "ten": {
+     "type": "parts",
+     "id": "p7_i1850",
+     "box": [
+      318,
+      206,
+      285,
+      85
+     ],
+     "size": 25,
+     "parts": [
+      "ten",
+      "don_vi"
+     ],
+     "parts_style": [
+      "cty21"
+     ],
+     "sep": "\n",
+     "max": [
+      28,
+      34
+     ],
+     "head_style": "ten25"
+    }
+   },
+   "images": [
+    {
+     "id": "p7_i1849",
+     "box": [
+      77,
+      99,
+      207,
+      207
+     ],
+     "shape": "ELLIPSE",
+     "key": "anh"
+    }
+   ]
+  },
+  "dien-gia-3": {
+   "slide": "p8",
+   "dung_khi": "Giới thiệu 2–3 người đào tạo (bỏ thẻ thứ ba nếu chỉ có 2).",
+   "list": {
+    "key": "nguoi",
+    "min": 2,
+    "max": 3,
+    "head_max": 22,
+    "body_max": 26,
+    "parts_style": [
+     "cty14"
+    ],
+    "sep": "\n",
+    "slots": [
+     {
+      "text": "p8_i1873",
+      "image": "p8_i1870",
+      "card": "p8_i1864",
+      "circle": "p8_i1865"
+     },
+     {
+      "text": "p8_i1874",
+      "image": "p8_i1871",
+      "card": "p8_i1866",
+      "circle": "p8_i1867"
+     },
+     {
+      "text": "p8_i1875",
+      "image": "p8_i1872",
+      "card": "p8_i1868",
+      "circle": "p8_i1869"
+     }
+    ],
+    "image_box": [
+     [
+      77,
+      79,
+      119,
+      119
+     ],
+     [
+      301,
+      79,
+      119,
+      119
+     ],
+     [
+      525,
+      79,
+      119,
+      119
+     ]
+    ],
+    "image_shape": "ELLIPSE",
+    "center_pitch": 224,
+    "head_style": "ten18"
+   }
+  },
+  "cau-nhan-manh": {
+   "slide": "p9",
+   "dung_khi": "Một thông điệp chính, đứng riêng một slide.",
+   "fields": {
+    "cau": {
+     "type": "text",
+     "id": "p9_i1880",
+     "box": [
+      129,
+      112,
+      493,
+      162
+     ],
+     "size": 30,
+     "max": 110
+    }
+   }
+  },
+  "trich-dan": {
+   "slide": "p10",
+   "dung_khi": "Trích lời một giáo viên, hiệu trưởng hoặc đối tác (có tên thật).",
+   "fields": {
+    "loi": {
+     "type": "text",
+     "id": "p10_i1897",
+     "box": [
+      36,
+      100,
+      404,
+      146
+     ],
+     "size": 20,
+     "max": 170
+    },
+    "nguoi": {
+     "type": "parts",
+     "id": "p10_i1896",
+     "box": [
+      36,
+      278,
+      281,
+      39
+     ],
+     "size": 13,
+     "parts": [
+      "ten",
+      "mo_ta"
+     ],
+     "parts_style": [
+      "mota13"
+     ],
+     "sep": "\n",
+     "max": [
+      30,
+      45
+     ],
+     "head_style": "ten13"
+    }
+   }
+  },
+  "giao-dien-trai": {
+   "slide": "p11",
+   "dung_khi": "Giới thiệu một màn hình phần mềm: chữ bên trái, ảnh chụp màn hình lớn bên phải.",
+   "fields": {
+    "tieu_de": {
+     "type": "text",
+     "id": "p11_i1940",
+     "box": [
+      37,
+      36,
+      211,
+      93
+     ],
+     "size": 30,
+     "max": 36
+    },
+    "noi_dung": {
+     "type": "text",
+     "id": "p11_i1941",
+     "box": [
+      37,
+      138,
+      185,
+      157
+     ],
+     "size": 11,
+     "max": 300
+    }
+   },
+   "cta": {
+    "group": "p11_i1943",
+    "text": "p11_i1944",
+    "max": 18
+   },
+   "images": [
+    {
+     "id": "p11_i1942",
+     "box": [
+      284,
+      74,
+      407,
+      238
+     ],
+     "key": "anh"
+    }
+   ]
+  },
+  "tieu-de-laptop": {
+   "slide": "p12",
+   "dung_khi": "Giới thiệu một trang web hoặc ứng dụng chạy trên máy tính (khung laptop).",
+   "fields": {
+    "tieu_de": {
+     "type": "text",
+     "id": "p12_i1954",
+     "box": [
+      48,
+      51,
+      234,
+      124
+     ],
+     "size": 40,
+     "max": 30
+    },
+    "noi_dung": {
+     "type": "text",
+     "id": "p12_i1955",
+     "box": [
+      48,
+      187,
+      213,
+      98
+     ],
+     "size": 14,
+     "max": 120
+    }
+   },
+   "images": [
+    {
+     "id": "p12_i1958",
+     "box": [
+      285,
+      117,
+      362,
+      222
+     ],
+     "key": "anh"
+    }
+   ]
+  },
+  "anh-tablet": {
+   "slide": "p13",
+   "dung_khi": "Giới thiệu thao tác trên máy tính bảng hoặc Chromebook dạng tablet.",
+   "fields": {
+    "tieu_de": {
+     "type": "text",
+     "id": "p13_i1968",
+     "box": [
+      37,
+      77,
+      250,
+      82
+     ],
+     "size": 40,
+     "max": 26
+    },
+    "noi_dung": {
+     "type": "text",
+     "id": "p13_i1969",
+     "box": [
+      37,
+      175,
+      250,
+      98
+     ],
+     "size": 14,
+     "max": 130
+    }
+   },
+   "cta": {
+    "group": "p13_i1970",
+    "text": "p13_i1971",
+    "max": 16
+   },
+   "images": [
+    {
+     "id": "p13_i1967",
+     "box": [
+      340,
+      56,
+      229,
+      298
+     ],
+     "key": "anh",
+     "extra_ids": []
+    }
+   ],
+   "transforms": [
+    {
+     "ids": [
+      "p13_i1965",
+      "p13_i1966"
+     ],
+     "scale": 0.86,
+     "origin": [
+      456,
+      42
+     ],
+     "note": "thu nhỏ tablet để không che huy hiệu ở chân trang"
+    }
+   ]
+  },
+  "anh-lon-phai": {
+   "slide": "p14",
+   "dung_khi": "Một ảnh lớn (lớp học, hoạt động) kèm đoạn giải thích.",
+   "fields": {
+    "tieu_de": {
+     "type": "text",
+     "id": "p14_i1977",
+     "box": [
+      37,
+      82,
+      250,
+      82
+     ],
+     "size": 40,
+     "max": 26
+    },
+    "noi_dung": {
+     "type": "text",
+     "id": "p14_i1978",
+     "box": [
+      37,
+      180,
+      250,
+      98
+     ],
+     "size": 14,
+     "max": 130
+    }
+   },
+   "cta": {
+    "group": "p14_i1979",
+    "text": "p14_i1980",
+    "max": 16
+   },
+   "images": [
+    {
+     "id": "p14_i1983",
+     "box": [
+      363,
+      0,
+      321,
+      350
+     ],
+     "key": "anh"
+    }
+   ]
+  },
+  "so-sanh-2": {
+   "slide": "p16",
+   "dung_khi": "So sánh hai lựa chọn, hai chế độ hoặc hai phiên bản.",
+   "fields": {
+    "tieu_de": {
+     "type": "text",
+     "id": "p16_i2000",
+     "box": [
+      37,
+      36,
+      647,
+      36
+     ],
+     "size": 35,
+     "max": 40
+    },
+    "nhan_trai": {
+     "type": "text",
+     "id": "p16_i2004",
+     "box": [
+      158,
+      223,
+      78,
+      17
+     ],
+     "size": 8,
+     "max": 16
+    },
+    "trai": {
+     "type": "parts",
+     "id": "p16_i2006",
+     "box": [
+      61,
+      241,
+      270,
+      86
+     ],
+     "size": 14,
+     "parts": [
+      "y",
+      "chi_tiet"
+     ],
+     "parts_style": [
+      "than10"
+     ],
+     "sep": "\n",
+     "max": [
+      50,
+      110
+     ],
+     "head_style": "dau14"
+    },
+    "nhan_phai": {
+     "type": "text",
+     "id": "p16_i2007",
+     "box": [
+      481,
+      223,
+      86,
+      17
+     ],
+     "size": 8,
+     "max": 16
+    },
+    "phai": {
+     "type": "parts",
+     "id": "p16_i2008",
+     "box": [
+      388,
+      241,
+      270,
+      86
+     ],
+     "size": 14,
+     "parts": [
+      "y",
+      "chi_tiet"
+     ],
+     "parts_style": [
+      "than10"
+     ],
+     "sep": "\n",
+     "max": [
+      50,
+      110
+     ],
+     "head_style": "dau14"
+    }
+   },
+   "images": [
+    {
+     "id": "p16_i2005",
+     "box": [
+      69,
+      100,
+      255,
+      109
+     ],
+     "key": "anh_trai"
+    },
+    {
+     "id": "p16_i2009",
+     "box": [
+      396,
+      100,
+      255,
+      109
+     ],
+     "key": "anh_phai"
+    }
+   ],
+   "remove": [
+    "p16_i2001",
+    "p16_i2003"
+   ]
+  },
+  "ba-cot-anh": {
+   "slide": "p17",
+   "dung_khi": "Ba nội dung ngang hàng, mỗi nội dung có một ảnh minh hoạ bên dưới.",
+   "fields": {
+    "tieu_de": {
+     "type": "text",
+     "id": "p17_i2021",
+     "box": [
+      37,
+      36,
+      647,
+      36
+     ],
+     "size": 35,
+     "max": 40
+    }
+   },
+   "list": {
+    "key": "cot",
+    "min": 3,
+    "max": 3,
+    "head_max": 24,
+    "body_max": 120,
+    "parts_style": [
+     "than10",
+     "lienket_xanh"
+    ],
+    "sep": "\n\n",
+    "slots": [
+     {
+      "text": "p17_i2015",
+      "arrow": "p17_i2022"
+     },
+     {
+      "text": "p17_i2016",
+      "arrow": "p17_i2023"
+     },
+     {
+      "text": "p17_i2017",
+      "arrow": "p17_i2024"
+     }
+    ],
+    "image_ids": [
+     "p17_i2018",
+     "p17_i2019",
+     "p17_i2020"
+    ],
+    "image_box": [
+     [
+      37,
+      267,
+      176,
+      102
+     ],
+     [
+      272,
+      267,
+      176,
+      102
+     ],
+     [
+      508,
+      267,
+      176,
+      102
+     ]
+    ],
+    "head_style": "dau14"
+   }
+  },
+  "anh-ghep": {
+   "slide": "p18",
+   "dung_khi": "Không khí lớp học, hoạt động thực tế: 4 ảnh ghép bên trái, 2 ý bên phải.",
+   "fields": {
+    "tieu_de": {
+     "type": "text",
+     "id": "p18_i2029",
+     "box": [
+      397,
+      50,
+      288,
+      97
+     ],
+     "size": 40,
+     "max": 26
+    }
+   },
+   "list": {
+    "key": "y",
+    "min": 2,
+    "max": 2,
+    "head_max": 30,
+    "body_max": 110,
+    "parts_style": [
+     "than10"
+    ],
+    "sep": "\n",
+    "slots": [
+     {
+      "text": "p18_i2034"
+     },
+     {
+      "text": "p18_i2035"
+     }
+    ],
+    "head_style": "dau14"
+   },
+   "images": [
+    {
+     "id": "p18_i2030",
+     "box": [
+      33,
+      31,
+      145,
+      193
+     ],
+     "key": "anh_1"
+    },
+    {
+     "id": "p18_i2033",
+     "box": [
+      193,
+      0,
+      145,
+      121
+     ],
+     "key": "anh_2"
+    },
+    {
+     "id": "p18_i2032",
+     "box": [
+      193,
+      134,
+      145,
+      193
+     ],
+     "key": "anh_3"
+    },
+    {
+     "id": "p18_i2031",
+     "box": [
+      33,
+      239,
+      145,
+      121
+     ],
+     "key": "anh_4"
+    }
+   ]
+  },
+  "tieu-de-doan-van": {
+   "slide": "p19",
+   "dung_khi": "Giải thích một khái niệm bằng một đoạn văn dài (tối đa 2 đoạn).",
+   "fields": {
+    "tieu_de": {
+     "type": "text",
+     "id": "p19_i2083",
+     "box": [
+      37,
+      36,
+      218,
+      82
+     ],
+     "size": 40,
+     "max": 24,
+     "fit": [
+      [
+       14,
+       null
+      ],
+      [
+       24,
+       32
+      ]
+     ]
+    },
+    "noi_dung": {
+     "type": "parts",
+     "id": "p19_i2078",
+     "box": [
+      331,
+      74,
+      353,
+      154
+     ],
+     "size": 13,
+     "parts": [
+      "doan_1",
+      "doan_2"
+     ],
+     "parts_style": [
+      "than11"
+     ],
+     "sep": "\n",
+     "max": [
+      220,
+      260
+     ],
+     "head_style": "doan13"
+    }
+   },
+   "cta": {
+    "group": "p19_i2079",
+    "text": "p19_i2080",
+    "max": 16
+   }
+  },
+  "tieu-de-2-y": {
+   "slide": "p21",
+   "dung_khi": "Một ý dẫn bên trái và hai ý chi tiết bên phải.",
+   "fields": {
+    "tieu_de": {
+     "type": "text",
+     "id": "p21_i2103",
+     "box": [
+      37,
+      69,
+      250,
+      82
+     ],
+     "size": 40,
+     "max": 26
+    },
+    "dan": {
+     "type": "text",
+     "id": "p21_i2109",
+     "box": [
+      37,
+      170,
+      211,
+      120
+     ],
+     "size": 14,
+     "max": 130
+    }
+   },
+   "list": {
+    "key": "y",
+    "min": 2,
+    "max": 2,
+    "head_max": 34,
+    "body_max": 220,
+    "parts_style": [
+     "than10"
+    ],
+    "sep": "\n",
+    "slots": [
+     {
+      "text": "p21_i2104"
+     },
+     {
+      "text": "p21_i2105"
+     }
+    ],
+    "head_style": "dau14"
+   }
+  },
+  "ba-y": {
+   "slide": "p22",
+   "dung_khi": "Ba ý ngang hàng (ba bước, ba lợi ích, ba yêu cầu).",
+   "fields": {
+    "tieu_de": {
+     "type": "text",
+     "id": "p22_i2118",
+     "box": [
+      37,
+      36,
+      647,
+      36
+     ],
+     "size": 35,
+     "max": 40
+    }
+   },
+   "list": {
+    "key": "y",
+    "min": 3,
+    "max": 3,
+    "head_max": 24,
+    "body_max": 120,
+    "parts_style": [
+     "than10"
+    ],
+    "sep": "\n\n",
+    "slots": [
+     {
+      "text": "p22_i2119"
+     },
+     {
+      "text": "p22_i2120"
+     },
+     {
+      "text": "p22_i2121"
+     }
+    ],
+    "head_style": "dau14"
+   }
+  },
+  "bon-y": {
+   "slide": "p23",
+   "dung_khi": "Bốn ý ngang hàng, có thể kèm đường dẫn tài liệu ở cuối mỗi ý.",
+   "fields": {
+    "tieu_de": {
+     "type": "text",
+     "id": "p23_i2136",
+     "box": [
+      37,
+      36,
+      647,
+      36
+     ],
+     "size": 35,
+     "max": 40
+    }
+   },
+   "list": {
+    "key": "y",
+    "min": 4,
+    "max": 4,
+    "head_max": 18,
+    "body_max": 120,
+    "parts_style": [
+     "than10",
+     "lienket_luc"
+    ],
+    "sep": "\n\n",
+    "slots": [
+     {
+      "text": "p23_i2137",
+      "arrow": "p23_i2148"
+     },
+     {
+      "text": "p23_i2138",
+      "arrow": "p23_i2149"
+     },
+     {
+      "text": "p23_i2139",
+      "arrow": "p23_i2150"
+     },
+     {
+      "text": "p23_i2141",
+      "arrow": "p23_i2151"
+     }
+    ],
+    "head_style": "dau14"
+   }
+  },
+  "bang": {
+   "slide": "p30",
+   "dung_khi": "So sánh nhiều tiêu chí (tối đa 5 cột, 8 dòng kể cả dòng tiêu đề).",
+   "fields": {
+    "tieu_de": {
+     "type": "text",
+     "id": "p30_i2267",
+     "box": [
+      37,
+      36,
+      647,
+      36
+     ],
+     "size": 35,
+     "max": 40
+    }
+   },
+   "table": {
+    "id": "p30_i2266",
+    "rows": 8,
+    "cols": 5,
+    "cell_max": 40
+   }
+  },
+  "timeline": {
+   "slide": "p31",
+   "dung_khi": "Lộ trình, các mốc thời gian hoặc các bước theo thứ tự (4–6 mốc).",
+   "fields": {
+    "tieu_de": {
+     "type": "text",
+     "id": "p31_i2291",
+     "box": [
+      37,
+      36,
+      647,
+      36
+     ],
+     "size": 35,
+     "max": 40
+    }
+   },
+   "list": {
+    "key": "moc",
+    "min": 4,
+    "max": 6,
+    "head_max": 20,
+    "body_max": 90,
+    "parts_style": [
+     "than9"
+    ],
+    "sep": "\n",
+    "slots": [
+     {
+      "text": "p31_i2279",
+      "card": "p31_i2277",
+      "dot": "p31_i2285"
+     },
+     {
+      "text": "p31_i2282",
+      "card": "p31_i2272",
+      "dot": "p31_i2286"
+     },
+     {
+      "text": "p31_i2280",
+      "card": "p31_i2275",
+      "dot": "p31_i2287"
+     },
+     {
+      "text": "p31_i2283",
+      "card": "p31_i2273",
+      "dot": "p31_i2288"
+     },
+     {
+      "text": "p31_i2281",
+      "card": "p31_i2276",
+      "dot": "p31_i2289"
+     },
+     {
+      "text": "p31_i2284",
+      "card": "p31_i2274",
+      "dot": "p31_i2290"
+     }
+    ],
+    "head_style": "dau12"
+   }
+  },
+  "cam-on": {
+   "slide": "p32",
+   "dung_khi": "Slide cuối cùng của mọi Bộ slide.",
+   "fields": {
+    "loi_cam_on": {
+     "type": "text",
+     "id": "p32_i2302",
+     "box": [
+      205,
+      149,
+      310,
+      85
+     ],
+     "size": 65,
+     "max": 10,
+     "default": "Cảm ơn"
+    }
+   }
+  }
+ }
+}

@@ -45,6 +45,7 @@ Chỗ quy trình dừng lại chờ người dùng đồng ý **Dàn ý** trư�
 ## Relationships
 
 - Bộ slide do AIE dẫn về nhận diện thuộc skill `aie-theme`, nằm ngoài bộ **Skill** này.
+- **Cụm logo** gồm hai logo tách rời, không bao giờ ghép thành một khối.
 - Bộ **Skill** slide gồm một **Skill điều phối** và các **Skill** con, mỗi skill một việc.
 - Bộ **Skill** slide đứng riêng, không thay thế skill `aie-theme`.
 - **Bản gốc** chỉ giữ các layout dùng được; slide hướng dẫn, Appendix, sticker, số liệu, biểu đồ đã bị xoá.
